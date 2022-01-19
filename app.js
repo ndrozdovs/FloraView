@@ -1,18 +1,21 @@
-const express = require('express');
-const path = require('path');
-const ejsMate = require('ejs-mate');
+const express  = require('express');
+const path     = require('path');
+const ejsMate  = require('ejs-mate');
+
 const app = express();
+
+// mongoose.connect("mongodb://localhost/floraview");
 
 app.engine('ejs', ejsMate);
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'views')));
-app.use(express.static(path.join(__dirname, 'public')))
+app.use(express.static(path.join(__dirname, 'public')));
 
 
 app.get('/', (req, res) => {
     res.render('home');
-})
+});
 
 app.get('/mainPage/company', (req, res) => {
     res.render('mainPage/company');
@@ -43,5 +46,5 @@ app.get('/dashboard/support', (req, res) => {
 })
 
 app.listen(3000, () => {
-    console.log('Serving on port 3000');
-})
+    console.log('Floraview server started on port 3000');
+});
