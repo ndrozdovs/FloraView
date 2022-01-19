@@ -1,0 +1,34 @@
+.navbar-nav {
+    margin: 0 0 2rem 10rem;
+}
+
+.nav-link {
+    padding: 0.25rem 0;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.849);
+    margin: 0 0 0 2rem;
+}
+
+.nav-link:hover{
+    color: rgba(255,255,255,0.5);
+}
+
+.navbar-brand img{
+    margin: 0 0 0 6rem;
+}
+
+.btn{
+    color: rgba(255, 255, 255, 0.849);
+    margin: 0 6rem 2rem 0;
+}
+
+body {
+    height: 100vh;
+    background: url("secondBackground.png");
+    background-size: cover;
+    background-position: center;
+}
+
+main h1{
+    margin: 0 0 0 6.9rem;
+}
