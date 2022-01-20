@@ -14,24 +14,32 @@ app.get('/', (req, res) => {
     res.render('home');
 })
 
-app.get('/company', (req, res) => {
-    res.render('company');
+app.get('/mainPage/company', (req, res) => {
+    res.render('mainPage/company');
 })
 
-app.get('/pricing', (req, res) => {
-    res.render('pricing');
+app.get('/mainPage/pricing', (req, res) => {
+    res.render('mainPage/pricing');
 })
 
-app.get('/product', (req, res) => {
-    res.render('product');
+app.get('/mainPage/product', (req, res) => {
+    res.render('mainPage/product');
 })
 
-app.get('/useCases', (req, res) => {
-    res.render('useCases');
+app.get('/mainPage/useCases', (req, res) => {
+    res.render('mainPage/useCases');
 })
 
-app.get('/signIn', (req, res) => {
-    res.render('signIn');
+app.get('/dashboard/dashHome', (req, res) => {
+    res.render('dashboard/dashHome');
+})
+
+app.get('/dashboard/guide', (req, res) => {
+    res.render('dashboard/guide');
+})
+
+app.get('/dashboard/support', (req, res) => {
+    res.render('dashboard/support');
 })
 
 app.listen(3000, () => {

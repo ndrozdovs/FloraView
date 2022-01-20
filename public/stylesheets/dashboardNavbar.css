@@ -1,0 +1,28 @@
+.navbar{
+    border-bottom: 1px solid rgba(77, 76, 76, 0.075);
+    box-shadow: 0 2px 2px -2px gray;
+    background-color: rgba(240, 240, 240, 0.851);
+}
+
+.navbar-nav {
+    margin: 0 0rem 0rem 26rem;
+}
+
+.nav-link {
+    padding: 0.25rem 0;
+    font-weight: 500;
+    color: rgb(0, 0, 0);
+    margin: 0 0 0 2rem;
+}
+
+.nav-link:hover{
+    color: rgba(27, 27, 27, 0.616);
+}
+
+#mainPage{
+    margin: 0 0rem 0rem 25rem;
+}
+
+main h1{
+    margin: 0rem 0rem 0rem -10.4rem;
+}
