@@ -1,10 +1,16 @@
-var mongoose = require("mongoose");
+const mongoose = require("mongoose");
 
 var classroomSchema = new mongoose.Schema({
-  name: String,
-  hubID: String,
+  name: {
+    type: String,
+    required: true
+  },
+  hubId: {
+    type: String,
+    required: true
+  },
 });
 
-var classroom = mongoose.model("Classroom", classroomSchema);
+const Classroom = mongoose.model("Classroom", classroomSchema);
 
-module.exports = classroom
+module.exports = Classroom
