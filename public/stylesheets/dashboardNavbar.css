@@ -5,7 +5,8 @@
 }
 
 .navbar-nav {
-    margin: 0 0rem 0rem 26rem;
+    margin: 0 0rem 0rem 29rem;
+    width: 1550px;
 }
 
 .nav-link {
@@ -17,12 +18,4 @@
 
 .nav-link:hover{
     color: rgba(27, 27, 27, 0.616);
-}
-
-#mainPage{
-    margin: 0 0rem 0rem 25rem;
-}
-
-main h1{
-    margin: 0rem 0rem 0rem -10.4rem;
 }

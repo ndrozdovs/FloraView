@@ -1,3 +1,17 @@
-.btn-group{
-    margin: 1rem 0rem 0rem -10.4rem;
+#mainContent {
+    width: 1550px;
+    margin-top: 1rem;
+}
+
+#addHub{
+    background-color: rgb(35, 163, 46);
+    color: rgb(255, 255, 255);
+    font-weight: 400;
+}
+
+#graphs img{
+    padding-left: 27rem;
+    padding-top: 10rem;
+    width: 2100px;
+    height: 766px;
 }
