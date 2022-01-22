@@ -7,9 +7,15 @@ window.onload=function(){
     });
 
     $('#submitWifi').click(function() {
-        document.querySelector('#startAddHub').remove();
-        document.querySelector('#firstHub').innerHTML = $("input[name='flexRadioDefault']:checked").val();
-        document.querySelector('#displayHubList').classList.remove("hidden");
+        document.querySelector('#wifiSpinner').classList.remove("hidden");
+
+        window.setTimeout(function () {
+            $('#enterWifiModal').modal('hide');
+            document.querySelector('#startAddHub').remove();
+            document.querySelector('#firstHub').innerHTML = $("input[name='flexRadioDefault']:checked").val();
+            document.querySelector('#displayHubList').classList.remove("hidden");
+            document.querySelector('#wifiSpinner').remove();
+        }, 2000);
     });
 
     $('#addNodes').click(function() {
