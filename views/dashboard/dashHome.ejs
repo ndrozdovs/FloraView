@@ -20,17 +20,60 @@
         </div>
     </div>
 
-    <div class="row no-gutters">
-        <div class="col-6 px-0 pt-4">
-            <h1>Start by adding a Hub</h1>
+    <section id="startAddHub">
+        <div class="row no-gutters">
+            <div class="col-6 px-0 pt-4">
+                <h1>Start by adding a Hub</h1>
+            </div>
         </div>
-    </div>
+    
+        <div class="row no-gutters">
+            <div class="col-6 px-0 pt-2">
+                <button class="btn buttonClr" data-toggle="modal" data-target="#addHubModal">Add a Hub</button>
+            </div>
+        </div>
+    </section>
 
-    <div class="row no-gutters">
-        <div class="col-6 px-0 pt-2">
-            <button class="btn" id="addHub">Add a Hub</button>
+    <section id="displayHubList" class="hidden">
+        <div class="row no-gutters">
+            <div class="col px-0 pt-4">
+                <h3>Hubs: 
+                    <button class="btn buttonClr" id="firstHub">B1</button>
+                </h3>
+            </div>
+            <div class="col-auto px-0 pt-4">
+                <button class="btn btn-outline-dark" data-toggle="modal" data-target="#addHubModal">Add another Hub</button>
+            </div>
         </div>
-    </div>
+
+        <div class="row no-gutters" id="createGroupButton">
+            <div class="col-6 px-0 pt-4">
+                <button class="btn btn-outline-dark" data-toggle="modal" data-target="#createGroup">Create a student group</button>
+            </div>
+        </div>
+    </section>
+
+    <section id="displayGroupList" class="hidden">
+        <div class="row no-gutters">
+            <div class="col px-0 pt-4">
+                <h3>Groups: 
+                    <button class="btn buttonClr" id="firstGroup">G1</button>
+                </h3>
+            </div>
+            <div class="col-auto px-0 pt-4">
+                <div class="btn-group" role="group" aria-label="Basic example">
+                    <button type="button" class="btn btn-outline-dark">Create another group</button>
+                    <button type="button" class="btn btn-outline-dark">Edit group</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="row no-gutters">
+            <div class="col px-0 pt-4">
+                <h3 id="nodeList">Nodes: </h3>
+            </div>
+        </div>
+    </section>
 </section>
 
 <section class="container-fluid" id="graphContent">
@@ -41,3 +84,119 @@
     </div>
 </section>
 
+<div class="modal" tabindex="-1" role="dialog" id="addHubModal">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Select the Hub you wish to connect</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body" id="exampleSelect">
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" value="FloraView Hub S-5468 ">
+                <label class="form-check-label" for="flexRadioDefault1">
+                  FloraView Hub S-5468 
+                </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" value="FloraView Hub S-7153">
+                <label class="form-check-label" for="flexRadioDefault2">
+                  FloraView Hub S-7153
+                </label>
+            </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" id="save" class="btn btn-primary" data-dismiss="modal" data-toggle="modal" data-target="#enterWifiModal">Connect</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" tabindex="-1" role="dialog" id="enterWifiModal">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="wifiModal">Enter Wifi credentials for %>  </h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <form>
+                <div class="form-group">
+                  <label for="exampleInputEmail1">Wifi Network</label>
+                  <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter network name">
+                </div>
+                <div class="form-group">
+                  <label for="exampleInputPassword1">Password</label>
+                  <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+                </div>
+                <button type="submit" id="submitWifi" class="btn btn-primary mt-4" data-dismiss="modal">Submit</button>
+                <button type="button" class="btn btn-secondary mt-4" data-dismiss="modal">Cancel</button>
+              </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="modal" tabindex="-1" role="dialog" id="createGroup">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-body" id="exampleSelect">
+            <form>
+                <div class="form-group row">
+                    <label for="inputEmail3" class="col-4 col-form-label">Enter group name:</label>
+                    <div class="col-8">
+                      <input type="email" class="form-control" id="inputGroup" placeholder="Group name">
+                    </div>
+                  </div>
+                  <label for="inputEmail3" class="col-4 col-form-label">Select nodes to add:</label>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="Node 1" id="node1">
+                    <label class="form-check-label" for="defaultCheck1">
+                      Node 1
+                    </label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="Node 2" id="node2">
+                    <label class="form-check-label" for="defaultCheck1">
+                      Node 2
+                    </label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="Node 3" id="node3">
+                    <label class="form-check-label" for="defaultCheck1">
+                      Node 3
+                    </label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="Node 4" id="node4">
+                    <label class="form-check-label" for="defaultCheck1">
+                      Node 4
+                    </label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="Node 5" id="node5">
+                    <label class="form-check-label" for="defaultCheck1">
+                      Node 5
+                    </label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="Node 6" id="node6">
+                    <label class="form-check-label" for="defaultCheck1">
+                      Node 6
+                    </label>
+                  </div>
+              </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" id="addNodes" class="btn btn-primary" data-dismiss="modal">Add</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
