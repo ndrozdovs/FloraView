@@ -48,19 +48,19 @@
 
         <div class="row no-gutters" id="createGroupButton">
             <div class="col-6 px-0 pt-4">
-                <button class="btn btn-outline-dark" data-toggle="modal" data-target="#createGroup">Create a student group</button>
+                <button class="btn btn-outline-dark" data-toggle="modal" data-target="#createGroupModal">Create a student group</button>
             </div>
         </div>
     </section>
 
-    <section id="displayGroupList" class="hidden">
+    <section id="displayGroups_Nodes" class="hidden">
         <div class="row no-gutters">
             <div class="col px-0 pt-4">
                 <h3 id="groupList">Groups: </h3>
             </div>
             <div class="col-auto px-0 pt-4">
                 <div class="btn-group" role="group" aria-label="Basic example">
-                    <button type="button" class="btn btn-outline-dark" data-toggle="modal" data-target="#createGroup">Create another group</button>
+                    <button type="button" class="btn btn-outline-dark" data-toggle="modal" data-target="#createGroupModal">Create another group</button>
                     <button type="button" class="btn btn-outline-dark">Edit group</button>
                 </div>
             </div>
@@ -104,7 +104,7 @@
             </div>
         </div>
         <div class="modal-footer">
-          <button type="button" id="save" class="btn btn-primary" data-dismiss="modal" data-toggle="modal" data-target="#enterWifiModal">Connect</button>
+          <button type="button" id="hubConnectButton" class="btn btn-primary" data-dismiss="modal" data-toggle="modal" data-target="#enterWifiModal">Connect</button>
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
         </div>
       </div>
@@ -136,7 +136,7 @@
               <div class="spinner-border hidden" role="status" id="wifiSpinner">
                 <span class="sr-only"></span>
               </div>
-              <a id="submitWifi" class="btn btn-primary">Submit</a>
+              <a id="submitWifiButton" class="btn btn-primary">Submit</a>
               <a class="btn btn-secondary" data-dismiss="modal">Cancel</a>
             </div>
         </div>
@@ -144,7 +144,7 @@
 </div>
 
 
-  <div class="modal" tabindex="-1" role="dialog" id="createGroup">
+  <div class="modal" tabindex="-1" role="dialog" id="createGroupModal">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-body">
@@ -160,7 +160,7 @@
               </form>
         </div>
         <div class="modal-footer">
-          <button type="button" id="addNodes" class="btn btn-primary" data-dismiss="modal">Add</button>
+          <button type="button" id="submitGroupButton" class="btn btn-primary" data-dismiss="modal">Add</button>
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
         </div>
       </div>
