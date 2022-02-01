@@ -36,7 +36,7 @@ window.onload=function(){
         // Create new group button and bind populateNodes function
         const groupHeader = document.querySelector('#groupList');
         const newGroup = document.createElement("button");
-        newGroup.classList = "btn buttonClr mx-1";
+        newGroup.classList = "btn blackBorder shadow-none mx-1";
         newGroup.id = $("#inputGroup").val();
         newGroup.innerHTML = $("#inputGroup").val();
         groupHeader.appendChild(newGroup);
@@ -100,7 +100,9 @@ window.onload=function(){
         for(node of groupNodeData[selectedGroup.id]){
             const newNode = document.createElement("button");
             newNode.innerHTML = node;
-            newNode.classList = "btn btn-outline-dark mx-1";
+            newNode.classList = "btn blackBorder shadow-none mx-1 nohover";
+            newNode.id = node.replace(/ /g,'');
+            newNode.onclick = function() {updateGraphs(newNode)};
             nodeHeader.appendChild(newNode);
         }
 
@@ -113,5 +115,7 @@ window.onload=function(){
                 document.querySelector('#' + key).classList.remove('highlight');
             }
         }
+
+        updateGraphs(nodeHeader.children[0])
     }
 }

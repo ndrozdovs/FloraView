@@ -13,13 +13,39 @@
     padding-top: 5rem;
 }
 
+
 .hidden{
     visibility: hidden;
 }
 
 .highlight{
+    outline: none;
+    -webkit-appearance: none;
     background-color: rgb(158, 14, 158);
+    color: rgb(255, 255, 255) !important;
+    box-shadow: 0px 0px 3px rgb(0, 0, 0) !important;
 }
+
+.highlightButton{
+    outline: none;
+    -webkit-appearance: none;
+    background-color: rgb(35, 163, 46);
+    color: rgb(255, 255, 255) !important;
+    box-shadow: 0px 0px 3px rgb(0, 0, 0) !important;
+}
+
+.hubButton{
+    outline: none;
+    -webkit-appearance: none;
+    background-color: rgb(35, 163, 46);
+    color: rgb(255, 255, 255) !important;
+    box-shadow: 0px 0px 3px rgb(0, 0, 0) !important;
+}
+
+.blackBorder{
+    border-color: black
+}
+
 
 @media only screen and (max-width: 1650px){
     #mainContent{

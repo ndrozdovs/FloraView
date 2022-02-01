@@ -1,6 +1,7 @@
 <% layout('layouts/dashboardBoilerplate') %> 
 <link rel="stylesheet" href="/stylesheets/dashboardHome.css">
-<script src="/javascripts/dashboard.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js/dist/chart.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
 
 <section class="container-fluid px-0" id="mainContent">
     <div class="row no-gutters">
@@ -38,7 +39,7 @@
         <div class="row no-gutters">
             <div class="col px-0 pt-4">
                 <h3>Hubs: 
-                    <button class="btn buttonClr" id="firstHub">B1</button>
+                    <button class="btn hubButton blackBorder" id="firstHub">B1</button>
                 </h3>
             </div>
             <div class="col-auto px-0 pt-4">
@@ -74,9 +75,20 @@
     </section>
 
     <div class="row no-gutters">
-      <div class="col-6 px-0" id="graphs">
-          <img src="../assets/graphs.png" alt="">
+      <div class="col-6 px-0 pt-5">
+          <canvas id="temperatureChart"></canvas>
       </div>
+      <div class="col-6 px-0 pt-5">
+        <canvas id="phChart"></canvas>
+    </div>
+    </div>
+    <div class="row no-gutters">
+      <div class="col-6 px-0 pt-5">
+          <canvas id="lightChart"></canvas>
+      </div>
+      <div class="col-6 px-0 pt-5">
+        <canvas id="moistureChart"></canvas>
+    </div>
     </div>
 </section>
 
@@ -166,3 +178,6 @@
       </div>
     </div>
   </div>
+
+  <script src="/javascripts/graphs.js"></script>
+  <script src="/javascripts/dashboard.js"></script>
