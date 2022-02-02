@@ -3,17 +3,6 @@
     margin-top: 1rem;
 }
 
-.buttonClr{
-    background-color: rgb(35, 163, 46);
-    color: rgb(255, 255, 255);
-    font-weight: 400;
-}
-
-#graphs img{
-    padding-top: 5rem;
-}
-
-
 .hidden{
     visibility: hidden;
 }
