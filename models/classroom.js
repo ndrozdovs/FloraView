@@ -1,14 +1,18 @@
 const mongoose = require("mongoose");
 
 var classroomSchema = new mongoose.Schema({
-  name: {
+  macAddress: {
     type: String,
     required: true
   },
-  hubId: {
+  counter: {
     type: String,
     required: true
   },
+  timestamp: {
+    type: String,
+    required: true
+  }
 });
 
 const Classroom = mongoose.model("Classroom", classroomSchema);
