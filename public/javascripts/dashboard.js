@@ -3,6 +3,22 @@ const groupNodeData = [];
 
 window.addEventListener('load', interact);
 
+function highlightNodes(node) {
+  const nodeList = document.querySelector('#nodeList'); // Select nodes currently being shown
+  var children = nodeList.children;
+
+  for(const key of children) {
+    if(node.id === key.id) {
+      document.querySelector('#' + key.id)
+        .classList.add('highlightButton');
+    }
+    else {
+      document.querySelector('#' + key.id)
+        .classList.remove('highlightButton');
+    }
+  }
+}
+
 function interact() {
   // When Connect button is pressed in the Hub selector modal
   $('#hubConnectButton').click(function() {
@@ -89,22 +105,6 @@ function interact() {
       newDiv.appendChild(newLabel);
     }
   });
-
-  function highlightNodes(node) {
-    const nodeList = document.querySelector('#nodeList'); // Select nodes currently being shown
-    var children = nodeList.children;
-  
-    for(const key of children) {
-      if(node.id === key.id) {
-        document.querySelector('#' + key.id)
-          .classList.add('highlightButton');
-      }
-      else {
-        document.querySelector('#' + key.id)
-          .classList.remove('highlightButton');
-      }
-    }
-  }
 
   // Associate respective group and node pairings and display them 
   function populateNodes(selectedGroup) {

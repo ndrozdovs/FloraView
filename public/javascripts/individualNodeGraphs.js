@@ -60,7 +60,6 @@ function updateGraphs(node) {
   var start = moment().subtract(0, 'days');
   today = start.format('YYYY-MM-DD').substr(8);
   todayNum = parseInt(today);
-  console.log(todayNum);
 
   for(var i = 0; i < 4; i++) {
     sensorConfigs[i].data.datasets[0].data = [];
