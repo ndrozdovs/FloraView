@@ -7,6 +7,10 @@
     visibility: hidden;
 }
 
+.removed{
+    display: none;
+}
+
 .highlight{
     outline: none;
     -webkit-appearance: none;

@@ -35,22 +35,6 @@ function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min) + min); //The maximum is exclusive and the minimum is inclusive
 }
 
-function highlightNodes(node) {
-  const nodeList = document.querySelector('#nodeList'); // Select nodes currently being shown
-  var children = nodeList.children;
-
-  for(const key of children) {
-    if(node.id === key.id) {
-      document.querySelector('#' + key.id)
-        .classList.add('highlightButton');
-    }
-    else {
-      document.querySelector('#' + key.id)
-        .classList.remove('highlightButton');
-    }
-  }
-}
-
 sensorCharts = [];
 
 labels = ['Temperature', 'pH', 'Light', 'Moisture'];

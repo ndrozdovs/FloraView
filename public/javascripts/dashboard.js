@@ -90,6 +90,22 @@ function interact() {
     }
   });
 
+  function highlightNodes(node) {
+    const nodeList = document.querySelector('#nodeList'); // Select nodes currently being shown
+    var children = nodeList.children;
+  
+    for(const key of children) {
+      if(node.id === key.id) {
+        document.querySelector('#' + key.id)
+          .classList.add('highlightButton');
+      }
+      else {
+        document.querySelector('#' + key.id)
+          .classList.remove('highlightButton');
+      }
+    }
+  }
+
   // Associate respective group and node pairings and display them 
   function populateNodes(selectedGroup) {
     const nodeHeader = document.querySelector('#nodeList'); // Select nodes currently being shown
@@ -117,7 +133,9 @@ function interact() {
     allNodes.innerHTML = 'All Nodes';
     allNodes.classList = "btn blackBorder shadow-none mx-1";
     allNodes.id = 'allNodes';
-    //allNodes.onclick = function() {updateGraphs(allNodes)};
+    allNodes.onclick = function() {
+      showAllGraphs(allNodes)
+    };
     nodeHeader.appendChild(allNodes);
 
     // Highlight the currently selected group
