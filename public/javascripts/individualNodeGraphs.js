@@ -35,8 +35,6 @@ function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min) + min); //The maximum is exclusive and the minimum is inclusive
 }
 
-sensorCharts = [];
-
 labels = ['Temperature', 'pH', 'Light', 'Moisture'];
 colors = ['rgb(11, 245, 19)', 'rgb(156, 75, 210)', 'rgb(246, 168, 12)', 'rgb(255, 99, 132)']
 chartElement = ['temperatureChart', 'phChart', 'lightChart', 'moistureChart']
@@ -57,6 +55,10 @@ function initGraphs() {
 }
 
 function updateGraphs(node) {
+  document.querySelector('#individualGraphs').classList.remove('removed');
+  document.querySelector('#allGraphs').classList.add('removed');
+  document.querySelector('#allGraphButtons').classList.add('removed');
+
   var start = moment().subtract(0, 'days');
   today = start.format('YYYY-MM-DD').substr(8);
   todayNum = parseInt(today);

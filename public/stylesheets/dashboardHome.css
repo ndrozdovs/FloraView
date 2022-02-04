@@ -27,6 +27,14 @@
     box-shadow: 0px 0px 3px rgb(0, 0, 0) !important;
 }
 
+.highlightChoice{
+    outline: none;
+    -webkit-appearance: none;
+    background-color: rgb(158, 14, 158);
+    color: rgb(255, 255, 255) !important;
+    box-shadow: 0px 0px 3px rgb(0, 0, 0) !important;
+}
+
 .hubButton{
     outline: none;
     -webkit-appearance: none;

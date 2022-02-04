@@ -6,6 +6,7 @@ function initCalendar() {
     var end = moment();
 
     function cb(start, end) {
+      updateTimeScaleAll(start.format('YYYY-MM-DD'), end.format('YYYY-MM-DD'))
       updateTimeScale(start.format('YYYY-MM-DD'), end.format('YYYY-MM-DD'))
       $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
     }

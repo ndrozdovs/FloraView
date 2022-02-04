@@ -148,6 +148,7 @@ function interact() {
       }
     }
 
+    initAllGraphs(allNodes)
     updateGraphs(nodeHeader.children[0])
   }
 }
