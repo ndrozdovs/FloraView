@@ -20,22 +20,20 @@ function highlightNodes(node) {
 }
 
 function interact() {
-  // When Connect button is pressed in the Hub selector modal
-  $('#hubConnectButton').click(function() {
-    // Add Hub name to the next modal screen 
-    document.querySelector('#wifiModal').innerHTML += $("input[name='flexRadioDefault']:checked").val();
-  });
-
   // When Wifi credentials are submitted
   $('#submitWifiButton').click(function() {
     // Enable the spinner
     document.querySelector('#wifiSpinner').classList.remove("hidden");
+    networkName =  $("input[id='inputNetworkName']").val();
+    networkPassword =  $("input[id='inputNetworkPassword']").val();
+    writeToStream(networkName);
+    writeToStream(networkPassword);
 
     // Wait 2 seconds and then close the modal
     window.setTimeout(function() {
       $('#enterWifiModal').modal('hide');
       document.querySelector('#startAddHub').remove(); // Remove initial set up info
-      document.querySelector('#firstHub').innerHTML = $("input[name='flexRadioDefault']:checked").val(); // Save selected Hub
+      document.querySelector('#firstHub').innerHTML = 'PlaceHolder'; // Save selected Hub
       document.querySelector('#displayHubList').classList.remove("hidden"); // Display the next info screen
       document.querySelector('#wifiSpinner').remove(); // Disbale the spinner
     }, 2000);

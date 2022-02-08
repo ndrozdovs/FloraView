@@ -29,13 +29,13 @@
   <section id="startAddHub">
     <div class="row no-gutters">
       <div class="col-6 px-0 pt-4">
-        <h1>Start by adding a Hub</h1>
+        <h1>Start by connecting the Hub to your device and then pressing 'Pair Hub' below</h1>
+        <div>
+          <button class="btn btn-outline-dark mt-2" id="serialConnect">Pair Hub</button>
+        </div>
       </div>
-    </div>
-
-    <div class="row no-gutters">
-      <div class="col-6 px-0 pt-2">
-        <button class="btn btn-outline-dark" data-toggle="modal" data-target="#addHubModal">Add a Hub</button>
+      <div class="col-4 mx-auto px-0 pt-4">
+        <img src="../assets/usbConnect.png" alt="">
       </div>
     </div>
   </section>
@@ -122,56 +122,25 @@
   <section id="allGraphs"></section>
 </section>
 
-
-<div class="modal" tabindex="-1" role="dialog" id="addHubModal">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Select the Hub you wish to connect</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <div class="form-check">
-          <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" value="FloraView Hub S-5468 ">
-          <label class="form-check-label" for="flexRadioDefault1">
-            FloraView Hub S-5468
-          </label>
-        </div>
-        <div class="form-check">
-          <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" value="FloraView Hub S-7153">
-          <label class="form-check-label" for="flexRadioDefault2">
-            FloraView Hub S-7153
-          </label>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" id="hubConnectButton" class="btn btn-primary" data-dismiss="modal" data-toggle="modal" data-target="#enterWifiModal">Connect</button>
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-      </div>
-    </div>
-  </div>
-</div>
-
 <div class="modal fade" id="enterWifiModal" role="diaglog">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="wifiModal">Enter Wifi credentials for %> </h5>
+        <h5 class="modal-title">Enter WiFi credentials for the Hub</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
+        <p>It is the WiFi network that you want the Hub to be connected to</p>
         <form>
           <div class="form-group">
-            <label for="exampleInputEmail1">Wifi Network</label>
-            <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter network name">
+            <label for="exampleInputEmail1">WiFi Network</label>
+            <input type="email" class="form-control" id="inputNetworkName" aria-describedby="emailHelp" placeholder="Enter network name">
           </div>
           <div class="form-group">
             <label for="exampleInputPassword1">Password</label>
-            <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+            <input type="password" class="form-control" id="inputNetworkPassword" placeholder="Password">
           </div>
         </form>
       </div>
@@ -214,3 +183,4 @@
 <script src="/javascripts/allNodeGraphs.js"></script>
 <script src="/javascripts/dashboard.js"></script>
 <script src="/javascripts/calendar.js"></script>
+<script src="/javascripts/serial.js"></script>
