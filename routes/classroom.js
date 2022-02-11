@@ -10,4 +10,6 @@ router.get("/:id", ClassroomsController.getClassroom);
 
 router.delete("/:id", ClassroomsController.deleteClassroom);
 
+router.delete("/", ClassroomsController.deleteAllClassrooms);
+
 module.exports = router;

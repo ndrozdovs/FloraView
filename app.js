@@ -8,7 +8,7 @@ const classroomRoutes = require("./routes/classroom");
 
 const app = express()
 
-const dbUrl = process.env.DB_URL || 'mongodb://localhost:27017/trial';
+const dbUrl = process.env.DB_URL || 'mongodb://localhost:27017/classrooms';
 
 mongoose.connect(dbUrl);
 

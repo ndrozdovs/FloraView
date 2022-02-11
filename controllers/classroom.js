@@ -88,14 +88,22 @@ exports.deleteClassroom = (req, res, next) => {
   Classroom.deleteOne({ _id: id })
     .exec()
     .then(result => {
-      res.status(200).json({
-        message: "Classroom deleted",
-        request: {
-          type: "POST",
-          url: "http://localhost:3000/products",
-          body: { name: "String", price: "Number" }
-        }
+      res.status(200).json({message: "Classroom deleted"});
+    })
+    .catch(err => {
+      console.log(err);
+      res.status(500).json({
+        error: err
       });
+    });
+};
+
+exports.deleteAllClassrooms = (req, res, next) => {
+  const id = req.params.id;
+  Classroom.deleteMany({})
+    .exec()
+    .then(result => {
+      res.status(200).json({message: "All classrooms deleted"});
     })
     .catch(err => {
       console.log(err);
