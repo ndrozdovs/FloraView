@@ -20,23 +20,20 @@ function highlightNodes(node) {
 }
 
 function interact() {
+  // Disconnect serial when wifi modal is exited
+  $('#enterWifiModal').on('hide.bs.modal', function () {
+    console.log("DISOCNNECTED")
+    disconnectSerial();
+  })
+
   // When Wifi credentials are submitted
   $('#submitWifiButton').click(function() {
     // Enable the spinner
-    document.querySelector('#wifiSpinner').classList.remove("hidden");
+    document.querySelector('#wifiSpinner').classList.toggle("hidden");
     networkName =  $("input[id='inputNetworkName']").val();
     networkPassword =  $("input[id='inputNetworkPassword']").val();
     writeToStream(networkName);
     writeToStream(networkPassword);
-
-    // Wait 2 seconds and then close the modal
-    window.setTimeout(function() {
-      $('#enterWifiModal').modal('hide');
-      document.querySelector('#startAddHub').remove(); // Remove initial set up info
-      document.querySelector('#firstHub').innerHTML = 'PlaceHolder'; // Save selected Hub
-      document.querySelector('#displayHubList').classList.remove("hidden"); // Display the next info screen
-      document.querySelector('#wifiSpinner').remove(); // Disbale the spinner
-    }, 2000);
   });
 
   // When new group is created
@@ -149,4 +146,18 @@ function interact() {
     initAllGraphs(allNodes)
     updateGraphs(nodeHeader.children[0])
   }
+}
+
+function wifiIsInvalid(){
+  document.querySelector('#wifiSpinner').classList.toggle("hidden"); // Disable the spinner
+  document.querySelector('#inputNetworkName').value = ""; // Reset modal text
+  document.querySelector('#inputNetworkPassword').value = ""; // Reset modal text
+}
+
+function wifiIsValid() {
+  $('#enterWifiModal').modal('hide');
+  document.querySelector('#startAddHub').remove(); // Remove initial set up info
+  document.querySelector('#firstHub').innerHTML = 'PlaceHolder'; // Save selected Hub
+  document.querySelector('#displayHubList').classList.remove("hidden"); // Display the next info screen
+  document.querySelector('#wifiSpinner').classList.toggle("hidden"); // Disable the spinner
 }

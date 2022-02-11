@@ -8,6 +8,7 @@ let inputStream;
 let outputStream;
 
 const serialConnect = document.getElementById('serialConnect');
+let sendRequest = false;
 
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -46,12 +47,11 @@ async function connect() {
 
   reader = inputStream.getReader();
   readLoop();
-  writeToStream('dummy')
 }
 
 
 // Closes the Web Serial connection
-async function disconnect() {
+async function disconnectSerial() {
   // CODELAB: Close the input stream (reader).
   if(reader) {
     await reader.cancel();
@@ -77,6 +77,7 @@ async function disconnect() {
 // Click handler for the connect/disconnect button
 async function clickConnect() {
   // CODELAB: Add connect code here.
+  sendRequest = true;
   await connect();
 }
 
@@ -87,14 +88,22 @@ async function readLoop() {
   while(true) {
     const {value, done} = await reader.read();
     console.log(value)
-    if(value.includes("set new WiFi")) {
-      writeToStream('y');
-      $('#enterWifiModal').modal('toggle');
-    }
     if(done) {
       console.log('[readLoop] DONE', done);
       reader.releaseLock();
       break;
+    }
+    if((value.includes("Ready for") || value.includes("Waiting for ssid")) && sendRequest === true) {
+      sendRequest = false;
+      writeToStream('FloraViewWifiKeyword');
+      $('#enterWifiModal').modal('show');
+    }
+    if(value.includes("WiFi credentials invalid")){
+      wifiIsInvalid();
+      writeToStream('FloraViewWifiKeyword');
+    }
+    if(value.includes("WiFi credentials valid")){
+      wifiIsValid();
     }
   }
 }

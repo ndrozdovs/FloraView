@@ -1,81 +1,90 @@
-const express    = require('express')
-const path       = require('path')
-const ejsMate    = require('ejs-mate')
-const mongoose   = require('mongoose')
+const express = require('express')
+const path = require('path')
+const ejsMate = require('ejs-mate')
+const mongoose = require('mongoose')
 const bodyParser = require("body-parser")
+const methodOverride = require('method-override');
+const classroomRoutes = require("./routes/classroom");
 
 const app = express()
 
-const Classroom = require('./models/classroom')
+const dbUrl = process.env.DB_URL || 'mongodb://localhost:27017/trial';
 
-mongoose.connect("mongodb://localhost:27017/classrooms")
-    .then(() => {
-        console.log("MONGODB CONNECTION OPEN")
-    })
-    .catch(err => {
-        console.log("MONGODB CONNECTION REFUSED");
-        console.log(err)
-    })
+mongoose.connect(dbUrl);
+
+const db = mongoose.connection;
+db.on("error", console.error.bind(console, "connection error:"));
+db.once("open", () => {
+  console.log("Database connected");
+});
 
 app.engine('ejs', ejsMate)
 app.set('view engine', 'ejs')
 app.set('views', path.join(__dirname, 'views'))
+
 app.use(express.static(path.join(__dirname, 'views')))
 app.use(express.static(path.join(__dirname, 'public')))
-app.use(bodyParser.urlencoded({extended: true}))
+app.use(express.urlencoded({
+  extended: true
+}));
+app.use(methodOverride('_method'));
+app.use(bodyParser.urlencoded({
+  extended: true
+}))
 app.use(bodyParser.json())
 
+// Routes which should handle requests
+app.use("/classrooms", classroomRoutes);
+
 app.get('/', (req, res) => {
-    res.render('home');
+  res.render('home');
 });
 
 app.get('/mainPage/company', (req, res) => {
-    res.render('mainPage/company');
+  res.render('mainPage/company');
 })
 
 app.get('/mainPage/pricing', (req, res) => {
-    res.render('mainPage/pricing');
+  res.render('mainPage/pricing');
 })
 
 app.get('/mainPage/product', (req, res) => {
-    res.render('mainPage/product');
+  res.render('mainPage/product');
 })
 
 app.get('/mainPage/useCases', (req, res) => {
-    res.render('mainPage/useCases');
+  res.render('mainPage/useCases');
 })
 
 app.get('/dashboard/dashHome', (req, res) => {
-    res.render('dashboard/dashHome');
+  res.render('dashboard/dashHome');
 })
 
 app.get('/dashboard/guide', (req, res) => {
-    res.render('dashboard/guide');
+  res.render('dashboard/guide');
 })
 
 app.get('/dashboard/support', (req, res) => {
-    res.render('dashboard/support');
+  res.render('dashboard/support');
 })
 
-app.get('/classrooms', async (req, res) => {
-    const classrooms = await Classroom.find({})
-    console.log(classrooms)
-    res.send(classrooms)
+app.use((req, res, next) => {
+  const error = new Error("Not found");
+  error.status = 404;
+  next(error);
+});
+
+app.use((err, req, res, next) => {
+  const {
+    statusCode = 500
+  } = err;
+  if(!err.message) err.message = 'Oh No, Something Went Wrong!'
+  res.status(statusCode).render('error', {
+    err
+  })
 })
 
-app.post('/classrooms', async (req, res) => {
-    const newClassroom = new Classroom(req.body)
-    await newClassroom.save()
-    .then(() => {
-        console.log(newClassroom)
-    })
-    .catch(err => {
-        console.log("error adding to DB")
-        console.log(err)
-    })
-    res.send(newClassroom)
-})
-
-app.listen(3000, () => {
-    console.log('Floraview server started on port 3000');
+const port = process.env.PORT || 3000;
+app.listen(port, () => {
+  console.log(`Serving on port ${port}`)
 })
