@@ -35,6 +35,24 @@ exports.getAllClassrooms = (req, res, next) => {
   });
 };
 
+exports.getLatest = (req, res, next) => {
+  Classroom.findOne()
+  .sort({ field: 'asc', _id: -1 })
+  .exec()
+  .then(doc => {
+    const response = {
+      classrooms: doc
+    };
+    res.status(200).json(response);
+  })
+  .catch(err => {
+    console.log(err);
+    res.status(500).json({
+      error: err
+    });
+  });
+};
+
 exports.createClassroom = (req, res, next) => {
 	const classroom = new Classroom({
     _id: new mongoose.Types.ObjectId(),

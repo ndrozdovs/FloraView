@@ -4,6 +4,8 @@ const ClassroomsController = require('../controllers/classroom');
 
 router.get("/", ClassroomsController.getAllClassrooms);
 
+router.get("/latest", ClassroomsController.getLatest);
+
 router.post("/", ClassroomsController.createClassroom);
 
 router.get("/:id", ClassroomsController.getClassroom);

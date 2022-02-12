@@ -4,6 +4,8 @@ sensorCharts = [];
 var xMin = '0'
 var xMax = '0'
 var timeUnit = '0'
+var updateVar
+var lastEntryTimestamp
 
 for(var i = 0; i < 4; i++) {
   sensorConfigs.push({
@@ -41,6 +43,13 @@ function getRandomInt(min, max) {
 
 async function getAllData() {
   const response = await fetch("http://localhost:3000/classrooms");
+  const data = await response.json();
+
+  return data["classrooms"];
+}
+
+async function getLatestData() {
+  const response = await fetch("http://localhost:3000/classrooms/latest");
   const data = await response.json();
 
   return data["classrooms"];
@@ -100,15 +109,22 @@ async function realtimeGraphs(node) {
         x: subData.timestamp,
         y: subData.moist
       })
+
+      lastEntryTimestamp = subData.timestamp;
     }
 
     for(var i = 0; i < 4; i++){
-      sensorConfigs[i].options.scales.x.min = moment().subtract(0, 'days').format('YYYY-MM-DD') + ' 17:30:00'
-      sensorConfigs[i].options.scales.x.max = moment().format('YYYY-MM-DD') + ' 18:00:00'
+      sensorConfigs[i].options.scales.x.min = moment().subtract(0, 'days').format('YYYY-MM-DD') + ' 14:00:00'
+      sensorConfigs[i].options.scales.x.max = moment().format('YYYY-MM-DD') + ' 14:30:00'
       sensorConfigs[i].options.scales.x.time.unit = 'minute'
       sensorCharts[i].update();
     }
 
+    if (typeof updateVar !== 'undefined') {
+      clearInterval(updateVar);
+    }
+
+    updateVar = setInterval(updateDataRealtime, 20000);
     highlightNodes(node);
   });
 }
@@ -117,6 +133,10 @@ function updateGraphs(node) {
   document.querySelector('#individualGraphs').classList.remove('removed');
   document.querySelector('#allGraphs').classList.add('removed');
   document.querySelector('#allGraphButtons').classList.add('removed');
+
+  if (typeof updateVar !== 'undefined') {
+    clearInterval(updateVar);
+  }
 
   var start = moment().subtract(0, 'days');
   today = start.format('YYYY-MM-DD').substr(8);
@@ -208,4 +228,37 @@ function updateTimeScale(start, end, fromCalendar) {
 
     sensorCharts[i].update();
   }
+}
+
+async function updateDataRealtime(){
+  await getLatestData()
+  .then(data => {
+    if(data.timestamp != lastEntryTimestamp){
+      lastEntryTimestamp = data.timestamp
+
+      sensorConfigs[0].data.datasets[0].data.push({
+        x: data.timestamp,
+        y: data.temp
+      })
+
+      sensorConfigs[1].data.datasets[0].data.push({
+        x: data.timestamp,
+        y: data.ph
+      })
+
+      sensorConfigs[2].data.datasets[0].data.push({
+        x: data.timestamp,
+        y: data.light
+      })
+
+      sensorConfigs[3].data.datasets[0].data.push({
+        x: data.timestamp,
+        y: data.moist
+      })
+
+      for(var i = 0; i < 4; i++){
+        sensorCharts[i].update();
+      }
+    }
+  });
 }
