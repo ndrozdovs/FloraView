@@ -7,7 +7,7 @@ function initCalendar() {
 
     function cb(start, end) {
       updateTimeScaleAll(start.format('YYYY-MM-DD'), end.format('YYYY-MM-DD'))
-      updateTimeScale(start.format('YYYY-MM-DD'), end.format('YYYY-MM-DD'))
+      updateTimeScale(start.format('YYYY-MM-DD') + ' 00:00:00', end.format('YYYY-MM-DD') + ' 24:00:00', true)
       $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
     }
 

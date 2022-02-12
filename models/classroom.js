@@ -5,7 +5,19 @@ var classroomSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  counter: {
+  temp: {
+    type: String,
+    required: true
+  },
+  ph: {
+    type: String,
+    required: true
+  },
+  light: {
+    type: String,
+    required: true
+  },
+  moist: {
     type: String,
     required: true
   },

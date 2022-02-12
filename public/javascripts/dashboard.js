@@ -22,7 +22,7 @@ function highlightNodes(node) {
 function interact() {
   // Disconnect serial when wifi modal is exited
   $('#enterWifiModal').on('hide.bs.modal', function () {
-    console.log("DISOCNNECTED")
+    console.log("DISCONNECTED")
     disconnectSerial();
   })
 
@@ -104,6 +104,7 @@ function interact() {
   // Associate respective group and node pairings and display them 
   function populateNodes(selectedGroup) {
     const nodeHeader = document.querySelector('#nodeList'); // Select nodes currently being shown
+    var customFlag = true;
 
     // Remove all nodes currently being displayed
     var child = nodeHeader.lastElementChild;
@@ -118,9 +119,17 @@ function interact() {
       newNode.innerHTML = node;
       newNode.classList = "btn blackBorder shadow-none mx-1";
       newNode.id = node.replace(/ /g, '');
-      newNode.onclick = function() {
-        updateGraphs(newNode)
-      };
+      if(customFlag){
+        newNode.onclick = function() {
+          realtimeGraphs(newNode)
+        };
+        customFlag = false;
+      }
+      else{
+        newNode.onclick = function() {
+          updateGraphs(newNode)
+        };
+      }
       nodeHeader.appendChild(newNode);
     }
 
@@ -144,7 +153,7 @@ function interact() {
     }
 
     initAllGraphs(allNodes)
-    updateGraphs(nodeHeader.children[0])
+    realtimeGraphs(nodeHeader.children[0])
   }
 }
 

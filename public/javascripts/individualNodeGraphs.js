@@ -1,6 +1,10 @@
 sensorConfigs = [];
 sensorCharts = [];
 
+var xMin = '0'
+var xMax = '0'
+var timeUnit = '0'
+
 for(var i = 0; i < 4; i++) {
   sensorConfigs.push({
     type: 'line',
@@ -35,6 +39,13 @@ function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min) + min); //The maximum is exclusive and the minimum is inclusive
 }
 
+async function getAllData() {
+  const response = await fetch("http://localhost:3000/classrooms");
+  const data = await response.json();
+
+  return data["classrooms"];
+}
+
 labels = ['Temperature', 'pH', 'Light', 'Moisture'];
 colors = ['rgb(11, 245, 19)', 'rgb(156, 75, 210)', 'rgb(246, 168, 12)', 'rgb(255, 99, 132)']
 chartElement = ['temperatureChart', 'phChart', 'lightChart', 'moistureChart']
@@ -52,6 +63,54 @@ function initGraphs() {
 
     sensorCharts.push(new Chart(document.getElementById(chartElement[i]), sensorConfigs[i]));
   }
+}
+
+async function realtimeGraphs(node) {
+  document.querySelector('#individualGraphs').classList.remove('removed');
+  document.querySelector('#allGraphs').classList.add('removed');
+  document.querySelector('#allGraphButtons').classList.add('removed');
+
+  var start = moment().subtract(0, 'days');
+  today = start.format('YYYY-MM-DD').substr(8);
+  todayNum = parseInt(today);
+
+  for(var i = 0; i < 4; i++){
+    sensorConfigs[i].data.datasets[0].data = [];
+  }
+
+  await getAllData()
+  .then(data => {
+    for(var subData of data) {
+      sensorConfigs[0].data.datasets[0].data.push({
+        x: subData.timestamp,
+        y: subData.temp
+      })
+
+      sensorConfigs[1].data.datasets[0].data.push({
+        x: subData.timestamp,
+        y: subData.ph
+      })
+
+      sensorConfigs[2].data.datasets[0].data.push({
+        x: subData.timestamp,
+        y: subData.light
+      })
+
+      sensorConfigs[3].data.datasets[0].data.push({
+        x: subData.timestamp,
+        y: subData.moist
+      })
+    }
+
+    for(var i = 0; i < 4; i++){
+      sensorConfigs[i].options.scales.x.min = moment().subtract(0, 'days').format('YYYY-MM-DD') + ' 17:30:00'
+      sensorConfigs[i].options.scales.x.max = moment().format('YYYY-MM-DD') + ' 18:00:00'
+      sensorConfigs[i].options.scales.x.time.unit = 'minute'
+      sensorCharts[i].update();
+    }
+
+    highlightNodes(node);
+  });
 }
 
 function updateGraphs(node) {
@@ -126,19 +185,25 @@ function updateGraphs(node) {
     sensorCharts[i].update();
   }
 
+  updateTimeScale(xMin, xMax, false);
   highlightNodes(node);
 }
 
-function updateTimeScale(start, end) {
-  for(var i = 0; i < 4; i++) {
-    sensorConfigs[i].options.scales.x.min = start + ' 00:00:00'
-    sensorConfigs[i].options.scales.x.max = end + ' 24:00:00'
+function updateTimeScale(start, end, fromCalendar) {
+  xMin = start
+  xMax = end
 
-    if(start !== end) {
-      sensorConfigs[i].options.scales.x.time.unit = 'day'
-    }
-    else {
-      sensorConfigs[i].options.scales.x.time.unit = 'hour'
+  for(var i = 0; i < 4; i++) {
+    sensorConfigs[i].options.scales.x.min = xMin
+    sensorConfigs[i].options.scales.x.max = xMax
+
+    if(fromCalendar){
+      if(start.substr(0, 10) !== end.substr(0, 10)) {
+        sensorConfigs[i].options.scales.x.time.unit = 'day'
+      }
+      else {
+        sensorConfigs[i].options.scales.x.time.unit = 'hour'
+      }
     }
 
     sensorCharts[i].update();

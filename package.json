@@ -15,6 +15,7 @@
     "express": "^4.17.2",
     "luxon": "^2.3.0",
     "method-override": "^3.0.0",
+    "moment": "^2.29.1",
     "mongoose": "^6.1.7"
   }
 }
