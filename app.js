@@ -68,11 +68,11 @@ app.get('/dashboard/support', (req, res) => {
   res.render('dashboard/support');
 })
 
-app.use((req, res, next) => {
-  const error = new Error("Not found");
-  error.status = 404;
-  next(error);
-});
+//app.use((req, res, next) => {
+  //const error = new Error("Not found");
+  //error.status = 404;
+  //next(error);
+//});
 
 app.use((err, req, res, next) => {
   const {

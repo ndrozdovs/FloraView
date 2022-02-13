@@ -22,7 +22,9 @@ function highlightNodes(node) {
 function interact() {
   // Disconnect serial when wifi modal is exited
   $('#enterWifiModal').on('hide.bs.modal', function () {
-    console.log("DISCONNECTED")
+    console.log("Serial Disconnected")
+    document.querySelector('#inputNetworkName').classList.remove("is-invalid");
+    document.querySelector('#inputNetworkPassword').classList.remove("is-invalid");
     disconnectSerial();
   })
 
@@ -161,6 +163,8 @@ function wifiIsInvalid(){
   document.querySelector('#wifiSpinner').classList.toggle("hidden"); // Disable the spinner
   document.querySelector('#inputNetworkName').value = ""; // Reset modal text
   document.querySelector('#inputNetworkPassword').value = ""; // Reset modal text
+  document.querySelector('#inputNetworkName').classList.add("is-invalid");
+  document.querySelector('#inputNetworkPassword').classList.add("is-invalid");
 }
 
 function wifiIsValid() {

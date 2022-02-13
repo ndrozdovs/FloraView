@@ -114,8 +114,8 @@ async function realtimeGraphs(node) {
     }
 
     for(var i = 0; i < 4; i++){
-      sensorConfigs[i].options.scales.x.min = moment().subtract(0, 'days').format('YYYY-MM-DD') + ' 14:00:00'
-      sensorConfigs[i].options.scales.x.max = moment().format('YYYY-MM-DD') + ' 14:30:00'
+      sensorConfigs[i].options.scales.x.min = moment().subtract(0, 'days').format('YYYY-MM-DD') + ' 18:30:00'
+      sensorConfigs[i].options.scales.x.max = moment().format('YYYY-MM-DD') + ' 19:00:00'
       sensorConfigs[i].options.scales.x.time.unit = 'minute'
       sensorCharts[i].update();
     }
