@@ -113,12 +113,7 @@ async function realtimeGraphs(node) {
       lastEntryTimestamp = subData.timestamp;
     }
 
-    for(var i = 0; i < 4; i++){
-      sensorConfigs[i].options.scales.x.min = moment().subtract(0, 'days').format('YYYY-MM-DD') + ' 18:30:00'
-      sensorConfigs[i].options.scales.x.max = moment().format('YYYY-MM-DD') + ' 19:00:00'
-      sensorConfigs[i].options.scales.x.time.unit = 'minute'
-      sensorCharts[i].update();
-    }
+    updateTimeframeRealtime();
 
     if (typeof updateVar !== 'undefined') {
       clearInterval(updateVar);
@@ -259,6 +254,36 @@ async function updateDataRealtime(){
       for(var i = 0; i < 4; i++){
         sensorCharts[i].update();
       }
+    }
+  });
+}
+
+async function updateTimeframeRealtime(){
+  await getLatestData()
+  .then(data => {
+    var start = data.timestamp;
+    var end = data.timestamp;
+
+    if(start[14] >= '3'){
+      start = start.replace(start.substr(14, 5), "30:00");
+      var nextNum = parseInt(start.substr(11, 2)) + 1;
+      if(nextNum > 9){
+        end = start.replace(start.substr(11, 8), `${nextNum}:00:00`);
+      }
+      else{
+        end = start.replace(start.substr(11, 8), `0${nextNum}:00:00`);
+      }
+    }
+    else{
+      start = start.replace(start.substr(14, 5), "00:00");
+      end = start.replace(start.substr(14, 5), "30:00");
+    }
+    
+    for(var i = 0; i < 4; i++){
+      sensorConfigs[i].options.scales.x.min = start
+      sensorConfigs[i].options.scales.x.max = end
+      sensorConfigs[i].options.scales.x.time.unit = 'minute'
+      sensorCharts[i].update();
     }
   });
 }
