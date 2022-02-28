@@ -278,7 +278,7 @@ async function updateTimeframeRealtime(){
       start = start.replace(start.substr(14, 5), "00:00");
       end = start.replace(start.substr(14, 5), "30:00");
     }
-    
+
     for(var i = 0; i < 4; i++){
       sensorConfigs[i].options.scales.x.min = start
       sensorConfigs[i].options.scales.x.max = end
