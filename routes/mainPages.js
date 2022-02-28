@@ -1,9 +1,6 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const mainPages = require('../controllers/mainPages');
-const {
-  isLoggedIn
-} = require('../middleware');
+const mainPages = require("../controllers/mainPages");
 
 router.get("/company", mainPages.renderCompany);
 

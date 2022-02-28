@@ -1,9 +1,7 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const mainPages = require('../controllers/dashboard');
-const {
-  isLoggedIn
-} = require('../middleware');
+const mainPages = require("../controllers/dashboard");
+const { isLoggedIn } = require("../middleware");
 
 router.get("/", isLoggedIn, mainPages.renderHome);
 
