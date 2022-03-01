@@ -1,5 +1,9 @@
 .navbar-nav {
-    margin: 0 0 2rem 10rem;
+    margin: 0 0 2rem 8.5rem;
+}
+
+.container{
+    max-width: 1100px;
 }
 
 .nav-link {
@@ -14,7 +18,7 @@
 }
 
 .navbar-brand img{
-    margin: 0 0 0 6rem;
+    margin: 0 0 0 0rem;
 }
 
 .btn{
@@ -30,5 +34,5 @@ body {
 }
 
 main h1{
-    margin: 0 0 0 6.9rem;
+    margin: 0 0 0 1.3rem;
 }
