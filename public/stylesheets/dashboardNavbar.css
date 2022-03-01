@@ -19,3 +19,7 @@
     color: rgba(27, 27, 27, 0.616);
 }
 
+li {
+    list-style-type: none;
+}
+
