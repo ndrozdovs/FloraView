@@ -84,10 +84,6 @@ app.use("/", mainPagesRoutes);
 app.use("/dashboard", dashboardRoutes);
 app.use("/classrooms", classroomRoutes);
 
-app.get("/", (req, res) => {
-  res.render("home");
-});
-
 app.get("/dashboard/dashHome", (req, res) => {
   res.render("dashboard/dashHome");
 });

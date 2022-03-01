@@ -6,7 +6,6 @@
 
 .navbar-nav {
     margin: 0 0rem 0rem 0rem;
-    width: 1650px;
 }
 
 .nav-link {
@@ -20,8 +19,3 @@
     color: rgba(27, 27, 27, 0.616);
 }
 
-@media only screen and (max-width: 1650px){
-    .navbar-nav{
-        width: 100vw;
-    }
-}

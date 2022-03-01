@@ -1,3 +1,7 @@
+exports.renderHome = (req, res) => {
+  res.render("mainPage/home");
+};
+
 exports.renderCompany = (req, res) => {
   res.render("mainPage/company");
 };

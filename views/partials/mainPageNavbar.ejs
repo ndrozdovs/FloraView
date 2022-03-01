@@ -14,15 +14,15 @@
           <a class="nav-link" href="/company">Company</a>
           <a class="nav-link" href="/pricing">Pricing</a>
         </div>
-        <div class="navbar-nav ml-auto">
+      </div>
+        <div class="d-flex justify-content-end">
           <% if(!currentUser) {%>
           <a class="nav-link" href="/login">Login</a>
           <a class="nav-link" href="/register">Register</a>
           <% } else {%>
-          <a class="nav-link" href="/logout">Logout</a>
+          <a href="/dashboard" class="btn btn-outline-dark" role="button">Dashboard</a>
           <% } %>
         </div>
-      </div>
     </div>
   </nav>
 </div>
