@@ -1,3 +1,7 @@
+#navbarContent{
+    max-width: 1600px;
+}
+
 .navbar{
     border-bottom: 1px solid rgba(77, 76, 76, 0.075);
     box-shadow: 0 2px 2px -2px gray;
