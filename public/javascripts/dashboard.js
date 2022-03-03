@@ -166,6 +166,6 @@ function wifiIsValid() {
   $("#enterWifiModal").modal("hide");
   document.querySelector("#startAddHub").remove(); // Remove initial set up info
   document.querySelector("#firstHub").innerHTML = "PlaceHolder"; // Save selected Hub
-  document.querySelector("#displayHubList").classList.remove("hidden"); // Display the next info screen
+  document.querySelector("#displayHubList").classList.remove("removed"); // Display the next info screen
   document.querySelector("#wifiSpinner").classList.toggle("hidden"); // Disable the spinner
 }

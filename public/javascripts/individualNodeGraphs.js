@@ -154,7 +154,7 @@ function updateGraphs(node) {
           time = j;
         }
         sensorConfigs[i].data.datasets[0].data.push({
-          x: `2022-01-${day} ${time}:00:00`,
+          x: `2022-02-${day} ${time}:00:00`,
           y: getRandomInt(minValue[i], maxValue[i]),
         });
       }
@@ -174,7 +174,7 @@ function updateGraphs(node) {
           time = j;
         }
         sensorConfigs[i].data.datasets[0].data.push({
-          x: `2022-02-${day} ${time}:00:00`,
+          x: `2022-03-${day} ${time}:00:00`,
           y: getRandomInt(minValue[i], maxValue[i]),
         });
       }
@@ -187,7 +187,7 @@ function updateGraphs(node) {
         time = j;
       }
       sensorConfigs[i].data.datasets[0].data.push({
-        x: `2022-02-${today} ${time}:00:00`,
+        x: `2022-03-${today} ${time}:00:00`,
         y: getRandomInt(minValue[i], maxValue[i]),
       });
     }

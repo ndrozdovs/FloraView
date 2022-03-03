@@ -1,6 +1,9 @@
 nodeConfigs = [];
 nodeCharts = [];
 
+var xMin = "0";
+var xMax = "0";
+
 buttons = ["Temperature", "pH", "Light", "Moisture"];
 colors = ["rgb(11, 245, 19)", "rgb(156, 75, 210)", "rgb(246, 168, 12)", "rgb(255, 99, 132)", "rgb(0,0,0)", "rgb(200, 75, 210)"];
 minValue = [15, 4, 30, 50];
@@ -52,7 +55,7 @@ function initAllGraphs(node) {
       const newCol = document.createElement("div");
       const newGraph = document.createElement("canvas");
 
-      newCol.classList = "col-6 px-0 pt-4";
+      newCol.classList = "col-xl-6 col-12 px-0 pt-4";
       newGraph.id = nodeElements[elementCounter++] + "Chart";
 
       newCol.appendChild(newGraph);
@@ -87,8 +90,8 @@ function initConfigs(numConifgs) {
         scales: {
           x: {
             parsing: false,
-            min: "2022-02-03 00:00:00",
-            max: "2022-02-03 24:00:00",
+            min: "2022-03-03 00:00:00",
+            max: "2022-03-03 24:00:00",
             type: "time",
             time: {
               unit: "hour",
@@ -133,7 +136,7 @@ function randomizeData(sensorIndex) {
           time = j;
         }
         nodeConfigs[i].data.datasets[0].data.push({
-          x: `2022-01-${day} ${time}:00:00`,
+          x: `2022-02-${day} ${time}:00:00`,
           y: getRandomInt(minValue[sensorIndex], maxValue[sensorIndex]),
         });
       }
@@ -153,7 +156,7 @@ function randomizeData(sensorIndex) {
           time = j;
         }
         nodeConfigs[i].data.datasets[0].data.push({
-          x: `2022-02-${day} ${time}:00:00`,
+          x: `2022-03-${day} ${time}:00:00`,
           y: getRandomInt(minValue[sensorIndex], maxValue[sensorIndex]),
         });
       }
@@ -166,7 +169,7 @@ function randomizeData(sensorIndex) {
         time = j;
       }
       nodeConfigs[i].data.datasets[0].data.push({
-        x: `2022-02-${today} ${time}:00:00`,
+        x: `2022-03-${today} ${time}:00:00`,
         y: getRandomInt(minValue[sensorIndex], maxValue[sensorIndex]),
       });
     }
@@ -174,18 +177,24 @@ function randomizeData(sensorIndex) {
     nodeCharts[i].update();
   }
 
+  updateTimeScaleAll(xMin, xMax, false);
   highlightChoice(sensorIndex);
 }
 
-function updateTimeScaleAll(start, end) {
-  for (var i = 0; i < nodeElements.length; i++) {
-    nodeConfigs[i].options.scales.x.min = start + " 00:00:00";
-    nodeConfigs[i].options.scales.x.max = end + " 24:00:00";
+function updateTimeScaleAll(start, end, fromCalendar) {
+  xMin = start;
+  xMax = end;
 
-    if (start !== end) {
-      nodeConfigs[i].options.scales.x.time.unit = "day";
-    } else {
-      nodeConfigs[i].options.scales.x.time.unit = "hour";
+  for (var i = 0; i < nodeElements.length; i++) {
+    nodeConfigs[i].options.scales.x.min = xMin;
+    nodeConfigs[i].options.scales.x.max = xMax;
+
+    if (fromCalendar) {
+      if (start.substr(0, 10) !== end.substr(0, 10)) {
+        nodeConfigs[i].options.scales.x.time.unit = "day";
+      } else {
+        nodeConfigs[i].options.scales.x.time.unit = "hour";
+      }
     }
 
     nodeCharts[i].update();

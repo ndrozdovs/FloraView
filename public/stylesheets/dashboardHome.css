@@ -1,5 +1,5 @@
 #mainContent {
-    width: 1550px;
+    max-width: 1550px;
     margin-top: 1rem;
 }
 
@@ -52,4 +52,15 @@
     #mainContent{
         width: 93.5vw;
     }
+}
+
+#usbConnectImage {
+    width: 499px;
+    height: 289px;
+}
+
+/* Resize images */
+#usbConnectImage {
+    width: 100%;
+    height: auto;
 }
