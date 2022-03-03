@@ -1,20 +1,24 @@
 .navbar-nav {
-    margin: 0 0 2rem 10rem;
+    margin: 0 0 2rem 8.5rem;
+}
+
+.container{
+    max-width: 1100px;
 }
 
 .nav-link {
     padding: 0.25rem 0;
     font-weight: 700;
-    color: rgb(0, 0, 0);
+    color: rgba(255, 255, 255, 0.849);
     margin: 0 0 0 2rem;
 }
 
 .nav-link:hover{
-    color: rgba(27, 27, 27, 0.616);
+    color: rgba(255,255,255,0.5);
 }
 
 .navbar-brand img{
-    margin: 0 0 0 6rem;
+    margin: 0 0 0 0rem;
 }
 
 .btn{
@@ -30,5 +34,5 @@ body {
 }
 
 main h1{
-    margin: 0 0 0 6.9rem;
+    margin: 0 0 0 1rem;
 }

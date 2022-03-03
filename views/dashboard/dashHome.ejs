@@ -1,10 +1,9 @@
 <% layout('layouts/dashboardBoilerplate') %>
-<link rel="stylesheet" href="/stylesheets/dashboardHome.css">
+<link rel="stylesheet" href="/stylesheets/dashboardHome.css" />
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
-<script src="https://use.fontawesome.com/83eb970045.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js/dist/chart.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
 
@@ -13,7 +12,7 @@
     <div class="col-12 border-bottom px-0 pb-2" id="buttonRow">
       <div class="btn-group">
         <button type="button" class="btn btn-outline-dark">Classroom 1</button>
-        <button type="button" class="btn btn-outline-dark dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <button type="button" class="btn btn-outline-dark dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           <span class="sr-only"></span>
         </button>
         <div class="dropdown-menu">
@@ -28,27 +27,28 @@
 
   <section id="startAddHub">
     <div class="row no-gutters">
-      <div class="col-6 px-0 pt-4">
-        <h1>Start by adding a Hub</h1>
+      <div class="col-md-6 col-sm-12 px-0 pt-4">
+        <h1>Start by connecting the Hub to your device and then pressing 'Pair Hub' below</h1>
+        <div>
+          <button class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#addHubModal">Pair hub</button>
+        </div>
       </div>
-    </div>
-
-    <div class="row no-gutters">
-      <div class="col-6 px-0 pt-2">
-        <button class="btn btn-outline-dark" data-toggle="modal" data-target="#addHubModal">Add a Hub</button>
+      <div class="col-md-4 col-8 mx-auto px-0 pt-4">
+        <img src="../assets/usbConnect.png" alt="" id="usbConnectImage" />
       </div>
     </div>
   </section>
 
-  <section id="displayHubList" class="hidden">
+  <section id="displayHubList" class="removed">
     <div class="row no-gutters">
       <div class="col px-0 pt-4">
-        <h3>Hubs:
+        <h3>
+          Hubs:
           <button class="btn hubButton blackBorder" id="firstHub">B1</button>
         </h3>
       </div>
       <div class="col-auto px-0 pt-4">
-        <button class="btn btn-outline-dark" data-toggle="modal" data-target="#addHubModal">Add another Hub</button>
+        <button class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#addHubModal">Add another Hub</button>
       </div>
     </div>
 
@@ -60,7 +60,7 @@
 
     <div class="row no-gutters" id="createGroupButton">
       <div class="col-6 px-0 pt-2">
-        <button class="btn btn-outline-dark" data-toggle="modal" data-target="#createGroupModal">Create a student group</button>
+        <button class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#createGroupModal">Create a student group</button>
       </div>
     </div>
   </section>
@@ -68,11 +68,11 @@
   <section id="displayGroups_Nodes" class="hidden">
     <div class="row no-gutters">
       <div class="col px-0 pt-4">
-        <h3 id="groupList">Groups: </h3>
+        <h3 id="groupList">Groups:</h3>
       </div>
       <div class="col-auto px-0 pt-4">
         <div class="btn-group" role="group" aria-label="Basic example">
-          <button type="button" class="btn btn-outline-dark" data-toggle="modal" data-target="#createGroupModal">Create another group</button>
+          <button type="button" class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#createGroupModal">Create another group</button>
           <button type="button" class="btn btn-outline-dark">Edit group</button>
         </div>
       </div>
@@ -80,19 +80,16 @@
 
     <div class="row no-gutters">
       <div class="col px-0 pt-4">
-        <h3 id="nodeList">Nodes: </h3>
+        <h3 id="nodeList">Nodes:</h3>
       </div>
     </div>
   </section>
 
   <div class="row no-gutters">
-    <div class="col-3 px-0 pt-5">
-      <div id="reportrange" class="selectbox pull-left" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc;">
-        <i class="fa fa-calendar"></i>&nbsp;
-        <span></span> <i class="fa"></i>
-      </div>
+    <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12  px-0 pt-5">
+      <div id="reportrange" class="selectbox pull-left" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc"><i class="fa fa-calendar"></i>&nbsp; <span></span> <i class="fa"></i></div>
     </div>
-    <div class="col-6 mx-auto px-4 pt-5 removed" id="allGraphButtons">
+    <div class="col-md-6 col-sm-12 mx-auto px-4 pt-5 removed" id="allGraphButtons">
       <button class="btn blackBorder shadow-none" id="temperatureButton">Temperature</button>
       <button class="btn blackBorder shadow-none mx-1" id="pHButton">pH</button>
       <button class="btn blackBorder shadow-none mx-1" id="lightButton">Light</button>
@@ -102,18 +99,18 @@
 
   <section id="individualGraphs">
     <div class="row no-gutters">
-      <div class="col-6 px-0 pt-4">
+      <div class="col-xl-6 col-12 px-0 pt-4">
         <canvas id="temperatureChart"></canvas>
       </div>
-      <div class="col-6 px-0 pt-4">
+      <div class="col-xl-6 col-12 px-0 pt-4">
         <canvas id="phChart"></canvas>
       </div>
     </div>
     <div class="row no-gutters">
-      <div class="col-6 px-0 pt-5">
+      <div class="col-xl-6 col-12 px-0 pt-5">
         <canvas id="lightChart"></canvas>
       </div>
-      <div class="col-6 px-0 pt-5">
+      <div class="col-xl-6 col-12 px-0 pt-5">
         <canvas id="moistureChart"></canvas>
       </div>
     </div>
@@ -121,7 +118,6 @@
 
   <section id="allGraphs"></section>
 </section>
-
 
 <div class="modal" tabindex="-1" role="dialog" id="addHubModal">
   <div class="modal-dialog" role="document">
@@ -134,21 +130,17 @@
       </div>
       <div class="modal-body">
         <div class="form-check">
-          <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" value="FloraView Hub S-5468 ">
-          <label class="form-check-label" for="flexRadioDefault1">
-            FloraView Hub S-5468
-          </label>
+          <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" value="FloraView Hub S-5468 " />
+          <label class="form-check-label" for="flexRadioDefault1"> FloraView Hub S-5468 </label>
         </div>
         <div class="form-check">
-          <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" value="FloraView Hub S-7153">
-          <label class="form-check-label" for="flexRadioDefault2">
-            FloraView Hub S-7153
-          </label>
+          <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" value="FloraView Hub S-7153" />
+          <label class="form-check-label" for="flexRadioDefault2"> FloraView Hub S-7153 </label>
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" id="hubConnectButton" class="btn btn-primary" data-dismiss="modal" data-toggle="modal" data-target="#enterWifiModal">Connect</button>
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        <button type="button" id="hubConnectButton" class="btn btn-primary" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#enterWifiModal">Connect</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
       </div>
     </div>
   </div>
@@ -158,20 +150,21 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="wifiModal">Enter Wifi credentials for %> </h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <h5 class="modal-title" id="wifiModal">Enter Wifi credentials for %></h5>
+        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
+        <p>It is the WiFi network that you want the Hub to be connected to</p>
         <form>
           <div class="form-group">
-            <label for="exampleInputEmail1">Wifi Network</label>
-            <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter network name">
+            <label for="exampleInputEmail1">WiFi Network</label>
+            <input type="email" class="form-control" id="inputNetworkName" aria-describedby="emailHelp" placeholder="Enter network name" />
           </div>
           <div class="form-group">
             <label for="exampleInputPassword1">Password</label>
-            <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+            <input type="password" class="form-control" id="inputNetworkPassword" placeholder="Password" />
           </div>
         </form>
       </div>
@@ -180,12 +173,11 @@
           <span class="sr-only"></span>
         </div>
         <a id="submitWifiButton" class="btn btn-primary">Submit</a>
-        <a class="btn btn-secondary" data-dismiss="modal">Cancel</a>
+        <a class="btn btn-secondary" data-bs-dismiss="modal">Cancel</a>
       </div>
     </div>
   </div>
 </div>
-
 
 <div class="modal" tabindex="-1" role="dialog" id="createGroupModal">
   <div class="modal-dialog" role="document">
@@ -195,7 +187,7 @@
           <div class="form-group row">
             <label for="inputEmail3" class="col-4 col-form-label">Enter group name:</label>
             <div class="col-8">
-              <input type="email" class="form-control" id="inputGroup" placeholder="Group name">
+              <input type="email" class="form-control" id="inputGroup" placeholder="Group name" />
             </div>
           </div>
           <label for="inputEmail3" class="col-4 col-form-label">Select nodes to add:</label>
@@ -203,8 +195,8 @@
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" id="submitGroupButton" class="btn btn-primary" data-dismiss="modal">Add</button>
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        <button type="button" id="submitGroupButton" class="btn btn-primary" data-bs-dismiss="modal">Add</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
       </div>
     </div>
   </div>

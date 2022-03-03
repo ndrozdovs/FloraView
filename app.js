@@ -1,81 +1,113 @@
-const express    = require('express')
-const path       = require('path')
-const ejsMate    = require('ejs-mate')
-const mongoose   = require('mongoose')
-const bodyParser = require("body-parser")
+const express = require("express");
+const path = require("path");
+const ejsMate = require("ejs-mate");
+const mongoose = require("mongoose");
+const session = require("express-session");
+const flash = require("connect-flash");
+const ExpressError = require("./utils/ExpressError");
+const bodyParser = require("body-parser");
+const methodOverride = require("method-override");
+const passport = require("passport");
+const LocalStrategy = require("passport-local");
+const User = require("./models/user");
 
-const app = express()
+const userRoutes = require("./routes/users");
+const mainPagesRoutes = require("./routes/mainPages");
+const dashboardRoutes = require("./routes/dashboard");
+const classroomRoutes = require("./routes/classrooms");
 
-const Classroom = require('./models/classroom')
+const app = express();
 
-mongoose.connect("mongodb://localhost:27017/classrooms")
-    .then(() => {
-        console.log("MONGODB CONNECTION OPEN")
-    })
-    .catch(err => {
-        console.log("MONGODB CONNECTION REFUSED");
-        console.log(err)
-    })
+const dbUrl = process.env.DB_URL || "mongodb://localhost:27017/classrooms";
 
-app.engine('ejs', ejsMate)
-app.set('view engine', 'ejs')
-app.set('views', path.join(__dirname, 'views'))
-app.use(express.static(path.join(__dirname, 'views')))
-app.use(express.static(path.join(__dirname, 'public')))
-app.use(bodyParser.urlencoded({extended: true}))
-app.use(bodyParser.json())
+mongoose.connect(dbUrl);
 
-app.get('/', (req, res) => {
-    res.render('home');
+const db = mongoose.connection;
+db.on("error", console.error.bind(console, "connection error:"));
+db.once("open", () => {
+  console.log("Database connected");
 });
 
-app.get('/mainPage/company', (req, res) => {
-    res.render('mainPage/company');
-})
+app.engine("ejs", ejsMate);
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
 
-app.get('/mainPage/pricing', (req, res) => {
-    res.render('mainPage/pricing');
-})
+app.use(express.static(path.join(__dirname, "views")));
+app.use(express.static(path.join(__dirname, "public")));
+app.use(
+  express.urlencoded({
+    extended: true,
+  })
+);
+app.use(methodOverride("_method"));
+app.use(
+  bodyParser.urlencoded({
+    extended: true,
+  })
+);
+app.use(bodyParser.json());
+const secret = process.env.SECRET || "thisshouldbeabettersecret!";
 
-app.get('/mainPage/product', (req, res) => {
-    res.render('mainPage/product');
-})
+const sessionConfig = {
+  name: "session",
+  secret,
+  resave: false,
+  saveUninitialized: true,
+  cookie: {
+    httpOnly: true,
+    // secure: true,
+    expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
+    maxAge: 1000 * 60 * 60 * 24 * 7,
+  },
+};
 
-app.get('/mainPage/useCases', (req, res) => {
-    res.render('mainPage/useCases');
-})
+app.use(session(sessionConfig));
+app.use(flash());
 
-app.get('/dashboard/dashHome', (req, res) => {
-    res.render('dashboard/dashHome');
-})
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new LocalStrategy(User.authenticate()));
 
-app.get('/dashboard/guide', (req, res) => {
-    res.render('dashboard/guide');
-})
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 
-app.get('/dashboard/support', (req, res) => {
-    res.render('dashboard/support');
-})
+app.use((req, res, next) => {
+  res.locals.currentUser = req.user;
+  res.locals.error = req.flash("error");
+  next();
+});
 
-app.get('/classrooms', async (req, res) => {
-    const classrooms = await Classroom.find({})
-    console.log(classrooms)
-    res.send(classrooms)
-})
+// Routes which should handle requests
+app.use("/", userRoutes);
+app.use("/", mainPagesRoutes);
+app.use("/dashboard", dashboardRoutes);
+app.use("/classrooms", classroomRoutes);
 
-app.post('/classrooms', async (req, res) => {
-    const newClassroom = new Classroom(req.body)
-    await newClassroom.save()
-    .then(() => {
-        console.log(newClassroom)
-    })
-    .catch(err => {
-        console.log("error adding to DB")
-        console.log(err)
-    })
-    res.send(newClassroom)
-})
+app.get("/dashboard/dashHome", (req, res) => {
+  res.render("dashboard/dashHome");
+});
 
-app.listen(3000, () => {
-    console.log('Floraview server started on port 3000');
-})
+app.get("/dashboard/guide", (req, res) => {
+  res.render("dashboard/guide");
+});
+
+app.get("/dashboard/support", (req, res) => {
+  res.render("dashboard/support");
+});
+
+app.all("*", (req, res, next) => {
+  next(new ExpressError("Page Not Found", 404));
+});
+
+app.use((err, req, res, next) => {
+  const { statusCode = 500 } = err;
+  if (!err.message) err.message = "Oh No, Something Went Wrong!";
+  res.status(statusCode).render("error", {
+    err,
+  });
+});
+
+const port = process.env.PORT || 3000;
+app.listen(port, () => {
+  console.log(`Serving on port ${port}`);
+});

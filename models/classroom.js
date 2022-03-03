@@ -3,18 +3,28 @@ const mongoose = require("mongoose");
 var classroomSchema = new mongoose.Schema({
   macAddress: {
     type: String,
-    required: true
+    required: true,
   },
-  counter: {
+  temp: {
     type: String,
-    required: true
+    required: true,
+  },
+  ph: {
+    type: String,
+    required: true,
+  },
+  light: {
+    type: String,
+    required: true,
+  },
+  moist: {
+    type: String,
+    required: true,
   },
   timestamp: {
     type: String,
-    required: true
-  }
+    required: true,
+  },
 });
 
-const Classroom = mongoose.model("Classroom", classroomSchema);
-
-module.exports = Classroom
+module.exports = mongoose.model("Classroom", classroomSchema);

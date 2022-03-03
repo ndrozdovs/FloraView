@@ -1,6 +1,9 @@
 sensorConfigs = [];
 sensorCharts = [];
 
+var xMin = "0";
+var xMax = "0";
+
 for(var i = 0; i < 4; i++) {
   sensorConfigs.push({
     type: 'line',
@@ -82,7 +85,7 @@ function updateGraphs(node) {
           time = j
         }
         sensorConfigs[i].data.datasets[0].data.push({
-          x: `2022-01-${day} ${time}:00:00`,
+          x: `2022-02-${day} ${time}:00:00`,
           y: getRandomInt(minValue[i], maxValue[i])
         })
       }
@@ -104,7 +107,7 @@ function updateGraphs(node) {
           time = j
         }
         sensorConfigs[i].data.datasets[0].data.push({
-          x: `2022-02-${day} ${time}:00:00`,
+          x: `2022-03-${day} ${time}:00:00`,
           y: getRandomInt(minValue[i], maxValue[i])
         })
       }
@@ -118,7 +121,7 @@ function updateGraphs(node) {
         time = j
       }
       sensorConfigs[i].data.datasets[0].data.push({
-        x: `2022-02-${today} ${time}:00:00`,
+        x: `2022-03-${today} ${time}:00:00`,
         y: getRandomInt(minValue[i], maxValue[i])
       })
     }
@@ -126,19 +129,24 @@ function updateGraphs(node) {
     sensorCharts[i].update();
   }
 
+  updateTimeScale(xMin, xMax, false);
   highlightNodes(node);
 }
 
-function updateTimeScale(start, end) {
-  for(var i = 0; i < 4; i++) {
-    sensorConfigs[i].options.scales.x.min = start + ' 00:00:00'
-    sensorConfigs[i].options.scales.x.max = end + ' 24:00:00'
+function updateTimeScale(start, end, fromCalendar) {
+  xMin = start;
+  xMax = end;
 
-    if(start !== end) {
-      sensorConfigs[i].options.scales.x.time.unit = 'day'
-    }
-    else {
-      sensorConfigs[i].options.scales.x.time.unit = 'hour'
+  for (var i = 0; i < 4; i++) {
+    sensorConfigs[i].options.scales.x.min = xMin;
+    sensorConfigs[i].options.scales.x.max = xMax;
+
+    if (fromCalendar) {
+      if (start.substr(0, 10) !== end.substr(0, 10)) {
+        sensorConfigs[i].options.scales.x.time.unit = "day";
+      } else {
+        sensorConfigs[i].options.scales.x.time.unit = "hour";
+      }
     }
 
     sensorCharts[i].update();
