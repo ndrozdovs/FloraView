@@ -19,14 +19,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // Opens a Web Serial connection to a micro:bit and sets up the input and output stream
 async function connect() {
+  document.querySelector("#reconnectSerial").classList.add("removed"); // Make sure that error message is not shown initially
+  document.querySelector("#closeSerialMonitor").classList.add("removed"); // Make sure that error message is not shown initially
   // CODELAB: Add code to request & open port here.
   // - Request a port and open a connection.
   port = await navigator.serial.requestPort();
 
   // - Wait for the port to open.
-  await port.open({
-    baudRate: 115200,
-  });
+  try{
+    await port.open({baudRate: 115200,});
+  }
+  catch(err){
+    document.querySelector("#closeSerialMonitor").classList.remove("removed"); // Show error asking user to close serial monitor windows
+    return;
+  }
 
   console.log(port);
 
@@ -44,6 +50,15 @@ async function connect() {
   inputStream = decoder.readable.pipeThrough(new TransformStream(new LineBreakTransformer()));
 
   reader = inputStream.getReader();
+
+  try{
+    await reader.read();
+  }
+  catch(err){
+    document.querySelector("#reconnectSerial").classList.remove("removed"); // Show error asking user to unplug the Hub
+    return;
+  }
+
   readLoop();
 }
 
