@@ -5,7 +5,6 @@ const mongoose = require("mongoose");
 const session = require("express-session");
 const flash = require("connect-flash");
 const ExpressError = require("./utils/ExpressError");
-const bodyParser = require("body-parser");
 const methodOverride = require("method-override");
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
@@ -14,11 +13,10 @@ const User = require("./models/user");
 const userRoutes = require("./routes/users");
 const mainPagesRoutes = require("./routes/mainPages");
 const dashboardRoutes = require("./routes/dashboard");
-const classroomRoutes = require("./routes/classrooms");
+const nodeRoutes = require("./routes/nodes");
+const profileRoutes = require("./routes/profiles");
 
-const app = express();
-
-const dbUrl = process.env.DB_URL || "mongodb://localhost:27017/classrooms";
+const dbUrl = "mongodb://localhost:27017/FloraView";
 
 mongoose.connect(dbUrl);
 
@@ -28,34 +26,25 @@ db.once("open", () => {
   console.log("Database connected");
 });
 
+const app = express();
+
 app.engine("ejs", ejsMate);
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
 app.use(express.static(path.join(__dirname, "views")));
 app.use(express.static(path.join(__dirname, "public")));
-app.use(
-  express.urlencoded({
-    extended: true,
-  })
-);
+app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
-app.use(
-  bodyParser.urlencoded({
-    extended: true,
-  })
-);
-app.use(bodyParser.json());
-const secret = process.env.SECRET || "thisshouldbeabettersecret!";
+
+const secret = 'anything';
 
 const sessionConfig = {
-  name: "session",
-  secret,
+  secret: 'thisshouldbeabettersecret!',
   resave: false,
   saveUninitialized: true,
   cookie: {
     httpOnly: true,
-    // secure: true,
     expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
     maxAge: 1000 * 60 * 60 * 24 * 7,
   },
@@ -81,7 +70,8 @@ app.use((req, res, next) => {
 app.use("/", userRoutes);
 app.use("/", mainPagesRoutes);
 app.use("/dashboard", dashboardRoutes);
-app.use("/classrooms", classroomRoutes);
+app.use("/nodes", nodeRoutes);
+app.use("/profiles", profileRoutes);
 
 app.get("/dashboard/dashHome", (req, res) => {
   res.render("dashboard/dashHome");

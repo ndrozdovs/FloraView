@@ -1,11 +1,11 @@
 const mongoose = require("mongoose");
 
-var classroomSchema = new mongoose.Schema({
-  macAddress: {
+var nodeSchema = new mongoose.Schema({
+  hubMacAddress: {
     type: String,
     required: true,
   },
-  temp: {
+  nodeMacAddress: {
     type: String,
     required: true,
   },
@@ -27,4 +27,4 @@ var classroomSchema = new mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model("Classroom", classroomSchema);
+module.exports = mongoose.model("Node", nodeSchema);

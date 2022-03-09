@@ -94,7 +94,7 @@ async function clickConnect() {
 
 // Reads data from the input stream and displays it on screen.
 async function readLoop() {
-  // CODELAB: Add read loop here.
+  let hubMacAddress
   while (true) {
     const { value, done } = await reader.read();
     console.log(value);
@@ -108,12 +108,15 @@ async function readLoop() {
       writeToStream("FloraViewWifiKeyword");
       $("#enterWifiModal").modal("show");
     }
+    if (value.includes("Hub MAC address is")) {
+      hubMacAddress = value.substr(20, 17)
+    }
     if (value.includes("WiFi credentials invalid")) {
       wifiIsInvalid();
       writeToStream("FloraViewWifiKeyword");
     }
     if (value.includes("WiFi credentials valid")) {
-      wifiIsValid();
+      wifiIsValid(hubMacAddress);
     }
   }
 }

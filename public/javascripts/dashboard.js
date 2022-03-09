@@ -16,6 +16,16 @@ function highlightNodes(node) {
   }
 }
 
+function createProfile(hubMacAddress) {
+  console.log("FROM createProfile:", hubMacAddress)
+  fetch("http://localhost:3000/profiles", {
+    method: "post",
+    headers: {'Content-Type': 'application/json'},
+    credentials: 'include',
+    body: JSON.stringify({hubMacAddress: hubMacAddress}),
+  });
+}
+
 function interact() {
   // Disconnect serial when wifi modal is exited
   $("#enterWifiModal").on("hide.bs.modal", function () {
@@ -162,10 +172,11 @@ function wifiIsInvalid() {
   document.querySelector("#inputNetworkPassword").classList.add("is-invalid");
 }
 
-function wifiIsValid() {
+function wifiIsValid(hubMacAddress) {
   $("#enterWifiModal").modal("hide");
   document.querySelector("#startAddHub").remove(); // Remove initial set up info
-  document.querySelector("#firstHub").innerHTML = "PlaceHolder"; // Save selected Hub
+  document.querySelector("#firstHub").innerHTML = hubMacAddress; // Save selected Hub
   document.querySelector("#displayHubList").classList.remove("removed"); // Display the next info screen
   document.querySelector("#wifiSpinner").classList.toggle("hidden"); // Disable the spinner
+  createProfile(hubMacAddress)
 }
