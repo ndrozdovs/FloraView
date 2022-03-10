@@ -1,7 +1,129 @@
-const nodes = ["Node 1", "Node 2", "Node 3", "Node 4", "Node 5", "Node 6"];
-const groupNodeData = [];
-
 window.addEventListener("load", interact);
+
+async function getAllGroups() {
+  const response = await fetch("http://localhost:3000/profiles/getGroups");
+  const data = await response.json();
+
+  return data;
+}
+
+var groupButtons = document.querySelectorAll("button.custom");
+groupButtons.forEach((button) => {
+  button.addEventListener("click", async function () {
+    await getAllGroups().then((groupNodeData) => {
+      const nodeHeader = document.querySelector("#nodeList"); // Select nodes currently being shown
+      var customFlag = true;
+      var index = 0;
+
+      for(var i = 0; i < Object.keys(groupNodeData).size; i++){
+          if(this.id === groupNodeData[i].groupName){
+              break;
+          }
+          index++;
+      }
+
+      // Remove all nodes currently being displayed
+      var child = nodeHeader.lastElementChild;
+      while (child) {
+        nodeHeader.removeChild(child);
+        child = nodeHeader.lastElementChild;
+      }
+
+      // Create new node list based on groupNodeData map
+      for (node of groupNodeData[this.id]) {
+        const newNode = document.createElement("button");
+        newNode.innerHTML = node;
+        newNode.classList = "btn blackBorder shadow-none mx-1";
+        newNode.id = node.replace(/ /g, "");
+        if (customFlag) {
+          newNode.onclick = function () {
+            realtimeGraphs(newNode);
+          };
+          customFlag = false;
+        } else {
+          newNode.onclick = function () {
+            updateGraphs(newNode);
+          };
+        }
+        nodeHeader.appendChild(newNode);
+      }
+
+      const allNodes = document.createElement("button");
+      allNodes.innerHTML = "All Nodes";
+      allNodes.classList = "btn blackBorder shadow-none mx-1";
+      allNodes.id = "allNodes";
+      allNodes.onclick = function () {
+        showAllGraphs(allNodes);
+      };
+      nodeHeader.appendChild(allNodes);
+
+      // Highlight the currently selected group
+      for (const key of Object.keys(groupNodeData)) {
+        if (this.id === key) {
+          document.querySelector("#" + key).classList.add("highlight");
+        } else {
+          document.querySelector("#" + key).classList.remove("highlight");
+        }
+      }
+
+      initAllGraphs(allNodes);
+      realtimeGraphs(nodeHeader.children[0]);
+    });
+  });
+});
+
+// Associate respective group and node pairings and display them
+function populateNodes(selectedGroup, groupNodeData) {
+  const nodeHeader = document.querySelector("#nodeList"); // Select nodes currently being shown
+  var customFlag = true;
+
+  // Remove all nodes currently being displayed
+  var child = nodeHeader.lastElementChild;
+  while (child) {
+    nodeHeader.removeChild(child);
+    child = nodeHeader.lastElementChild;
+  }
+
+  // Create new node list based on groupNodeData map
+  for (node of groupNodeData[selectedGroup]) {
+    const newNode = document.createElement("button");
+    newNode.innerHTML = node;
+    newNode.classList = "btn blackBorder shadow-none mx-1";
+    newNode.id = node.replace(/ /g, "");
+    if (customFlag) {
+      newNode.onclick = function () {
+        realtimeGraphs(newNode);
+      };
+      customFlag = false;
+    } else {
+      newNode.onclick = function () {
+        updateGraphs(newNode);
+      };
+    }
+    nodeHeader.appendChild(newNode);
+  }
+
+  const allNodes = document.createElement("button");
+  allNodes.innerHTML = "All Nodes";
+  allNodes.classList = "btn blackBorder shadow-none mx-1";
+  allNodes.id = "allNodes";
+  allNodes.onclick = function () {
+    showAllGraphs(allNodes);
+  };
+  nodeHeader.appendChild(allNodes);
+
+  // Highlight the currently selected group
+  for (const key of Object.keys(groupNodeData)) {
+    if (selectedGroup === key) {
+      document.querySelector("#" + key).classList.add("highlight");
+    } else {
+      document.querySelector("#" + key).classList.remove("highlight");
+    }
+  }
+
+  initAllGraphs(allNodes);
+  realtimeGraphs(nodeHeader.children[0]);
+}
 
 function highlightNodes(node) {
   const nodeList = document.querySelector("#nodeList"); // Select nodes currently being shown
@@ -16,25 +138,16 @@ function highlightNodes(node) {
   }
 }
 
+function addGroupToProfile(groupName, nodes) {
+  fetch("http://localhost:3000/profiles/addGroup", {
+    method: "post",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify({ groupName: groupName, nodes: nodes }),
+  });
+}
+
 function interact() {
-  // Disconnect serial when wifi modal is exited
-  $("#enterWifiModal").on("hide.bs.modal", function () {
-    console.log("Serial Disconnected");
-    document.querySelector("#inputNetworkName").classList.remove("is-invalid");
-    document.querySelector("#inputNetworkPassword").classList.remove("is-invalid");
-    disconnectSerial();
-  });
-
-  // When Wifi credentials are submitted
-  $("#submitWifiButton").click(function () {
-    // Enable the spinner
-    document.querySelector("#wifiSpinner").classList.toggle("hidden");
-    networkName = $("input[id='inputNetworkName']").val();
-    networkPassword = $("input[id='inputNetworkPassword']").val();
-    writeToStream(networkName);
-    writeToStream(networkPassword);
-  });
-
   // When new group is created
   $("#submitGroupButton").click(function () {
     var checked = document.querySelectorAll("input[type=checkbox]:checked"); // Selected nodes (checkboxes)
@@ -63,6 +176,8 @@ function interact() {
       groupNodeData[newGroup.id].push(node.value);
       nodes.splice(nodes.indexOf(node.value), 1);
     }
+
+    addGroupToProfile(newGroup.id, groupNodeData[newGroup.id]);
 
     document.querySelector("#inputGroup").value = ""; // Reset modal text
     populateNodes(newGroup);
@@ -99,59 +214,6 @@ function interact() {
       newDiv.appendChild(newLabel);
     }
   });
-
-  // Associate respective group and node pairings and display them
-  function populateNodes(selectedGroup) {
-    const nodeHeader = document.querySelector("#nodeList"); // Select nodes currently being shown
-    var customFlag = true;
-
-    // Remove all nodes currently being displayed
-    var child = nodeHeader.lastElementChild;
-    while (child) {
-      nodeHeader.removeChild(child);
-      child = nodeHeader.lastElementChild;
-    }
-
-    // Create new node list based on groupNodeData map
-    for (node of groupNodeData[selectedGroup.id]) {
-      const newNode = document.createElement("button");
-      newNode.innerHTML = node;
-      newNode.classList = "btn blackBorder shadow-none mx-1";
-      newNode.id = node.replace(/ /g, "");
-      if (customFlag) {
-        newNode.onclick = function () {
-          realtimeGraphs(newNode);
-        };
-        customFlag = false;
-      } else {
-        newNode.onclick = function () {
-          updateGraphs(newNode);
-        };
-      }
-      nodeHeader.appendChild(newNode);
-    }
-
-    const allNodes = document.createElement("button");
-    allNodes.innerHTML = "All Nodes";
-    allNodes.classList = "btn blackBorder shadow-none mx-1";
-    allNodes.id = "allNodes";
-    allNodes.onclick = function () {
-      showAllGraphs(allNodes);
-    };
-    nodeHeader.appendChild(allNodes);
-
-    // Highlight the currently selected group
-    for (const key of Object.keys(groupNodeData)) {
-      if (selectedGroup.id === key) {
-        document.querySelector("#" + key).classList.add("highlight");
-      } else {
-        document.querySelector("#" + key).classList.remove("highlight");
-      }
-    }
-
-    initAllGraphs(allNodes);
-    realtimeGraphs(nodeHeader.children[0]);
-  }
 }
 
 function wifiIsInvalid() {
@@ -162,10 +224,11 @@ function wifiIsInvalid() {
   document.querySelector("#inputNetworkPassword").classList.add("is-invalid");
 }
 
-function wifiIsValid() {
+function wifiIsValid(hubMacAddress) {
   $("#enterWifiModal").modal("hide");
   document.querySelector("#startAddHub").remove(); // Remove initial set up info
-  document.querySelector("#firstHub").innerHTML = "PlaceHolder"; // Save selected Hub
+  document.querySelector("#firstHub").innerHTML = hubMacAddress; // Save selected Hub
   document.querySelector("#displayHubList").classList.remove("removed"); // Display the next info screen
   document.querySelector("#wifiSpinner").classList.toggle("hidden"); // Disable the spinner
+  createProfile(hubMacAddress);
 }

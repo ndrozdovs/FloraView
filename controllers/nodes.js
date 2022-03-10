@@ -1,17 +1,18 @@
 const mongoose = require("mongoose");
-const Classroom = require("../models/classroom");
+const Node = require("../models/node");
 const moment = require("moment"); // require
 
-exports.getAllClassrooms = (req, res, next) => {
-  Classroom.find()
-    .select("macAddress temp ph light moist timestamp _id")
+exports.getAllNodes = (req, res, next) => {
+  Node.find()
+    .select("hubMacAddress nodeMacAddress temp ph light moist timestamp _id")
     .exec()
     .then((docs) => {
       const response = {
         count: docs.length,
-        classrooms: docs.map((doc) => {
+        nodes: docs.map((doc) => {
           return {
-            macAddress: doc.macAddress,
+            hubMacAddress: doc.hubMacAddress,
+            nodeMacAddress: doc.nodeMacAddress,
             temp: doc.temp,
             ph: doc.ph,
             light: doc.light,
@@ -20,7 +21,7 @@ exports.getAllClassrooms = (req, res, next) => {
             _id: doc._id,
             request: {
               type: "GET",
-              url: "http://localhost:3000/classrooms/" + doc._id,
+              url: "http://localhost:3000/nodes/" + doc._id,
             },
           };
         }),
@@ -36,7 +37,7 @@ exports.getAllClassrooms = (req, res, next) => {
 };
 
 exports.getLatest = (req, res, next) => {
-  Classroom.findOne()
+  Node.findOne()
     .sort({
       field: "asc",
       _id: -1,
@@ -44,7 +45,7 @@ exports.getLatest = (req, res, next) => {
     .exec()
     .then((doc) => {
       const response = {
-        classrooms: doc,
+        nodes: doc,
       };
       res.status(200).json(response);
     })
@@ -56,24 +57,28 @@ exports.getLatest = (req, res, next) => {
     });
 };
 
-exports.createClassroom = (req, res, next) => {
-  const classroom = new Classroom({
+exports.createNode = (req, res, next) => {
+  //console.log(req.body)
+  const node = new Node({
     _id: new mongoose.Types.ObjectId(),
-    macAddress: req.body.macAddress,
+    hubMacAddress: req.body.hubMacAddress,
+    nodeMacAddress: req.body.nodeMacAddress,
     temp: req.body.temp,
     ph: req.body.ph,
     light: req.body.light,
     moist: req.body.moist,
     timestamp: moment().subtract(0, "days").format("YYYY-MM-DD HH:mm:ss"),
   });
-  classroom
+  console.log(node)
+  node
     .save()
     .then((result) => {
       console.log(result);
       res.status(201).json({
-        message: "Created classroom successfully",
-        createdClassroom: {
-          macAddress: result.macAddress,
+        message: "Created node successfully",
+        createdNode: {
+          hubMacAddress: result.hubMacAddress,
+          nodeMacAddress: result.nodeMacAddress,
           temp: result.temp,
           ph: result.ph,
           light: result.light,
@@ -82,7 +87,7 @@ exports.createClassroom = (req, res, next) => {
           _id: result._id,
           request: {
             type: "GET",
-            url: "http://localhost:3000/classrooms/" + result._id,
+            url: "http://localhost:3000/nodes/" + result._id,
           },
         },
       });
@@ -95,16 +100,16 @@ exports.createClassroom = (req, res, next) => {
     });
 };
 
-exports.getClassroom = (req, res, next) => {
+exports.getNode = (req, res, next) => {
   const id = req.params.id;
   console.log(req.params.id);
-  Classroom.findById(id)
-    .select("macAddress temp ph light moist timestamp _id")
+  Node.findById(id)
+    .select("hubMacAddress nodeMacAddress temp ph light moist timestamp _id")
     .exec()
     .then((doc) => {
       console.log("From database", doc);
       if (doc) {
-        res.status(200).json({ classroom: doc });
+        res.status(200).json({ node: doc });
       } else {
         res.status(404).json({ message: "No valid entry found for provided ID" });
       }
@@ -117,13 +122,13 @@ exports.getClassroom = (req, res, next) => {
     });
 };
 
-exports.deleteClassroom = (req, res, next) => {
+exports.deleteNode = (req, res, next) => {
   const id = req.params.id;
-  Classroom.deleteOne({ _id: id })
+  Node.deleteOne({ _id: id })
     .exec()
     .then((result) => {
       res.status(200).json({
-        message: "Classroom deleted",
+        message: "Node deleted",
       });
     })
     .catch((err) => {
@@ -134,13 +139,13 @@ exports.deleteClassroom = (req, res, next) => {
     });
 };
 
-exports.deleteAllClassrooms = (req, res, next) => {
+exports.deleteAllNodes = (req, res, next) => {
   const id = req.params.id;
-  Classroom.deleteMany({})
+  Node.deleteMany({})
     .exec()
     .then((result) => {
       res.status(200).json({
-        message: "All classrooms deleted",
+        message: "All nodes deleted",
       });
     })
     .catch((err) => {

@@ -11,7 +11,7 @@ module.exports.register = async (req, res, next) => {
     const registeredUser = await User.register(user, password);
     req.login(registeredUser, (err) => {
       if (err) return next(err);
-      res.redirect("/dashboard/dashHome");
+      res.redirect("/dashboard");
     });
   } catch (e) {
     req.flash("error", e.message);
@@ -24,7 +24,7 @@ module.exports.renderLogin = (req, res) => {
 };
 
 module.exports.login = (req, res) => {
-  const redirectUrl = req.session.returnTo || "/dashboard/dashHome";
+  const redirectUrl = req.session.returnTo || "/dashboard";
   delete req.session.returnTo;
   res.redirect(redirectUrl);
 };

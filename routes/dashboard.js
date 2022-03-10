@@ -1,12 +1,14 @@
 const express = require("express");
 const router = express.Router();
-const mainPages = require("../controllers/dashboard");
-const { isLoggedIn } = require("../middleware");
+const dashboardPages = require("../controllers/dashboard");
+const { isLoggedIn, profileCreated, setupCompleted } = require("../middleware");
 
-router.get("/", isLoggedIn, mainPages.renderHome);
+router.get("/", isLoggedIn, profileCreated, dashboardPages.renderHome);
 
-router.get("/guide", isLoggedIn, mainPages.renderGuide);
+router.get("/setup", isLoggedIn, setupCompleted, dashboardPages.renderSetup);
 
-router.get("/support", isLoggedIn, mainPages.renderSupport);
+router.get("/guide", isLoggedIn, dashboardPages.renderGuide);
+
+router.get("/support", isLoggedIn, dashboardPages.renderSupport);
 
 module.exports = router;

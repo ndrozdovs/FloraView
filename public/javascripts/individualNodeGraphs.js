@@ -43,17 +43,17 @@ function getRandomInt(min, max) {
 }
 
 async function getAllData() {
-  const response = await fetch("http://localhost:3000/classrooms");
+  const response = await fetch("http://localhost:3000/nodes");
   const data = await response.json();
 
-  return data["classrooms"];
+  return data["nodes"];
 }
 
 async function getLatestData() {
-  const response = await fetch("http://localhost:3000/classrooms/latest");
+  const response = await fetch("http://localhost:3000/nodes/latest");
   const data = await response.json();
 
-  return data["classrooms"];
+  return data["nodes"];
 }
 
 labels = ["Temperature", "pH", "Light", "Moisture"];
