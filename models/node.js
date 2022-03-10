@@ -9,6 +9,10 @@ var nodeSchema = new mongoose.Schema({
     type: String,
     required: false,
   },
+  temp: {
+    type: String,
+    required: false,
+  },
   ph: {
     type: String,
     required: false,
