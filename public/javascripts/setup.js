@@ -35,7 +35,76 @@ function addGroupToProfile(groupName, nodes) {
   });
 }
 
+async function getAllNodeData() {
+  const response = await fetch("http://localhost:3000/nodes");
+  const data = await response.json();
+
+  return data["nodes"];
+}
+
+function exportToCsv(filename, rows) {
+  var processRow = function (row) {
+    var finalVal = "";
+    for (var j = 0; j < row.length; j++) {
+      var innerValue = row[j] === null ? "" : row[j].toString();
+      if (row[j] instanceof Date) {
+        innerValue = row[j].toLocaleString();
+      }
+      var result = innerValue.replace(/"/g, '""');
+      if (result.search(/("|,|\n)/g) >= 0) result = '"' + result + '"';
+      if (j > 0) finalVal += ",";
+      finalVal += result;
+    }
+    return finalVal + "\n";
+  };
+
+  var csvFile = "";
+  for (var i = 0; i < rows.length; i++) {
+    console.log(rows[i])
+    csvFile += processRow(rows[i]);
+  }
+
+  var blob = new Blob([csvFile], { type: "text/csv;charset=utf-8;" });
+  if (navigator.msSaveBlob) {
+    // IE 10+
+    navigator.msSaveBlob(blob, filename);
+  } else {
+    var link = document.createElement("a");
+    if (link.download !== undefined) {
+      // feature detection
+      // Browsers that support HTML5 download attribute
+      var url = URL.createObjectURL(blob);
+      link.setAttribute("href", url);
+      link.setAttribute("download", filename);
+      link.style.visibility = "hidden";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  }
+}
+
 function interact() {
+  $("a.downloadData").click(async function (e) {
+    const rawData = await getAllNodeData();
+    let data = [[]]
+    let row = []
+    data.push(["Node MAC Address", "Timestamp", "Temperature", "pH", "Light", "Moisture"])
+
+    for(let i = 0; i < rawData.length; i++){
+      row = []
+      row.push(rawData[i]["nodeMacAddress"])
+      row.push(rawData[i]["timestamp"])
+      row.push(rawData[i]["temp"])
+      row.push(rawData[i]["ph"])
+      row.push(rawData[i]["light"])
+      row.push(rawData[i]["moist"])
+      data.push(row)
+    }
+    e.preventDefault();
+    exportToCsv("nodeData", data)
+  });
+
   // Disconnect serial when wifi modal is exited
   $("#enterWifiModal").on("hide.bs.modal", function () {
     console.log("Serial Disconnected");
@@ -58,6 +127,7 @@ function interact() {
   $("#submitGroupButton").click(function () {
     var checked = document.querySelectorAll("input[type=checkbox]:checked"); // Selected nodes (checkboxes)
     document.querySelector("#displayGroups_Nodes").classList.remove("hidden"); // Display groups and nodes screen
+    document.querySelector("a.downloadData").classList.remove("hidden"); // Display groups and nodes screen
 
     // Remove "Create a student group" button if it exists
     if (document.contains(document.querySelector("#createGroupButton"))) {

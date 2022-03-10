@@ -109,7 +109,7 @@ function initConfigs(numConifgs) {
 function showAllGraphs(node) {
   document.querySelector("#individualGraphs").classList.add("removed");
   document.querySelector("#allGraphs").classList.remove("removed");
-  document.querySelector("#allGraphButtons").classList.remove("removed");
+  document.querySelector("#allGraphButtons").classList.remove("hidden");
   highlightNodes(node);
   randomizeData(0);
 }

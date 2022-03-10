@@ -78,7 +78,7 @@ function initGraphs() {
 async function realtimeGraphs(node) {
   document.querySelector("#individualGraphs").classList.remove("removed");
   document.querySelector("#allGraphs").classList.add("removed");
-  document.querySelector("#allGraphButtons").classList.add("removed");
+  document.querySelector("#allGraphButtons").classList.add("hidden");
 
   var start = moment().subtract(0, "days");
   today = start.format("YYYY-MM-DD").substr(8);
@@ -127,7 +127,7 @@ async function realtimeGraphs(node) {
 function updateGraphs(node) {
   document.querySelector("#individualGraphs").classList.remove("removed");
   document.querySelector("#allGraphs").classList.add("removed");
-  document.querySelector("#allGraphButtons").classList.add("removed");
+  document.querySelector("#allGraphButtons").classList.add("hidden");
 
   if (typeof updateVar !== "undefined") {
     clearInterval(updateVar);
