@@ -9,6 +9,7 @@ const methodOverride = require("method-override");
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
 const User = require("./models/user");
+const bodyParser = require('body-parser')
 
 const userRoutes = require("./routes/users");
 const mainPagesRoutes = require("./routes/mainPages");
@@ -35,6 +36,8 @@ app.set("views", path.join(__dirname, "views"));
 app.use(express.static(path.join(__dirname, "views")));
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.json())
 app.use(methodOverride("_method"));
 
 const secret = 'anything';
@@ -73,29 +76,15 @@ app.use("/dashboard", dashboardRoutes);
 app.use("/nodes", nodeRoutes);
 app.use("/profiles", profileRoutes);
 
-app.get("/dashboard/dashHome", (req, res) => {
-  res.render("dashboard/dashHome");
-});
-
-app.get("/dashboard/guide", (req, res) => {
-  res.render("dashboard/guide");
-});
-
-app.get("/dashboard/support", (req, res) => {
-  res.render("dashboard/support");
-});
-
 app.all("*", (req, res, next) => {
   next(new ExpressError("Page Not Found", 404));
 });
 
 app.use((err, req, res, next) => {
   const { statusCode = 500 } = err;
-  if (!err.message) err.message = "Oh No, Something Went Wrong!";
-  res.status(statusCode).render("error", {
-    err,
-  });
-});
+  if (!err.message) err.message = 'Oh No, Something Went Wrong!'
+  res.status(statusCode).render('error', { err })
+})
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {

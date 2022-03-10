@@ -1,0 +1,140 @@
+<% layout('layouts/dashboardBoilerplate') %>
+<link rel="stylesheet" href="/stylesheets/dashboardHome.css" />
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+<script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js/dist/chart.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+
+<section class="container-fluid px-0" id="mainContent">
+  <div class="row no-gutters">
+    <div class="col-12 border-bottom px-0 pb-2" id="buttonRow">
+      <div class="btn-group">
+        <button type="button" class="btn btn-outline-dark">Classroom 1</button>
+        <button type="button" class="btn btn-outline-dark dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <span class="sr-only"></span>
+        </button>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="#">Classroom 1</a>
+          <a class="dropdown-item" href="#">Classroom 2</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="#">New Classroom</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section id="displayHubList">
+    <div class="row no-gutters">
+      <div class="col px-0 pt-4">
+        <h3>
+          Hubs:
+          <button class="btn hubButton blackBorder" id="firstHub"><%= hubMacAddress %> </button>
+        </h3>
+      </div>
+      <div class="col-auto px-0 pt-4">
+        <button class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#addHubModal">Add another Hub</button>
+      </div>
+    </div>
+
+    <% if(Object.keys(groupNodeData).length === 0){ %> 
+    <div class="row no-gutters" id="groupText">
+      <div class="col-6 px-0 pt-4">
+        <h3>Now, create a student group:</h3>
+      </div>
+    </div>
+
+    <div class="row no-gutters" id="createGroupButton">
+      <div class="col-6 px-0 pt-2">
+        <button class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#createGroupModal">Create a student group</button>
+      </div>
+    </div>
+    <% } %> 
+  </section>
+
+  <section id="displayGroups_Nodes">
+    <div class="row no-gutters">
+      <div class="col px-0 pt-4">
+        <h3 id="groupList">Groups:
+            <% for (const group of Object.keys(groupNodeData)) { %> 
+                <button class="btn blackBorder shadow-none mx-1 custom" id=<%= group %>><%= group %> </button>
+            <% } %> 
+        </h3>
+      </div>
+      <div class="col-auto px-0 pt-4">
+        <div class="btn-group" role="group" aria-label="Basic example">
+          <button type="button" class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#createGroupModal">Create another group</button>
+          <button type="button" class="btn btn-outline-dark">Edit group</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="row no-gutters">
+      <div class="col px-0 pt-4">
+        <h3 id="nodeList">Nodes:</h3>
+      </div>
+    </div>
+  </section>
+
+  <div class="row no-gutters">
+    <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12  px-0 pt-5">
+      <div id="reportrange" class="selectbox pull-left" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc"><i class="fa fa-calendar"></i>&nbsp; <span></span> <i class="fa"></i></div>
+    </div>
+    <div class="col-md-6 col-sm-12 mx-auto px-4 pt-5 removed" id="allGraphButtons">
+      <button class="btn blackBorder shadow-none" id="temperatureButton">Temperature</button>
+      <button class="btn blackBorder shadow-none mx-1" id="pHButton">pH</button>
+      <button class="btn blackBorder shadow-none mx-1" id="lightButton">Light</button>
+      <button class="btn blackBorder shadow-none mx-1" id="moistureButton">Moisture</button>
+    </div>
+  </div>
+
+  <section id="individualGraphs">
+    <div class="row no-gutters">
+      <div class="col-xl-6 col-12 px-0 pt-4">
+        <canvas id="temperatureChart"></canvas>
+      </div>
+      <div class="col-xl-6 col-12 px-0 pt-4">
+        <canvas id="phChart"></canvas>
+      </div>
+    </div>
+    <div class="row no-gutters">
+      <div class="col-xl-6 col-12 px-0 pt-5">
+        <canvas id="lightChart"></canvas>
+      </div>
+      <div class="col-xl-6 col-12 px-0 pt-5">
+        <canvas id="moistureChart"></canvas>
+      </div>
+    </div>
+  </section>
+
+  <section id="allGraphs"></section>
+</section>
+
+<div class="modal" tabindex="-1" role="dialog" id="createGroupModal">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <form>
+          <div class="form-group row">
+            <label for="inputEmail3" class="col-4 col-form-label">Enter group name:</label>
+            <div class="col-8">
+              <input type="email" class="form-control" id="inputGroup" placeholder="Group name" />
+            </div>
+          </div>
+          <label for="inputEmail3" class="col-4 col-form-label">Select nodes to add:</label>
+          <section id="nodeListForm"></section>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="submitGroupButton" class="btn btn-primary" data-bs-dismiss="modal">Add</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/javascripts/individualNodeGraphs.js"></script>
+<script src="/javascripts/allNodeGraphs.js"></script>
+<script src="/javascripts/dashboard.js"></script>
+<script src="/javascripts/calendar.js"></script>

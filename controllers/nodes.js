@@ -37,7 +37,7 @@ exports.getAllNodes = (req, res, next) => {
 };
 
 exports.getLatest = (req, res, next) => {
-  nodes.findOne()
+  Node.findOne()
     .sort({
       field: "asc",
       _id: -1,
@@ -58,7 +58,8 @@ exports.getLatest = (req, res, next) => {
 };
 
 exports.createNode = (req, res, next) => {
-  const node = new node({
+  //console.log(req.body)
+  const node = new Node({
     _id: new mongoose.Types.ObjectId(),
     hubMacAddress: req.body.hubMacAddress,
     nodeMacAddress: req.body.nodeMacAddress,
@@ -68,6 +69,7 @@ exports.createNode = (req, res, next) => {
     moist: req.body.moist,
     timestamp: moment().subtract(0, "days").format("YYYY-MM-DD HH:mm:ss"),
   });
+  console.log(node)
   node
     .save()
     .then((result) => {

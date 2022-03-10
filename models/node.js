@@ -3,27 +3,27 @@ const mongoose = require("mongoose");
 var nodeSchema = new mongoose.Schema({
   hubMacAddress: {
     type: String,
-    required: true,
+    required: false,
   },
   nodeMacAddress: {
     type: String,
-    required: true,
+    required: false,
   },
   ph: {
     type: String,
-    required: true,
+    required: false,
   },
   light: {
     type: String,
-    required: true,
+    required: false,
   },
   moist: {
     type: String,
-    required: true,
+    required: false,
   },
   timestamp: {
     type: String,
-    required: true,
+    required: false,
   },
 });
 
