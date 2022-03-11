@@ -3,6 +3,9 @@ nodeCharts = [];
 
 var xMin = "0";
 var xMax = "0";
+var timeUnit = "0";
+var updateVar;
+var lastEntryTimestamp;
 
 buttons = ["Temperature", "pH", "Light", "Moisture"];
 colors = ["rgb(11, 245, 19)", "rgb(156, 75, 210)", "rgb(246, 168, 12)", "rgb(255, 99, 132)", "rgb(0,0,0)", "rgb(200, 75, 210)"];
@@ -114,12 +117,59 @@ function showAllGraphs(node) {
   randomizeData(0);
 }
 
+async function realtimeGraph(sensorIndex) {
+  var sensorType;
+
+  switch (sensorIndex) {
+    case 0:
+      sensorType = "temp";
+      break;
+    case 1:
+      sensorType = "ph";
+      break;
+    case 2:
+      sensorType = "light";
+      break;
+    case 3:
+      sensorType = "moist";
+      break;
+  }
+
+  nodeConfigs[0].data.datasets[0].data = [];
+
+  await getAllData().then((data) => {
+    for (var subData of data) {
+      nodeConfigs[0].data.datasets[0].data.push({
+        x: subData.timestamp,
+        y: subData[sensorType],
+      });
+
+      lastEntryTimestamp = subData.timestamp;
+    }
+
+    updateTimeframeRealtimeAll();
+
+    if (typeof updateVar !== "undefined") {
+      clearInterval(updateVar);
+    }
+
+    updateVar = setInterval(function () {
+      updateDataRealtimeAll(sensorType);
+    }, 20000);
+  });
+}
+
 function randomizeData(sensorIndex) {
+  if (typeof updateVar !== "undefined") {
+    clearInterval(updateVar);
+  }
+  realtimeGraph(sensorIndex);
+
   var start = moment().subtract(0, "days");
   today = start.format("YYYY-MM-DD").substr(8);
   todayNum = parseInt(today);
 
-  for (var i = 0; i < nodeElements.length; i++) {
+  for (var i = 1; i < nodeElements.length; i++) {
     nodeConfigs[i].data.datasets[0].data = [];
 
     for (var k = 1; k < 32; k++) {
@@ -185,7 +235,7 @@ function updateTimeScaleAll(start, end, fromCalendar) {
   xMin = start;
   xMax = end;
 
-  for (var i = 0; i < nodeElements.length; i++) {
+  for (var i = 1; i < nodeElements.length; i++) {
     nodeConfigs[i].options.scales.x.min = xMin;
     nodeConfigs[i].options.scales.x.max = xMax;
 
@@ -199,6 +249,50 @@ function updateTimeScaleAll(start, end, fromCalendar) {
 
     nodeCharts[i].update();
   }
+}
+
+async function updateDataRealtimeAll(sensorType) {
+  await getLatestData().then((data) => {
+    if (data !== null) {
+      if (data.timestamp != lastEntryTimestamp) {
+        lastEntryTimestamp = data.timestamp;
+
+        nodeConfigs[0].data.datasets[0].data.push({
+          x: data.timestamp,
+          y: data[sensorType],
+        });
+
+        nodeCharts[0].update();
+      }
+    }
+  });
+}
+
+async function updateTimeframeRealtimeAll() {
+  await getLatestData().then((data) => {
+    if (data !== null) {
+      var start = data.timestamp;
+      var end = data.timestamp;
+
+      if (start[14] >= "3") {
+        start = start.replace(start.substr(14, 5), "30:00");
+        var nextNum = parseInt(start.substr(11, 2)) + 1;
+        if (nextNum > 9) {
+          end = start.replace(start.substr(11, 8), `${nextNum}:00:00`);
+        } else {
+          end = start.replace(start.substr(11, 8), `0${nextNum}:00:00`);
+        }
+      } else {
+        start = start.replace(start.substr(14, 5), "00:00");
+        end = start.replace(start.substr(14, 5), "30:00");
+      }
+
+      nodeConfigs[0].options.scales.x.min = start;
+      nodeConfigs[0].options.scales.x.max = end;
+      nodeConfigs[0].options.scales.x.time.unit = "minute";
+      nodeCharts[0].update();
+    }
+  });
 }
 
 function highlightChoice(buttonNum) {

@@ -133,7 +133,6 @@ function exportToCsv(filename, rows) {
 
   var csvFile = "";
   for (var i = 0; i < rows.length; i++) {
-    console.log(rows[i])
     csvFile += processRow(rows[i]);
   }
 

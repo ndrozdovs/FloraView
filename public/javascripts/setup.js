@@ -17,7 +17,6 @@ function highlightNodes(node) {
 }
 
 function createProfile(hubMacAddress) {
-  console.log(JSON.stringify({hubMacAddress: hubMacAddress}));
   fetch("http://localhost:3000/profiles", {
     method: "post",
     headers: {'Content-Type': 'application/json'},
@@ -60,7 +59,6 @@ function exportToCsv(filename, rows) {
 
   var csvFile = "";
   for (var i = 0; i < rows.length; i++) {
-    console.log(rows[i])
     csvFile += processRow(rows[i]);
   }
 
@@ -193,7 +191,6 @@ function interact() {
 
   // Associate respective group and node pairings and display them
   function populateNodes(selectedGroup) {
-    console.log("HERE")
     const nodeHeader = document.querySelector("#nodeList"); // Select nodes currently being shown
     var customFlag = true;
 

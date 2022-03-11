@@ -58,7 +58,6 @@ exports.getLatest = (req, res, next) => {
 };
 
 exports.createNode = (req, res, next) => {
-  //console.log(req.body)
   const node = new Node({
     _id: new mongoose.Types.ObjectId(),
     hubMacAddress: req.body.hubMacAddress,
@@ -69,7 +68,6 @@ exports.createNode = (req, res, next) => {
     moist: req.body.moist,
     timestamp: moment().subtract(0, "days").format("YYYY-MM-DD HH:mm:ss"),
   });
-  console.log(node)
   node
     .save()
     .then((result) => {
