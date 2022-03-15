@@ -6,11 +6,7 @@ function addListenerToButtons() {
   var groupButtons = document.querySelectorAll("button.custom");
   groupButtons.forEach((button) => {
     button.addEventListener("click", async function () {
-      const groupId = this.id;
-      await getAllGroups().then((groupNodeData) => {
-        removeAddedNodes(groupNodeData);
-        populateNodes(groupId, groupNodeData);
-      });
+      populateNodesAsync(this.id)
     });
   });
 }
@@ -79,6 +75,26 @@ function populateNodes(groupId, groupNodeData) {
   realtimeGraphs(nodeHeader.children[0]);
 }
 
+function populateStudents(students, groupId){
+  const studentHeader = document.querySelector("#studentList"); // Select nodes currently being shown
+
+  // Remove all nodes currently being displayed
+  var child = studentHeader.lastElementChild;
+  while (child) {
+    studentHeader.removeChild(child);
+    child = studentHeader.lastElementChild;
+  }
+
+  // Create new node list based on groupNodeData map
+  for (let student of students) {
+    const newNode = document.createElement("button");
+    newNode.innerHTML = student;
+    newNode.classList = "btn blackBorder shadow-none mx-1";
+    newNode.id = node.replace(/ /g, "");
+    studentHeader.appendChild(newNode);
+  }
+}
+
 function highlightNodes(node) {
   const nodeList = document.querySelector("#nodeList"); // Select nodes currently being shown
   var children = nodeList.children;
@@ -92,12 +108,30 @@ function highlightNodes(node) {
   }
 }
 
-function addGroupToProfile(groupName, nodes) {
-  fetch("http://localhost:3000/profiles/addGroup", {
+async function addGroupToProfile(groupName, nodes) {
+  await fetch("http://localhost:3000/profiles/addGroup", {
     method: "post",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
     body: JSON.stringify({ groupName: groupName, nodes: nodes }),
+  });
+}
+
+async function addStudentsToGroup(students, groupName) {
+  await fetch("http://localhost:3000/profiles/addStudentsToGroup", {
+    method: "post",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify({ students: students, groupName: groupName }),
+  });
+}
+
+function addPasswordToClassroom(password) {
+  fetch("http://localhost:3000/profiles/addPassword", {
+    method: "post",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify({ password: password }),
   });
 }
 
@@ -113,6 +147,21 @@ async function getAllNodeData() {
   const data = await response.json();
 
   return data["nodes"];
+}
+
+async function getAllStudents() {
+  const response = await fetch("http://localhost:3000/profiles/getStudents");
+  const data = await response.json();
+
+  return data;
+}
+
+async function populateNodesAsync(group){
+  document.querySelector("#displayGroups_Nodes").classList.remove("removed"); // Display groups and nodes screen
+  await getAllGroups().then((groupNodeData) => {
+    removeAddedNodes(groupNodeData);
+    populateNodes(group, groupNodeData);
+  });
 }
 
 function exportToCsv(filename, rows) {
@@ -158,14 +207,11 @@ function exportToCsv(filename, rows) {
 
 async function interact() {
   addListenerToButtons();
-  const groups = document.querySelector("#groupList").childNodes;
-  if (groups.length !== 0) {
-    for (group of groups) {
+  const groups = document.querySelector("#groupList");
+  if (groups !== null && groups.childNodes.length !== 0) {
+    for (group of groups.childNodes) {
       if (group.tagName === "BUTTON") {
-        await getAllGroups().then((groupNodeData) => {
-          removeAddedNodes(groupNodeData);
-          populateNodes(group.id, groupNodeData);
-        });
+        populateNodesAsync(group.id)
         break;
       }
     }
@@ -190,36 +236,9 @@ async function interact() {
     e.preventDefault();
     exportToCsv("nodeData", data)
   });
-
-  // When new group is created
-  $("#submitGroupButton").click(function () {
-    var checked = document.querySelectorAll("input[type=checkbox]:checked"); // Selected nodes (checkboxes)
-    document.querySelector("#displayGroups_Nodes").classList.remove("hidden"); // Display groups and nodes screen
-
-    // Remove "Create a student group" button if it exists
-    if (document.contains(document.querySelector("#createGroupButton"))) {
-      document.querySelector("#createGroupButton").remove();
-      document.querySelector("#groupText").remove();
-    }
-
-    // Create new group button and bind populateNodes function
-    const groupHeader = document.querySelector("#groupList");
-    const newGroup = document.createElement("button");
-    newGroup.classList = "btn blackBorder shadow-none mx-1 custom";
-    newGroup.id = $("#inputGroup").val();
-    newGroup.innerHTML = $("#inputGroup").val();
-    groupHeader.appendChild(newGroup);
-    newNodes = []; // Add new group to group node data
-
-    // Add selected nodes to the respective group and remove those nodes from available nodes
-    for (node of checked) {
-      newNodes.push(node.value);
-    }
-
-    addGroupToProfile(newGroup.id, newNodes);
-
-    document.querySelector("#inputGroup").value = ""; // Reset modal text
-    addListenerToButtons();
+  
+  $("#submitClassroomPassword").click(function () {
+    addPasswordToClassroom($("input[id='inputClassroomPassword']").val())
   });
 
   // When create a new group modal is on screen
@@ -252,5 +271,94 @@ async function interact() {
       newDiv.appendChild(newInput);
       newDiv.appendChild(newLabel);
     }
+  });
+  
+  // When new group is created
+  $("#submitGroupButton").click(async function () {
+    var checked = document.querySelectorAll("input[type=checkbox]:checked"); // Selected nodes (checkboxes)
+
+    // Remove "Create a student group" button if it exists
+    if (document.contains(document.querySelector("#createGroupButton"))) {
+      document.querySelector("#createGroupButton").remove();
+      document.querySelector("#groupText").remove();
+    }
+
+    // Create new group button and bind populateNodes function
+    const groupHeader = document.querySelector("#groupList");
+    const newGroup = document.createElement("button");
+    newGroup.classList = "btn blackBorder shadow-none mx-1 custom";
+    newGroup.id = $("#inputGroup").val();
+    newGroup.innerHTML = $("#inputGroup").val();
+    groupHeader.appendChild(newGroup);
+    newNodes = []; // Add new group to group node data
+
+    // Add selected nodes to the respective group and remove those nodes from available nodes
+    for (node of checked) {
+      newNodes.push(node.value);
+    }
+
+    await addGroupToProfile(newGroup.id, newNodes);
+
+    document.querySelector("#inputGroup").value = ""; // Reset modal text
+    populateNodesAsync(newGroup.id)
+    addListenerToButtons();
+  });
+
+
+  $("#addStudentsModal").on("shown.bs.modal", async function () {
+    const students = await getAllStudents();
+    console.log(students)
+    const studentHeader = document.querySelector("#studentListForm"); // Select node list in the modal
+
+    // Remove all nodes from the list (clear the list)
+    var child = studentHeader.lastElementChild;
+    while (child) {
+      studentHeader.removeChild(child);
+      child = studentHeader.lastElementChild;
+    }
+
+    // Populate the list
+    for (student of students) {
+      const newDiv = document.createElement("div");
+      const newInput = document.createElement("input");
+      const newLabel = document.createElement("label");
+
+      newDiv.classList.add("form-check");
+      newInput.classList.add("form-check-input");
+      newLabel.classList.add("form-check-label");
+
+      newDiv.id = student.replace(/ /g, "");
+      newInput.type = "checkbox";
+      newInput.value = student;
+      newLabel.innerHTML = student;
+
+      studentHeader.appendChild(newDiv);
+      newDiv.appendChild(newInput);
+      newDiv.appendChild(newLabel);
+    }
+  });
+
+  $("#submitStudentListButton").click(async function () {
+    var checked = document.querySelectorAll("input[type=checkbox]:checked"); // Selected students (checkboxes)
+
+    newStudents = []; // Add new group to group node data
+
+    // Add selected nodes to the respective group and remove those nodes from available nodes
+    for (student of checked) {
+      newStudents.push(student.value);
+    }
+
+    let currentGroup;
+    var groupButtons = document.querySelectorAll("button.custom");
+    groupButtons.forEach((button) => {
+      if(button.classList.contains("highlight")){
+        currentGroup = button.id
+      }
+    });
+
+    console.log(newStudents)
+    await addStudentsToGroup(newStudents, currentGroup);
+
+    populateStudents(newStudents, currentGroup)
   });
 }

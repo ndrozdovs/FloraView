@@ -13,6 +13,16 @@
               <div class="valid-feedback">Looks good!</div>
             </div>
             <div class="mb-3">
+              <label class="form-label" for="firstName">First Name</label>
+              <input class="form-control" type="text" id="firstName" name="firstName" required autofocus />
+              <div class="valid-feedback">Looks good!</div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label" for="lastName">Last Name</label>
+              <input class="form-control" type="text" id="lastName" name="lastName" required autofocus />
+              <div class="valid-feedback">Looks good!</div>
+            </div>
+            <div class="mb-3">
               <label class="form-label" for="email">Email</label>
               <input class="form-control" type="email" id="email" name="email" required />
               <div class="valid-feedback">Looks good!</div>
@@ -21,6 +31,13 @@
               <label class="form-label" for="password">Password</label>
               <input class="form-control" type="password" id="password" name="password" required />
               <div class="valid-feedback">Looks good!</div>
+            </div>
+            <div class="mb-3">
+              <select class="form-select mb-2" aria-label="Default select example" name="account" required>
+                <option selected disabled>Select Account Type</option>
+                <option value="Teacher" class="form-control">Teacher</option>
+                <option value="Student" class="form-control">Student</option>
+              </select>
             </div>
             <button class="btn btn-outline-dark mt-2">Register</button>
           </form>

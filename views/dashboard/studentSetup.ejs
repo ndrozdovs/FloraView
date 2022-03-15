@@ -1,0 +1,91 @@
+<% layout('layouts/dashboardBoilerplate') %>
+<link rel="stylesheet" href="/stylesheets/dashboardHome.css" />
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+<script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js/dist/chart.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+
+<section class="container-fluid px-0" id="mainContent">
+  <section id="startAddHub">
+    <div class="row no-gutters">
+      <div class="col-md-12 col-sm-12 px-0 pt-4">
+        <h1>Start by pressing 'Join classroom' below once you have classroom credentials from your teacher</h1>
+        <div>
+          <button class="btn btn-outline-dark mt-2" data-bs-toggle="modal" data-bs-target="#joinClassroomModal">Join classroom</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="row">
+    <div class="col-xl-3 col-lg-4 col-md-4 col-sm-6 col-6 px-0 pt-5">
+      <div id="reportrange" class="selectbox pull-left" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc"><i class="fa fa-calendar"></i>&nbsp; <span></span> <i class="fa"></i></div>
+    </div>
+    <div class="text-center col-xl-6 col-lg-6 col-md-6 col-sm-6 mx-auto px-0 pt-5 hidden" id="allGraphButtons">
+      <button class="btn blackBorder shadow-none" id="temperatureButton">Temperature</button>
+      <button class="btn blackBorder shadow-none mx-1" id="pHButton">pH</button>
+      <button class="btn blackBorder shadow-none mx-1" id="lightButton">Light</button>
+      <button class="btn blackBorder shadow-none mx-1" id="moistureButton">Moisture</button>
+    </div>
+  </div>
+
+  <section id="individualGraphs">
+    <div class="row no-gutters">
+      <div class="col-xl-6 col-12 px-0 pt-4">
+        <canvas id="temperatureChart"></canvas>
+      </div>
+      <div class="col-xl-6 col-12 px-0 pt-4">
+        <canvas id="phChart"></canvas>
+      </div>
+    </div>
+    <div class="row no-gutters">
+      <div class="col-xl-6 col-12 px-0 pt-5">
+        <canvas id="lightChart"></canvas>
+      </div>
+      <div class="col-xl-6 col-12 px-0 pt-5">
+        <canvas id="moistureChart"></canvas>
+      </div>
+    </div>
+  </section>
+
+  <section id="allGraphs"></section>
+</section>
+
+<div class="modal fade" id="joinClassroomModal" role="diaglog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Enter classroom details</h5>
+        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>This information should be provided by your teacher</p>
+        <form action="/profiles/addStudent" method="POST" class="validated-form" validate>
+          <div class="form-group">
+            <label class="form-label" for="classroom">Classroom Code</label>
+            <input class="form-control" type="classroom" name="classroom" id="classroom" placeholder="Enter classroom code" required/>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="password">Password</label>
+            <input class="form-control" type="password" id="password" name="password" placeholder="Password" required/>
+          </div>
+          <div class="modal-footer">
+            <div class="spinner-border hidden" role="status" id="wifiSpinner">
+              <span class="sr-only"></span>
+            </div>
+            <button id="submitClassroomInfo" class="btn btn-primary">Submit</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/javascripts/individualNodeGraphs.js"></script>
+<script src="/javascripts/allNodeGraphs.js"></script>
+<script src="/javascripts/student.js"></script>
+<script src="/javascripts/calendar.js"></script>

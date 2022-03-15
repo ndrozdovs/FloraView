@@ -7,6 +7,17 @@ const profileSchema = new Schema({
     {
       groupName: { type: String },
       nodes: [String],
+      students: [String],
+    },
+  ],
+  classrooms: [
+    {
+      pairCode: { type: String },
+      password: { type: String },
+      students: [{
+        type: Schema.Types.ObjectId,
+        ref: "User",
+      }],
     },
   ],
   user: {

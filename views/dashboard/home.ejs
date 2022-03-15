@@ -37,45 +37,92 @@
         <button class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#addHubModal">Add another Hub</button>
       </div>
     </div>
-
-    <% if(Object.keys(groupNodeData).length === 0){ %> 
-    <div class="row no-gutters" id="groupText">
-      <div class="col-6 px-0 pt-4">
-        <h3>Now, create a student group:</h3>
-      </div>
-    </div>
-
-    <div class="row no-gutters" id="createGroupButton">
-      <div class="col-6 px-0 pt-2">
-        <button class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#createGroupModal">Create a student group</button>
-      </div>
-    </div>
-    <% } %> 
   </section>
 
-  <section id="displayGroups_Nodes">
+  <section id="displayPairCode">
     <div class="row no-gutters">
       <div class="col px-0 pt-4">
-        <h3 id="groupList">Groups:
-            <% for (const group of Object.keys(groupNodeData)) { %> 
-                <button class="btn blackBorder shadow-none mx-1 custom" id=<%= group %>><%= group %> </button>
-            <% } %> 
+        <h3>
+          Pairing Code:
+          <button class="btn hubButton blackBorder" id="pairCode"><%= classrooms[0].pairCode %> </button>
         </h3>
       </div>
-      <div class="col-auto px-0 pt-4">
-        <div class="btn-group" role="group" aria-label="Basic example">
-          <button type="button" class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#createGroupModal">Create another group</button>
-          <button type="button" class="btn btn-outline-dark">Edit group</button>
-        </div>
-      </div>
     </div>
+  </section>
 
+  <% if(classrooms[0].password === undefined){ %>
+    <% console.log(classrooms[0]) %> 
+  <section id="displayPairInstructions">
     <div class="row no-gutters">
-      <div class="col px-0 pt-4">
-        <h3 id="nodeList">Nodes:</h3>
+      <div class="col-12 px-0 pt-4">
+        <h3>Now, create a classroom password. You will provide the pairing code and the password to your students in order for them to join your classroom:</h3>
+      </div>
+      <div class="col-2 px-0 pt-2">
+        <form class="validated-form" validate>
+          <div class="input-group">
+            <input type="text" class="form-control" name="password" placeholder="Classroom password" id="inputClassroomPassword" required>
+            <button id="submitClassroomPassword" class="btn btn-outline-dark">Submit</button>
+          </div> 
+        </form>
       </div>
     </div>
   </section>
+  <% } %> 
+
+  <% if(classrooms[0].password !== undefined) { %> 
+    <% if(Object.keys(groupNodeData).length === 0){ %>
+    <section id="displayGroupList">
+      <div class="row no-gutters" id="groupText">
+        <div class="col-6 px-0 pt-4">
+          <h3>Now, create a student group:</h3>
+        </div>
+      </div>
+
+      <div class="row no-gutters" id="createGroupButton">
+        <div class="col-6 px-0 pt-2">
+          <button class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#createGroupModal">Create a student group</button>
+        </div>
+      </div>
+    </section>
+    <% } %> 
+
+    <section id="displayGroups_Nodes" class="removed">
+      <div class="row no-gutters">
+        <div class="col px-0 pt-4">
+          <h3 id="groupList">Groups:
+              <% for (const group of Object.keys(groupNodeData)) { %> 
+                  <button class="btn blackBorder shadow-none mx-1 custom" id=<%= group %>><%= group %> </button>
+              <% } %> 
+          </h3>
+        </div>
+        <div class="col-auto px-0 pt-4">
+          <div class="btn-group" role="group" aria-label="Basic example">
+            <button type="button" class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#createGroupModal">Create another group</button>
+            <button type="button" class="btn btn-outline-dark">Edit group</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="row no-gutters">
+        <div class="col px-0 pt-4">
+          <h3 id="nodeList">Nodes:</h3>
+        </div>
+      </div>
+
+      <div class="row no-gutters">
+        <div class="col px-0 pt-4">
+          <h3 id="studentList">Students:
+              
+          </h3>
+        </div>
+        <div class="col-auto px-0 pt-4">
+          <div class="btn-group" role="group" aria-label="Basic example">
+            <button type="button" class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#addStudentsModal">Add students to group</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  <% } %> 
 
   <div class="row">
     <div class="col-xl-3 col-lg-4 col-md-4 col-sm-6 col-6 px-0 pt-5">
@@ -133,6 +180,23 @@
       </div>
       <div class="modal-footer">
         <button type="button" id="submitGroupButton" class="btn btn-primary" data-bs-dismiss="modal">Add</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" tabindex="-1" role="dialog" id="addStudentsModal">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <form>
+          <label for="studentList" class="col-5 col-form-label">Select students to add:</label>
+          <section id="studentListForm"></section>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="submitStudentListButton" class="btn btn-primary" data-bs-dismiss="modal">Add</button>
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
       </div>
     </div>
