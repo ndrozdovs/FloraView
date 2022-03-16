@@ -100,7 +100,6 @@ exports.createNode = (req, res, next) => {
 
 exports.getNode = (req, res, next) => {
   const id = req.params.id;
-  console.log(req.params.id);
   Node.findById(id)
     .select("hubMacAddress nodeMacAddress temp ph light moist timestamp _id")
     .exec()

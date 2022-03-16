@@ -11,6 +11,8 @@ router.post("/addPassword", isLoggedIn, ProfilesController.addPassword);
 
 router.get("/getGroups", isLoggedIn, ProfilesController.getGroups);
 
+router.get("/getStudentGroups", isLoggedIn, isStudent, ProfilesController.getStudentGroups);
+
 router.get("/getStudents", isLoggedIn, ProfilesController.getStudents);
 
 router.post("/addStudent", isLoggedIn, isStudent, ProfilesController.addStudent);

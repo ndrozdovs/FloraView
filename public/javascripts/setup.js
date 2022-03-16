@@ -13,7 +13,6 @@ function createProfile(hubMacAddress) {
 }
 
 function addPasswordToClassroom(password) {
-  console.log(password)
   fetch("http://localhost:3000/profiles/addPassword", {
     method: "post",
     headers: { "Content-Type": "application/json" },

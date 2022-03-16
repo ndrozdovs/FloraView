@@ -8,7 +8,7 @@
 <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
 
 <section class="container-fluid px-0" id="mainContent">
-  <% if (groupName === undefined) { %> 
+  <% if (groups.length === 0) { %> 
     <div class="row no-gutters">
       <div class="col px-0 pt-4">
         <h3>Please wait for your teacher to add you to a group</h3>
@@ -19,9 +19,9 @@
   <div class="row no-gutters">
     <div class="col px-0 pt-4">
       <h3 id="groupList">Groups:
-          <% if (groupName !== undefined) { %> 
-              <button class="btn blackBorder shadow-none mx-1 custom" id=<%= groupName %>><%= groupName %> </button>
-          <% } %> 
+        <% for (const group of groups) { %> 
+          <button class="btn blackBorder shadow-none mx-1 custom" id=<%= group %>><%= group %> </button>
+        <% } %>
       </h3>
     </div>
   </div>
@@ -41,6 +41,11 @@
       <button class="btn blackBorder shadow-none mx-1" id="pHButton">pH</button>
       <button class="btn blackBorder shadow-none mx-1" id="lightButton">Light</button>
       <button class="btn blackBorder shadow-none mx-1" id="moistureButton">Moisture</button>
+    </div>
+    <div class="text-end col-xl-3 col-lg-2 col-md-2 col-sm-6 col-6 px-0 pt-5">  
+      <a href="#" class="downloadData">
+        <button type="button" class="btn btn-outline-dark">Export to Excel</button>
+      </a>
     </div>
   </div>
 

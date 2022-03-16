@@ -23,9 +23,24 @@ function removeAddedNodes(groupNodeData) {
 }
 
 // Associate respective group and node pairings and display them
-function populateNodes(groupId, groupNodeData) {
+function populateNodes(groupId, groupNodeData, groupStudentsData) {
   const nodeHeader = document.querySelector("#nodeList"); // Select nodes currently being shown
+  const studentHeader = document.querySelector("#studentList");
   var customFlag = true;
+
+  var child = studentHeader.lastElementChild;
+  while (child) {
+    studentHeader.removeChild(child);
+    child = studentHeader.lastElementChild;
+  }
+
+  for (let student of groupStudentsData[groupId]) {
+    const newNode = document.createElement("button");
+    newNode.innerHTML = student;
+    newNode.classList = "btn blackBorder shadow-none mx-1";
+    newNode.id = node.replace(/ /g, "");
+    studentHeader.appendChild(newNode);
+  }
 
   // Remove all nodes currently being displayed
   var child = nodeHeader.lastElementChild;
@@ -33,6 +48,7 @@ function populateNodes(groupId, groupNodeData) {
     nodeHeader.removeChild(child);
     child = nodeHeader.lastElementChild;
   }
+
 
   // Create new node list based on groupNodeData map
   for (node of groupNodeData[groupId]) {
@@ -158,9 +174,9 @@ async function getAllStudents() {
 
 async function populateNodesAsync(group){
   document.querySelector("#displayGroups_Nodes").classList.remove("removed"); // Display groups and nodes screen
-  await getAllGroups().then((groupNodeData) => {
+  await getAllGroups().then(({groupNodeData, groupStudentsData}) => {
     removeAddedNodes(groupNodeData);
-    populateNodes(group, groupNodeData);
+    populateNodes(group, groupNodeData, groupStudentsData);
   });
 }
 
@@ -307,7 +323,6 @@ async function interact() {
 
   $("#addStudentsModal").on("shown.bs.modal", async function () {
     const students = await getAllStudents();
-    console.log(students)
     const studentHeader = document.querySelector("#studentListForm"); // Select node list in the modal
 
     // Remove all nodes from the list (clear the list)
@@ -356,7 +371,6 @@ async function interact() {
       }
     });
 
-    console.log(newStudents)
     await addStudentsToGroup(newStudents, currentGroup);
 
     populateStudents(newStudents, currentGroup)

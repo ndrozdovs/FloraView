@@ -5,16 +5,19 @@ var ObjectId = require("mongodb").ObjectId;
 exports.renderHome = async (req, res) => {
   const profile = await TeacherProfile.findOne({user: new ObjectId(req.user._id)});
   const groupNodeData = [];
+  const groupStudentsData = [];
   const hubMacAddress = profile.hubMacAddress
   const classrooms = profile.classrooms
   for(let group of profile.groups){
     groupNodeData[group.groupName] = [];
+    groupStudentsData[group.groupName] = [];
     for(let node of group.nodes){
       groupNodeData[group.groupName].push(node);
     }
+    groupStudentsData[group.groupName] = group.students
   }
 
-  res.render("dashboard/home", {hubMacAddress, groupNodeData, classrooms});
+  res.render("dashboard/home", {hubMacAddress, groupNodeData, groupStudentsData, classrooms});
 };
 
 exports.renderSetup = (req, res) => {
@@ -36,8 +39,10 @@ exports.renderStudentSetup = (req, res) => {
 exports.renderStudent = async (req, res) => {
   const profile = await StudentProfile.findOne({user: new ObjectId(req.user._id)});
   const hubMacAddress = profile.hubMacAddress
-  const groupName = profile.groupName;
-  const nodes = profile.nodes
+  let groups = []
+  for(let group of profile.groups){
+    groups.push(group.groupName)
+  }
 
-  res.render("dashboard/student", {hubMacAddress, groupName, nodes});
+  res.render("dashboard/student", {hubMacAddress, groups});
 };

@@ -3,8 +3,12 @@ const Schema = mongoose.Schema;
 
 const profileSchema = new Schema({
   hubMacAddress: String,
-  groupName: { type: String },
-  nodes: [String],
+  groups: [
+    {
+      groupName: { type: String },
+      nodes: [String],
+    },
+  ],
   user: {
     type: Schema.Types.ObjectId,
     ref: "User",
