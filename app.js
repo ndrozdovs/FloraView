@@ -14,7 +14,7 @@ const bodyParser = require('body-parser')
 const userRoutes = require("./routes/users");
 const mainPagesRoutes = require("./routes/mainPages");
 const dashboardRoutes = require("./routes/dashboard");
-const nodeRoutes = require("./routes/nodes");
+const hubRoutes = require("./routes/hubs");
 const profileRoutes = require("./routes/profiles");
 
 const dbUrl = "mongodb://localhost:27017/FloraView";
@@ -73,7 +73,7 @@ app.use((req, res, next) => {
 app.use("/", userRoutes);
 app.use("/", mainPagesRoutes);
 app.use("/dashboard", dashboardRoutes);
-app.use("/nodes", nodeRoutes);
+app.use("/hubs", hubRoutes);
 app.use("/profiles", profileRoutes);
 
 app.all("*", (req, res, next) => {

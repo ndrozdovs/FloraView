@@ -18,6 +18,15 @@
 
   <div class="row no-gutters">
     <div class="col px-0 pt-4">
+      <h3>
+        Hub:
+        <button class="btn hubButton blackBorder" id="firstHub"><%= hubMacAddress %></button>
+      </h3>
+    </div>
+  </div>
+
+  <div class="row no-gutters">
+    <div class="col px-0 pt-4">
       <h3 id="groupList">Groups:
         <% for (const group of groups) { %> 
           <button class="btn blackBorder shadow-none mx-1 custom" id=<%= group %>><%= group %> </button>

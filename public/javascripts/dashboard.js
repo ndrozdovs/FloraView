@@ -158,11 +158,13 @@ async function getAllGroups() {
   return data;
 }
 
-async function getAllNodeData() {
-  const response = await fetch("http://localhost:3000/nodes");
+async function getHubData(hubMacAddress) {
+  const response = await fetch('http://localhost:3000/hubs?' + new URLSearchParams({
+    hubMacAddress: hubMacAddress,
+  }))
   const data = await response.json();
 
-  return data["nodes"];
+  return data;
 }
 
 async function getAllStudents() {
@@ -234,19 +236,20 @@ async function interact() {
   }
 
   $("a.downloadData").click(async function (e) {
-    const rawData = await getAllNodeData();
+    const hubMacAddress = document.querySelector("#firstHub").innerHTML
+    const rawData = await getHubData(hubMacAddress);
     let data = [[]]
     let row = []
     data.push(["Node MAC Address", "Timestamp", "Temperature", "pH", "Light", "Moisture"])
 
-    for(let i = 0; i < rawData.length; i++){
+    for(let i = 0; i < rawData.data.length; i++){
       row = []
-      row.push(rawData[i]["nodeMacAddress"])
-      row.push(rawData[i]["timestamp"])
-      row.push(rawData[i]["temp"])
-      row.push(rawData[i]["ph"])
-      row.push(rawData[i]["light"])
-      row.push(rawData[i]["moist"])
+      row.push(rawData.nodeMacAddress)
+      row.push(rawData.data[i]["timestamp"])
+      row.push(rawData.data[i]["temp"])
+      row.push(rawData.data[i]["ph"])
+      row.push(rawData.data[i]["light"])
+      row.push(rawData.data[i]["moist"])
       data.push(row)
     }
     e.preventDefault();
