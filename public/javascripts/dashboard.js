@@ -1,4 +1,4 @@
-const nodes = ["Node 1", "Node 2", "Node 3", "Node 4", "Node 5", "Node 6"];
+let nodes = [];
 
 window.addEventListener("load", interact);
 
@@ -11,22 +11,10 @@ function addListenerToButtons() {
   });
 }
 
-function removeAddedNodes(groupNodeData) {
-  for (const key of Object.keys(groupNodeData)) {
-    for (node of groupNodeData[key]) {
-      const index = nodes.indexOf(node);
-      if (index > -1) {
-        nodes.splice(index, 1);
-      }
-    }
-  }
-}
-
 // Associate respective group and node pairings and display them
 function populateNodes(groupId, groupNodeData, groupStudentsData) {
   const nodeHeader = document.querySelector("#nodeList"); // Select nodes currently being shown
   const studentHeader = document.querySelector("#studentList");
-  var customFlag = true;
 
   var child = studentHeader.lastElementChild;
   while (child) {
@@ -38,7 +26,7 @@ function populateNodes(groupId, groupNodeData, groupStudentsData) {
     const newNode = document.createElement("button");
     newNode.innerHTML = student;
     newNode.classList = "btn blackBorder shadow-none mx-1";
-    newNode.id = node.replace(/ /g, "");
+    newNode.id = student.replace(/ /g, "");
     studentHeader.appendChild(newNode);
   }
 
@@ -53,19 +41,13 @@ function populateNodes(groupId, groupNodeData, groupStudentsData) {
   // Create new node list based on groupNodeData map
   for (node of groupNodeData[groupId]) {
     const newNode = document.createElement("button");
-    newNode.innerHTML = node;
+    newNode.innerHTML = node.codeName;
     newNode.classList = "btn blackBorder shadow-none mx-1";
-    newNode.id = node.replace(/ /g, "");
-    if (customFlag) {
-      newNode.onclick = function () {
-        realtimeGraphs(newNode);
-      };
-      customFlag = false;
-    } else {
-      newNode.onclick = function () {
-        updateGraphs(newNode);
-      };
-    }
+    newNode.id = node.codeName.replace(/ /g, "");
+    newNode.title = node.macAddress;
+    newNode.onclick = function () {
+      realtimeGraphs(newNode);
+    };
     nodeHeader.appendChild(newNode);
   }
 
@@ -106,7 +88,7 @@ function populateStudents(students, groupId){
     const newNode = document.createElement("button");
     newNode.innerHTML = student;
     newNode.classList = "btn blackBorder shadow-none mx-1";
-    newNode.id = node.replace(/ /g, "");
+    newNode.id = student.replace(/ /g, "");
     studentHeader.appendChild(newNode);
   }
 }
@@ -158,6 +140,15 @@ async function getAllGroups() {
   return data;
 }
 
+async function getAllNodes(hubMacAddress) {
+  const response = await fetch('http://localhost:3000/hubs/nodes?' + new URLSearchParams({
+    hubMacAddress: hubMacAddress,
+  }))
+  const data = await response.json();
+
+  return data;
+}
+
 async function getHubData(hubMacAddress) {
   const response = await fetch('http://localhost:3000/hubs?' + new URLSearchParams({
     hubMacAddress: hubMacAddress,
@@ -177,7 +168,6 @@ async function getAllStudents() {
 async function populateNodesAsync(group){
   document.querySelector("#displayGroups_Nodes").classList.remove("removed"); // Display groups and nodes screen
   await getAllGroups().then(({groupNodeData, groupStudentsData}) => {
-    removeAddedNodes(groupNodeData);
     populateNodes(group, groupNodeData, groupStudentsData);
   });
 }
@@ -261,8 +251,10 @@ async function interact() {
   });
 
   // When create a new group modal is on screen
-  $("#createGroupModal").on("shown.bs.modal", function () {
+  $("#createGroupModal").on("shown.bs.modal", async function () {
     const nodeHeader = document.querySelector("#nodeListForm"); // Select node list in the modal
+    const hubMacAddress = document.querySelector("#firstHub").innerHTML
+    nodes = await getAllNodes(hubMacAddress);
 
     // Remove all nodes from the list (clear the list)
     var child = nodeHeader.lastElementChild;
@@ -281,10 +273,10 @@ async function interact() {
       newInput.classList.add("form-check-input");
       newLabel.classList.add("form-check-label");
 
-      newDiv.id = node.replace(/ /g, "");
+      newDiv.id = node.codeName.replace(/ /g, "");
       newInput.type = "checkbox";
-      newInput.value = node;
-      newLabel.innerHTML = node;
+      newInput.value = node.nodeMacAddress + " " + node.codeName;
+      newLabel.innerHTML = node.codeName + " (" + node.nodeMacAddress + ")";
 
       nodeHeader.appendChild(newDiv);
       newDiv.appendChild(newInput);
@@ -313,7 +305,7 @@ async function interact() {
 
     // Add selected nodes to the respective group and remove those nodes from available nodes
     for (node of checked) {
-      newNodes.push(node.value);
+      newNodes.push({macAddress: node.value.substr(0,17), codeName: node.value.substr(18)});
     }
 
     await addGroupToProfile(newGroup.id, newNodes);

@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const node = require("../models/node");
 const TeacherProfile = require("../models/profile");
 const StudentProfile = require("../models/studentProfile");
 const User = require("../models/user");
@@ -102,7 +103,7 @@ exports.addStudentToGroup = async (req, res) => {
   for (let group of teacherProfile.groups) {
     if (group.groupName == groupName) {
       for (let student of students) { 
-        if (group.students.indexOf(student) == -1) {
+        if (group.students.indexOf(student) === -1) {
           let [first, last] = student.split(" ");
           let studentAccount = await User.findOne({ firstName: first, lastName: last });
           let studentProfile = await StudentProfile.findOne({ user: studentAccount._id });

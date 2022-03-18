@@ -3,7 +3,6 @@ sensorCharts = [];
 
 var xMin = "0";
 var xMax = "0";
-var timeUnit = "0";
 var updateVar;
 var lastEntryTimestamp;
 
@@ -89,8 +88,8 @@ async function realtimeGraphs(node) {
     sensorConfigs[i].data.datasets[0].data = [];
   }
 
-  await getHubData(hubMacAddress).then((data) => {
-    for (var subData of data.data) {
+  await getHubData(hubMacAddress).then((response) => {
+    for (var subData of response.data) {
       sensorConfigs[0].data.datasets[0].data.push({
         x: subData.timestamp,
         y: subData.temp,
@@ -123,81 +122,6 @@ async function realtimeGraphs(node) {
     updateVar = setInterval(updateDataRealtime, 20000);
     highlightNodes(node);
   });
-}
-
-function updateGraphs(node) {
-  document.querySelector("#individualGraphs").classList.remove("removed");
-  document.querySelector("#allGraphs").classList.add("removed");
-  document.querySelector("#allGraphButtons").classList.add("hidden");
-
-  if (typeof updateVar !== "undefined") {
-    clearInterval(updateVar);
-  }
-
-  var start = moment().subtract(0, "days");
-  today = start.format("YYYY-MM-DD").substr(8);
-  todayNum = parseInt(today);
-
-  for (var i = 0; i < 4; i++) {
-    sensorConfigs[i].data.datasets[0].data = [];
-
-    for (var k = 1; k < 32; k++) {
-      if (k < 10) {
-        day = `0${k}`;
-      } else {
-        day = k;
-      }
-
-      for (var j = 0; j < 25; j++) {
-        if (j < 10) {
-          time = `0${j}`;
-        } else {
-          time = j;
-        }
-        sensorConfigs[i].data.datasets[0].data.push({
-          x: `2022-02-${day} ${time}:00:00`,
-          y: getRandomInt(minValue[i], maxValue[i]),
-        });
-      }
-    }
-
-    for (var k = 1; k < todayNum; k++) {
-      if (k < 10) {
-        day = `0${k}`;
-      } else {
-        day = k;
-      }
-
-      for (var j = 0; j < 25; j++) {
-        if (j < 10) {
-          time = `0${j}`;
-        } else {
-          time = j;
-        }
-        sensorConfigs[i].data.datasets[0].data.push({
-          x: `2022-03-${day} ${time}:00:00`,
-          y: getRandomInt(minValue[i], maxValue[i]),
-        });
-      }
-    }
-
-    for (var j = 0; j < 19; j++) {
-      if (j < 10) {
-        time = `0${j}`;
-      } else {
-        time = j;
-      }
-      sensorConfigs[i].data.datasets[0].data.push({
-        x: `2022-03-${today} ${time}:00:00`,
-        y: getRandomInt(minValue[i], maxValue[i]),
-      });
-    }
-
-    sensorCharts[i].update();
-  }
-
-  updateTimeScale(xMin, xMax, false);
-  highlightNodes(node);
 }
 
 function updateTimeScale(start, end, fromCalendar) {

@@ -19,16 +19,16 @@ function initAllGraphs(node) {
   nodeCharts = [];
 
   document.querySelector("#temperatureButton").addEventListener("click", function () {
-    randomizeData(0);
+    displayData(0);
   });
   document.querySelector("#pHButton").addEventListener("click", function () {
-    randomizeData(1);
+    displayData(1);
   });
   document.querySelector("#lightButton").addEventListener("click", function () {
-    randomizeData(2);
+    displayData(2);
   });
   document.querySelector("#moistureButton").addEventListener("click", function () {
-    randomizeData(3);
+    displayData(3);
   });
 
   const nodeHeader = document.querySelector("#nodeList");
@@ -114,11 +114,12 @@ function showAllGraphs(node) {
   document.querySelector("#allGraphs").classList.remove("removed");
   document.querySelector("#allGraphButtons").classList.remove("hidden");
   highlightNodes(node);
-  randomizeData(0);
+  displayData(0);
 }
 
 async function realtimeGraph(sensorIndex) {
   var sensorType;
+  const hubMacAddress = document.querySelector("#firstHub").innerHTML
 
   switch (sensorIndex) {
     case 0:
@@ -137,8 +138,8 @@ async function realtimeGraph(sensorIndex) {
 
   nodeConfigs[0].data.datasets[0].data = [];
 
-  await getAllData().then((data) => {
-    for (var subData of data) {
+  await getHubData(hubMacAddress).then((response) => {
+    for (var subData of response.data) {
       nodeConfigs[0].data.datasets[0].data.push({
         x: subData.timestamp,
         y: subData[sensorType],
@@ -157,78 +158,15 @@ async function realtimeGraph(sensorIndex) {
       updateDataRealtimeAll(sensorType);
     }, 20000);
   });
+
+  highlightChoice(sensorIndex);
 }
 
-function randomizeData(sensorIndex) {
+function displayData(sensorIndex) {
   if (typeof updateVar !== "undefined") {
     clearInterval(updateVar);
   }
   realtimeGraph(sensorIndex);
-
-  var start = moment().subtract(0, "days");
-  today = start.format("YYYY-MM-DD").substr(8);
-  todayNum = parseInt(today);
-
-  for (var i = 1; i < nodeElements.length; i++) {
-    nodeConfigs[i].data.datasets[0].data = [];
-
-    for (var k = 1; k < 32; k++) {
-      if (k < 10) {
-        day = `0${k}`;
-      } else {
-        day = k;
-      }
-
-      for (var j = 0; j < 25; j++) {
-        if (j < 10) {
-          time = `0${j}`;
-        } else {
-          time = j;
-        }
-        nodeConfigs[i].data.datasets[0].data.push({
-          x: `2022-02-${day} ${time}:00:00`,
-          y: getRandomInt(minValue[sensorIndex], maxValue[sensorIndex]),
-        });
-      }
-    }
-
-    for (var k = 1; k < todayNum; k++) {
-      if (k < 10) {
-        day = `0${k}`;
-      } else {
-        day = k;
-      }
-
-      for (var j = 0; j < 25; j++) {
-        if (j < 10) {
-          time = `0${j}`;
-        } else {
-          time = j;
-        }
-        nodeConfigs[i].data.datasets[0].data.push({
-          x: `2022-03-${day} ${time}:00:00`,
-          y: getRandomInt(minValue[sensorIndex], maxValue[sensorIndex]),
-        });
-      }
-    }
-
-    for (var j = 0; j < 19; j++) {
-      if (j < 10) {
-        time = `0${j}`;
-      } else {
-        time = j;
-      }
-      nodeConfigs[i].data.datasets[0].data.push({
-        x: `2022-03-${today} ${time}:00:00`,
-        y: getRandomInt(minValue[sensorIndex], maxValue[sensorIndex]),
-      });
-    }
-
-    nodeCharts[i].update();
-  }
-
-  updateTimeScaleAll(xMin, xMax, false);
-  highlightChoice(sensorIndex);
 }
 
 function updateTimeScaleAll(start, end, fromCalendar) {
@@ -252,8 +190,10 @@ function updateTimeScaleAll(start, end, fromCalendar) {
 }
 
 async function updateDataRealtimeAll(sensorType) {
-  await getLatestData().then((data) => {
-    if (data !== null) {
+  const hubMacAddress = document.querySelector("#firstHub").innerHTML
+  await getLatestData(hubMacAddress).then((response) => {
+    if (response !== null) {
+      data = response.data[0]
       if (data.timestamp != lastEntryTimestamp) {
         lastEntryTimestamp = data.timestamp;
 
@@ -269,8 +209,10 @@ async function updateDataRealtimeAll(sensorType) {
 }
 
 async function updateTimeframeRealtimeAll() {
-  await getLatestData().then((data) => {
-    if (data !== null) {
+  const hubMacAddress = document.querySelector("#firstHub").innerHTML
+  await getLatestData(hubMacAddress).then((response) => {
+    if (response !== null) {
+      data = response.data[0]
       var start = data.timestamp;
       var end = data.timestamp;
 

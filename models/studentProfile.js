@@ -6,7 +6,12 @@ const profileSchema = new Schema({
   groups: [
     {
       groupName: { type: String },
-      nodes: [String],
+      nodes: [
+        {
+          macAddress: String,
+          codeName: String,
+        },
+      ],
     },
   ],
   user: {

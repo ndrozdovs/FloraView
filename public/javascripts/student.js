@@ -4,7 +4,7 @@ function addListenerToButtons() {
   var groupButtons = document.querySelectorAll("button.custom");
   groupButtons.forEach((button) => {
     button.addEventListener("click", async function () {
-      populateNodesAsync(this.id);
+      populateNodesAsync(this.id)
     });
   });
 }
@@ -12,7 +12,6 @@ function addListenerToButtons() {
 // Associate respective group and node pairings and display them
 function populateNodes(groupId, groupNodeData) {
   const nodeHeader = document.querySelector("#nodeList"); // Select nodes currently being shown
-  var customFlag = true;
 
   // Remove all nodes currently being displayed
   var child = nodeHeader.lastElementChild;
@@ -24,19 +23,13 @@ function populateNodes(groupId, groupNodeData) {
   // Create new node list based on groupNodeData map
   for (node of groupNodeData[groupId]) {
     const newNode = document.createElement("button");
-    newNode.innerHTML = node;
+    newNode.innerHTML = node.codeName;
     newNode.classList = "btn blackBorder shadow-none mx-1";
-    newNode.id = node.replace(/ /g, "");
-    if (customFlag) {
-      newNode.onclick = function () {
-        realtimeGraphs(newNode);
-      };
-      customFlag = false;
-    } else {
-      newNode.onclick = function () {
-        updateGraphs(newNode);
-      };
-    }
+    newNode.id = node.codeName.replace(/ /g, "");
+    newNode.title = node.macAddress;
+    newNode.onclick = function () {
+      realtimeGraphs(newNode);
+    };
     nodeHeader.appendChild(newNode);
   }
 

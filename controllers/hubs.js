@@ -5,39 +5,56 @@ const moment = require("moment"); // require
 
 exports.getHub = async (req, res, next) => {
   Hub.findOne({ hubMacAddress: req.query.hubMacAddress })
-  .then((hub) =>{
-    Node.findById(hub.nodes[0])
-    .then((node) => {
-      return res.status(200).json(node)
+    .then((hub) => {
+      Node.findById(hub.nodes[0])
+        .then((node) => {
+          return res.status(200).json(node);
+        })
+        .catch((err) => {
+          console.log(err);
+          res.status(500).json({ error: err });
+        });
     })
     .catch((err) => {
       console.log(err);
-      res.status(500).json({error: err});
+      res.status(500).json({ error: err });
     });
-  })
-  .catch((err) => {
-    console.log(err);
-    res.status(500).json({error: err});
-  });
 };
 
 exports.getLatest = async (req, res, next) => {
   Hub.findOne({ hubMacAddress: req.query.hubMacAddress })
-  .then((hub) =>{
-    Node.findById(hub.nodes[0])
-    .then((response) => {
-      response.data = response.data[response.data.length - 1]
-      return res.status(200).json(response)
+    .then((hub) => {
+      Node.findById(hub.nodes[0])
+        .then((response) => {
+          response.data = response.data[response.data.length - 1];
+          return res.status(200).json(response);
+        })
+        .catch((err) => {
+          console.log(err);
+          res.status(500).json({ error: err });
+        });
     })
     .catch((err) => {
       console.log(err);
-      res.status(500).json({error: err});
+      res.status(500).json({ error: err });
     });
-  })
-  .catch((err) => {
-    console.log(err);
-    res.status(500).json({error: err});
-  });
+};
+
+exports.getAvailableNodes = async (req, res, next) => {
+  Hub.findOne({ hubMacAddress: req.query.hubMacAddress })
+    .then(async function (hub) {
+      let nodeList = [];
+      for (node of hub.nodes) {
+        let response = await Node.findById(node);
+        nodeList.push({nodeMacAddress: response.nodeMacAddress, codeName: response.codeName});
+      }
+      console.log(nodeList);
+      return res.status(200).json(nodeList);
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json({ error: err });
+    });
 };
 
 exports.addNodeData = async (req, res, next) => {
@@ -54,7 +71,7 @@ exports.addNodeData = async (req, res, next) => {
   numberFound = await Node.countDocuments({ nodeMacAddress: req.body.nodeMacAddress });
 
   if (numberFound === 0) {
-    const newNode = new Node({ nodeMacAddress: req.body.nodeMacAddress });
+    const newNode = new Node({ nodeMacAddress: req.body.nodeMacAddress, codeName: "Node " + String(hub.nodes.length + 1)});
     await newNode.save();
   }
 

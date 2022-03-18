@@ -6,6 +6,8 @@ router.get("/", HubsController.getHub);
 
 router.get("/latest", HubsController.getLatest);
 
+router.get("/nodes", HubsController.getAvailableNodes);
+
 router.post("/", HubsController.addNodeData);
 
 router.delete("/", HubsController.deleteAllNodes);

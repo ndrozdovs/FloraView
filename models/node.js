@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 
 var nodeSchema = new mongoose.Schema({
   nodeMacAddress: String,
+  codeName: String,
   data: [
     {
       temp: String,
