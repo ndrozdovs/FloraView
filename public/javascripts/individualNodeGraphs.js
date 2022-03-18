@@ -41,18 +41,18 @@ function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min) + min); //The maximum is exclusive and the minimum is inclusive
 }
 
-async function getHubData(hubMacAddress) {
+async function getNodeData(nodeMacAddress) {
   const response = await fetch('http://localhost:3000/hubs?' + new URLSearchParams({
-    hubMacAddress: hubMacAddress,
+    nodeMacAddress: nodeMacAddress,
   }))
   const data = await response.json();
 
   return data;
 }
 
-async function getLatestData(hubMacAddress) {
+async function getLatestData(nodeMacAddress) {
   const response = await fetch('http://localhost:3000/hubs/latest?' + new URLSearchParams({
-    hubMacAddress: hubMacAddress,
+    nodeMacAddress: nodeMacAddress,
   }))
   const data = await response.json();
 
@@ -82,13 +82,12 @@ async function realtimeGraphs(node) {
   document.querySelector("#individualGraphs").classList.remove("removed");
   document.querySelector("#allGraphs").classList.add("removed");
   document.querySelector("#allGraphButtons").classList.add("hidden");
-  const hubMacAddress = document.querySelector("#firstHub").innerHTML
 
   for (var i = 0; i < 4; i++) {
     sensorConfigs[i].data.datasets[0].data = [];
   }
 
-  await getHubData(hubMacAddress).then((response) => {
+  await getNodeData(getCurrentNode()).then((response) => {
     for (var subData of response.data) {
       sensorConfigs[0].data.datasets[0].data.push({
         x: subData.timestamp,
@@ -120,7 +119,6 @@ async function realtimeGraphs(node) {
     }
 
     updateVar = setInterval(updateDataRealtime, 20000);
-    highlightNodes(node);
   });
 }
 
@@ -145,8 +143,7 @@ function updateTimeScale(start, end, fromCalendar) {
 }
 
 async function updateDataRealtime() {
-  const hubMacAddress = document.querySelector("#firstHub").innerHTML
-  await getLatestData(hubMacAddress).then((response) => {
+  await getLatestData(getCurrentNode()).then((response) => {
     if (response !== null) {
       data = response.data[0]
       if (data.timestamp != lastEntryTimestamp) {
@@ -181,8 +178,7 @@ async function updateDataRealtime() {
 }
 
 async function updateTimeframeRealtime() {
-  const hubMacAddress = document.querySelector("#firstHub").innerHTML
-  await getLatestData(hubMacAddress).then((response) => {
+  await getLatestData(getCurrentNode()).then((response) => {
     if (response !== null) {
       data = response.data[0]
       var start = data.timestamp;

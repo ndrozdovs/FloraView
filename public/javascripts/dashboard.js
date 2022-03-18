@@ -11,6 +11,16 @@ function addListenerToButtons() {
   });
 }
 
+function getCurrentNode(){
+  const nodeHeader = document.querySelector("#nodeList");
+
+  for(let child of nodeHeader.children){
+    if(child.classList.contains("highlightButton")){
+      return child.title
+    }
+  }
+}
+
 // Associate respective group and node pairings and display them
 function populateNodes(groupId, groupNodeData, groupStudentsData) {
   const nodeHeader = document.querySelector("#nodeList"); // Select nodes currently being shown
@@ -46,6 +56,7 @@ function populateNodes(groupId, groupNodeData, groupStudentsData) {
     newNode.id = node.codeName.replace(/ /g, "");
     newNode.title = node.macAddress;
     newNode.onclick = function () {
+      highlightNodes(newNode);
       realtimeGraphs(newNode);
     };
     nodeHeader.appendChild(newNode);
@@ -56,6 +67,7 @@ function populateNodes(groupId, groupNodeData, groupStudentsData) {
   allNodes.classList = "btn blackBorder shadow-none mx-1";
   allNodes.id = "allNodes";
   allNodes.onclick = function () {
+    highlightNodes(allNodes);
     showAllGraphs(allNodes);
   };
   nodeHeader.appendChild(allNodes);
@@ -70,6 +82,7 @@ function populateNodes(groupId, groupNodeData, groupStudentsData) {
   }
 
   initAllGraphs(allNodes);
+  highlightNodes(nodeHeader.children[0]);
   realtimeGraphs(nodeHeader.children[0]);
 }
 
@@ -149,9 +162,9 @@ async function getAllNodes(hubMacAddress) {
   return data;
 }
 
-async function getHubData(hubMacAddress) {
+async function getNodeData(nodeMacAddress) {
   const response = await fetch('http://localhost:3000/hubs?' + new URLSearchParams({
-    hubMacAddress: hubMacAddress,
+    nodeMacAddress: nodeMacAddress,
   }))
   const data = await response.json();
 
@@ -226,8 +239,7 @@ async function interact() {
   }
 
   $("a.downloadData").click(async function (e) {
-    const hubMacAddress = document.querySelector("#firstHub").innerHTML
-    const rawData = await getHubData(hubMacAddress);
+    const rawData = await getNodeData(getCurrentNode());
     let data = [[]]
     let row = []
     data.push(["Node MAC Address", "Timestamp", "Temperature", "pH", "Light", "Moisture"])

@@ -3,17 +3,26 @@ const Hub = require("../models/hub");
 const Node = require("../models/node");
 const moment = require("moment"); // require
 
-exports.getHub = async (req, res, next) => {
+exports.getNodeData = async (req, res, next) => {
+  Node.findOne({ nodeMacAddress: req.query.nodeMacAddress })
+    .then((response) => {
+      return res.status(200).json(response);
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json({ error: err });
+    });
+};
+
+exports.getHubData = async (req, res, next) => {
   Hub.findOne({ hubMacAddress: req.query.hubMacAddress })
-    .then((hub) => {
-      Node.findById(hub.nodes[0])
-        .then((node) => {
-          return res.status(200).json(node);
-        })
-        .catch((err) => {
-          console.log(err);
-          res.status(500).json({ error: err });
-        });
+    .then(async function (hub) {
+      let nodeData = [];
+      for (let node of hub.nodes) {
+        let response = await Node.findById(node);
+        nodeData.push(response);
+      }
+      return res.status(200).json(nodeData);
     })
     .catch((err) => {
       console.log(err);
@@ -22,17 +31,27 @@ exports.getHub = async (req, res, next) => {
 };
 
 exports.getLatest = async (req, res, next) => {
+  Node.findOne({ nodeMacAddress: req.query.nodeMacAddress })
+  .then((response) => {
+    response.data = response.data[response.data.length - 1];
+    return res.status(200).json(response);
+  })
+  .catch((err) => {
+    console.log(err);
+    res.status(500).json({ error: err });
+  });
+};
+
+exports.getLatestHubData = async (req, res, next) => {
   Hub.findOne({ hubMacAddress: req.query.hubMacAddress })
-    .then((hub) => {
-      Node.findById(hub.nodes[0])
-        .then((response) => {
-          response.data = response.data[response.data.length - 1];
-          return res.status(200).json(response);
-        })
-        .catch((err) => {
-          console.log(err);
-          res.status(500).json({ error: err });
-        });
+    .then(async function (hub) {
+      let nodeData = [];
+      for (let node of hub.nodes) {
+        let response = await Node.findById(node);
+        response.data = response.data[response.data.length - 1];
+        nodeData.push(response);
+      }
+      return res.status(200).json(nodeData);
     })
     .catch((err) => {
       console.log(err);
@@ -44,11 +63,10 @@ exports.getAvailableNodes = async (req, res, next) => {
   Hub.findOne({ hubMacAddress: req.query.hubMacAddress })
     .then(async function (hub) {
       let nodeList = [];
-      for (node of hub.nodes) {
+      for (let node of hub.nodes) {
         let response = await Node.findById(node);
-        nodeList.push({nodeMacAddress: response.nodeMacAddress, codeName: response.codeName});
+        nodeList.push({ nodeMacAddress: response.nodeMacAddress, codeName: response.codeName });
       }
-      console.log(nodeList);
       return res.status(200).json(nodeList);
     })
     .catch((err) => {
@@ -71,7 +89,7 @@ exports.addNodeData = async (req, res, next) => {
   numberFound = await Node.countDocuments({ nodeMacAddress: req.body.nodeMacAddress });
 
   if (numberFound === 0) {
-    const newNode = new Node({ nodeMacAddress: req.body.nodeMacAddress, codeName: "Node " + String(hub.nodes.length + 1)});
+    const newNode = new Node({ nodeMacAddress: req.body.nodeMacAddress, codeName: "Node " + String(hub.nodes.length + 1) });
     await newNode.save();
   }
 
@@ -85,21 +103,4 @@ exports.addNodeData = async (req, res, next) => {
   }
 
   res.status(201).json({ message: "Added data successfully" });
-};
-
-exports.deleteAllNodes = (req, res, next) => {
-  const id = req.params.id;
-  Node.deleteMany({})
-    .exec()
-    .then((result) => {
-      res.status(200).json({
-        message: "All nodes deleted",
-      });
-    })
-    .catch((err) => {
-      console.log(err);
-      res.status(500).json({
-        error: err,
-      });
-    });
 };

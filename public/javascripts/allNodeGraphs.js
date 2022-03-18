@@ -13,6 +13,24 @@ minValue = [15, 4, 30, 50];
 maxValue = [25, 10, 60, 100];
 nodeElements = [];
 
+async function getHubData(hubMacAddress) {
+  const response = await fetch('http://localhost:3000/hubs/hub?' + new URLSearchParams({
+    hubMacAddress: hubMacAddress,
+  }))
+  const data = await response.json();
+
+  return data;
+}
+
+async function getLatestHubData(hubMacAddress) {
+  const response = await fetch('http://localhost:3000/hubs/latestHubData?' + new URLSearchParams({
+    hubMacAddress: hubMacAddress,
+  }))
+  const data = await response.json();
+
+  return data;
+}
+
 function initAllGraphs(node) {
   let elementCounter = 0;
   nodeElements = [];
@@ -113,7 +131,6 @@ function showAllGraphs(node) {
   document.querySelector("#individualGraphs").classList.add("removed");
   document.querySelector("#allGraphs").classList.remove("removed");
   document.querySelector("#allGraphButtons").classList.remove("hidden");
-  highlightNodes(node);
   displayData(0);
 }
 
@@ -136,27 +153,31 @@ async function realtimeGraph(sensorIndex) {
       break;
   }
 
-  nodeConfigs[0].data.datasets[0].data = [];
+  for (var i = 0; i < nodeElements.length; i++){
+    nodeConfigs[i].data.datasets[0].data = [];
+  }
 
   await getHubData(hubMacAddress).then((response) => {
-    for (var subData of response.data) {
-      nodeConfigs[0].data.datasets[0].data.push({
-        x: subData.timestamp,
-        y: subData[sensorType],
-      });
-
-      lastEntryTimestamp = subData.timestamp;
+    for (var i = 0; i < nodeElements.length; i++){
+      for (var subData of response[i].data) {
+        nodeConfigs[i].data.datasets[0].data.push({
+          x: subData.timestamp,
+          y: subData[sensorType],
+        });
+  
+        lastEntryTimestamp = subData.timestamp;
+      }
+  
+      updateTimeframeRealtimeAll();
+  
+      if (typeof updateVar !== "undefined") {
+        clearInterval(updateVar);
+      }
+  
+      updateVar = setInterval(function () {
+        updateDataRealtimeAll(sensorType);
+      }, 20000);
     }
-
-    updateTimeframeRealtimeAll();
-
-    if (typeof updateVar !== "undefined") {
-      clearInterval(updateVar);
-    }
-
-    updateVar = setInterval(function () {
-      updateDataRealtimeAll(sensorType);
-    }, 20000);
   });
 
   highlightChoice(sensorIndex);
@@ -191,18 +212,20 @@ function updateTimeScaleAll(start, end, fromCalendar) {
 
 async function updateDataRealtimeAll(sensorType) {
   const hubMacAddress = document.querySelector("#firstHub").innerHTML
-  await getLatestData(hubMacAddress).then((response) => {
+  await getLatestHubData(hubMacAddress).then((response) => {
     if (response !== null) {
-      data = response.data[0]
-      if (data.timestamp != lastEntryTimestamp) {
-        lastEntryTimestamp = data.timestamp;
-
-        nodeConfigs[0].data.datasets[0].data.push({
-          x: data.timestamp,
-          y: data[sensorType],
-        });
-
-        nodeCharts[0].update();
+      for (var i = 0; i < nodeElements.length; i++){
+        data = response[i].data[0]
+        if (data.timestamp != lastEntryTimestamp) {
+          lastEntryTimestamp = data.timestamp;
+  
+          nodeConfigs[i].data.datasets[0].data.push({
+            x: data.timestamp,
+            y: data[sensorType],
+          });
+  
+          nodeCharts[i].update();
+        }
       }
     }
   });
@@ -210,29 +233,31 @@ async function updateDataRealtimeAll(sensorType) {
 
 async function updateTimeframeRealtimeAll() {
   const hubMacAddress = document.querySelector("#firstHub").innerHTML
-  await getLatestData(hubMacAddress).then((response) => {
+  await getLatestHubData(hubMacAddress).then((response) => {
     if (response !== null) {
-      data = response.data[0]
-      var start = data.timestamp;
-      var end = data.timestamp;
-
-      if (start[14] >= "3") {
-        start = start.replace(start.substr(14, 5), "30:00");
-        var nextNum = parseInt(start.substr(11, 2)) + 1;
-        if (nextNum > 9) {
-          end = start.replace(start.substr(11, 8), `${nextNum}:00:00`);
+      for (var i = 0; i < nodeElements.length; i++){
+        data = response[i].data[0]
+        var start = data.timestamp;
+        var end = data.timestamp;
+  
+        if (start[14] >= "3") {
+          start = start.replace(start.substr(14, 5), "30:00");
+          var nextNum = parseInt(start.substr(11, 2)) + 1;
+          if (nextNum > 9) {
+            end = start.replace(start.substr(11, 8), `${nextNum}:00:00`);
+          } else {
+            end = start.replace(start.substr(11, 8), `0${nextNum}:00:00`);
+          }
         } else {
-          end = start.replace(start.substr(11, 8), `0${nextNum}:00:00`);
+          start = start.replace(start.substr(14, 5), "00:00");
+          end = start.replace(start.substr(14, 5), "30:00");
         }
-      } else {
-        start = start.replace(start.substr(14, 5), "00:00");
-        end = start.replace(start.substr(14, 5), "30:00");
+  
+        nodeConfigs[i].options.scales.x.min = start;
+        nodeConfigs[i].options.scales.x.max = end;
+        nodeConfigs[i].options.scales.x.time.unit = "minute";
+        nodeCharts[i].update();
       }
-
-      nodeConfigs[0].options.scales.x.min = start;
-      nodeConfigs[0].options.scales.x.max = end;
-      nodeConfigs[0].options.scales.x.time.unit = "minute";
-      nodeCharts[0].update();
     }
   });
 }
