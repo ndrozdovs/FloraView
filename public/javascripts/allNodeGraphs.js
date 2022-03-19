@@ -14,18 +14,24 @@ maxValue = [25, 10, 60, 100];
 nodeElements = [];
 
 async function getHubData(hubMacAddress) {
-  const response = await fetch('http://localhost:3000/hubs/hub?' + new URLSearchParams({
-    hubMacAddress: hubMacAddress,
-  }))
+  const response = await fetch(
+    "http://localhost:3000/hubs/hub?" +
+      new URLSearchParams({
+        hubMacAddress: hubMacAddress,
+      })
+  );
   const data = await response.json();
 
   return data;
 }
 
 async function getLatestHubData(hubMacAddress) {
-  const response = await fetch('http://localhost:3000/hubs/latestHubData?' + new URLSearchParams({
-    hubMacAddress: hubMacAddress,
-  }))
+  const response = await fetch(
+    "http://localhost:3000/hubs/latestHubData?" +
+      new URLSearchParams({
+        hubMacAddress: hubMacAddress,
+      })
+  );
   const data = await response.json();
 
   return data;
@@ -36,18 +42,10 @@ function initAllGraphs(node) {
   nodeElements = [];
   nodeCharts = [];
 
-  document.querySelector("#temperatureButton").addEventListener("click", function () {
-    displayData(0);
-  });
-  document.querySelector("#pHButton").addEventListener("click", function () {
-    displayData(1);
-  });
-  document.querySelector("#lightButton").addEventListener("click", function () {
-    displayData(2);
-  });
-  document.querySelector("#moistureButton").addEventListener("click", function () {
-    displayData(3);
-  });
+  document.querySelector("#temperatureButton").addEventListener("click", displayData);
+  document.querySelector("#pHButton").addEventListener("click", displayData);
+  document.querySelector("#lightButton").addEventListener("click", displayData);
+  document.querySelector("#moistureButton").addEventListener("click", displayData);
 
   const nodeHeader = document.querySelector("#nodeList");
   const sectionHeader = document.querySelector("#allGraphs");
@@ -131,12 +129,12 @@ function showAllGraphs(node) {
   document.querySelector("#individualGraphs").classList.add("removed");
   document.querySelector("#allGraphs").classList.remove("removed");
   document.querySelector("#allGraphButtons").classList.remove("hidden");
-  displayData(0);
+  displayData();
 }
 
 async function realtimeGraph(sensorIndex) {
   var sensorType;
-  const hubMacAddress = document.querySelector("#firstHub").innerHTML
+  const hubMacAddress = document.querySelector("#firstHub").innerHTML;
 
   switch (sensorIndex) {
     case 0:
@@ -153,27 +151,27 @@ async function realtimeGraph(sensorIndex) {
       break;
   }
 
-  for (var i = 0; i < nodeElements.length; i++){
+  for (var i = 0; i < nodeElements.length; i++) {
     nodeConfigs[i].data.datasets[0].data = [];
   }
 
   await getHubData(hubMacAddress).then((response) => {
-    for (var i = 0; i < nodeElements.length; i++){
+    for (var i = 0; i < nodeElements.length; i++) {
       for (var subData of response[i].data) {
         nodeConfigs[i].data.datasets[0].data.push({
           x: subData.timestamp,
           y: subData[sensorType],
         });
-  
+
         lastEntryTimestamp = subData.timestamp;
       }
-  
+
       updateTimeframeRealtimeAll();
-  
+
       if (typeof updateVar !== "undefined") {
         clearInterval(updateVar);
       }
-  
+
       updateVar = setInterval(function () {
         updateDataRealtimeAll(sensorType);
       }, 20000);
@@ -183,7 +181,15 @@ async function realtimeGraph(sensorIndex) {
   highlightChoice(sensorIndex);
 }
 
-function displayData(sensorIndex) {
+function displayData() {
+  let sensorIndex;
+
+  if (this.name.length !== 0) {
+    sensorIndex = parseInt(this.name);
+  } else {
+    sensorIndex = 0;
+  }
+
   if (typeof updateVar !== "undefined") {
     clearInterval(updateVar);
   }
@@ -211,19 +217,19 @@ function updateTimeScaleAll(start, end, fromCalendar) {
 }
 
 async function updateDataRealtimeAll(sensorType) {
-  const hubMacAddress = document.querySelector("#firstHub").innerHTML
+  const hubMacAddress = document.querySelector("#firstHub").innerHTML;
   await getLatestHubData(hubMacAddress).then((response) => {
     if (response !== null) {
-      for (var i = 0; i < nodeElements.length; i++){
-        data = response[i].data[0]
+      for (var i = 0; i < nodeElements.length; i++) {
+        data = response[i].data[0];
         if (data.timestamp != lastEntryTimestamp) {
           lastEntryTimestamp = data.timestamp;
-  
+
           nodeConfigs[i].data.datasets[0].data.push({
             x: data.timestamp,
             y: data[sensorType],
           });
-  
+
           nodeCharts[i].update();
         }
       }
@@ -232,14 +238,14 @@ async function updateDataRealtimeAll(sensorType) {
 }
 
 async function updateTimeframeRealtimeAll() {
-  const hubMacAddress = document.querySelector("#firstHub").innerHTML
+  const hubMacAddress = document.querySelector("#firstHub").innerHTML;
   await getLatestHubData(hubMacAddress).then((response) => {
     if (response !== null) {
-      for (var i = 0; i < nodeElements.length; i++){
-        data = response[i].data[0]
+      for (var i = 0; i < nodeElements.length; i++) {
+        data = response[i].data[0];
         var start = data.timestamp;
         var end = data.timestamp;
-  
+
         if (start[14] >= "3") {
           start = start.replace(start.substr(14, 5), "30:00");
           var nextNum = parseInt(start.substr(11, 2)) + 1;
@@ -252,7 +258,7 @@ async function updateTimeframeRealtimeAll() {
           start = start.replace(start.substr(14, 5), "00:00");
           end = start.replace(start.substr(14, 5), "30:00");
         }
-  
+
         nodeConfigs[i].options.scales.x.min = start;
         nodeConfigs[i].options.scales.x.max = end;
         nodeConfigs[i].options.scales.x.time.unit = "minute";
