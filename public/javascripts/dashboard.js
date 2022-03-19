@@ -288,6 +288,7 @@ async function interact() {
       newDiv.id = node.codeName.replace(/ /g, "");
       newInput.type = "checkbox";
       newInput.value = node.nodeMacAddress + " " + node.codeName;
+      newInput.name = "nodeSelector"
       newLabel.innerHTML = node.codeName + " (" + node.nodeMacAddress + ")";
 
       nodeHeader.appendChild(newDiv);
@@ -298,7 +299,7 @@ async function interact() {
   
   // When new group is created
   $("#submitGroupButton").click(async function () {
-    var checked = document.querySelectorAll("input[type=checkbox]:checked"); // Selected nodes (checkboxes)
+    var checked = document.querySelectorAll("input[name=nodeSelector]:checked"); // Selected nodes (checkboxes)
 
     // Remove "Create a student group" button if it exists
     if (document.contains(document.querySelector("#createGroupButton"))) {
@@ -352,6 +353,7 @@ async function interact() {
       newDiv.id = student.replace(/ /g, "");
       newInput.type = "checkbox";
       newInput.value = student;
+      newInput.name = "studentSelector"
       newLabel.innerHTML = student;
 
       studentHeader.appendChild(newDiv);
@@ -361,7 +363,7 @@ async function interact() {
   });
 
   $("#submitStudentListButton").click(async function () {
-    var checked = document.querySelectorAll("input[type=checkbox]:checked"); // Selected students (checkboxes)
+    var checked = document.querySelectorAll("input[name=studentSelector]:checked"); // Selected students (checkboxes)
 
     newStudents = []; // Add new group to group node data
 
