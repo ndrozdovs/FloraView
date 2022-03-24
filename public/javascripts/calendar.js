@@ -2,20 +2,20 @@ window.addEventListener("load", initCalendar);
 
 function initCalendar() {
   $(function () {
-    var start = moment().subtract(0, "days");
-    var end = moment();
-
     function cb(start, end) {
       updateTimeScaleAll(start.format("YYYY-MM-DD") + " 00:00:00", end.format("YYYY-MM-DD") + " 24:00:00", true);
       updateTimeScale(start.format("YYYY-MM-DD") + " 00:00:00", end.format("YYYY-MM-DD") + " 24:00:00", true);
-      $("#reportrange span").html(start.format("MMMM D, YYYY") + " - " + end.format("MMMM D, YYYY"));
+      if(start.format("YYYY-MM-DD")[0] !== "1"){
+        $("#reportrange span").html(start.format("MMMM D, YYYY") + " - " + end.format("MMMM D, YYYY"));
+      }
     }
 
     $("#reportrange").daterangepicker(
       {
-        startDate: start,
-        endDate: end,
+        startDate: moment().subtract(30, "year").startOf("year"),
+        endDate: moment().subtract(30, "year").endOf("year"),
         ranges: {
+          "Latest Data": [moment().subtract(30, "year").startOf("year"), moment().subtract(30, "year").endOf("year")],
           Today: [moment(), moment()],
           Yesterday: [moment().subtract(1, "days"), moment().subtract(1, "days")],
           "Last 7 Days": [moment().subtract(6, "days"), moment()],
@@ -25,7 +25,5 @@ function initCalendar() {
       },
       cb
     );
-
-    cb(start, end);
   });
 }

@@ -164,6 +164,8 @@ async function realtimeGraph(sensorIndex) {
         });
 
         lastEntryTimestamp = subData.timestamp;
+
+        nodeCharts[i].update()
       }
 
       updateTimeframeRealtimeAll();
@@ -172,14 +174,18 @@ async function realtimeGraph(sensorIndex) {
         clearInterval(updateVar);
       }
 
-      updateVar = setInterval(function () {
-        updateDataRealtimeAll(sensorType);
-      }, 20000);
+      updateVar = setIntervalImmediately(updateDataRealtimeAll, 20000);
     }
   });
 
   highlightChoice(sensorIndex);
 }
+
+function setIntervalImmediately(func, interval) {
+  func();
+  return setInterval(func, interval);
+}
+
 
 function displayData() {
   let sensorIndex;
@@ -197,10 +203,14 @@ function displayData() {
 }
 
 function updateTimeScaleAll(start, end, fromCalendar) {
+  if(start[0] == '1'){
+    updateTimeframeRealtimeAll()
+    return;
+  }
   xMin = start;
   xMax = end;
 
-  for (var i = 1; i < nodeElements.length; i++) {
+  for (var i = 0; i < nodeElements.length; i++) {
     nodeConfigs[i].options.scales.x.min = xMin;
     nodeConfigs[i].options.scales.x.max = xMax;
 
@@ -238,34 +248,57 @@ async function updateDataRealtimeAll(sensorType) {
 }
 
 async function updateTimeframeRealtimeAll() {
-  const hubMacAddress = document.querySelector("#firstHub").innerHTML;
-  await getLatestHubData(hubMacAddress).then((response) => {
-    if (response !== null) {
-      for (var i = 0; i < nodeElements.length; i++) {
-        data = response[i].data[0];
-        var start = data.timestamp;
-        var end = data.timestamp;
+  if(document.querySelector("#allNodes").classList.contains("highlightButton")){
+    const hubMacAddress = document.querySelector("#firstHub").innerHTML;
+    await getLatestHubData(hubMacAddress).then((response) => {
+      if (response !== null) {
+        var latestDataDate = moment(data.timestamp.substr(0,10), "YYYY-MM-DD");
+        $("#reportrange span").html(latestDataDate.format("MMMM D, YYYY") + " - " + latestDataDate.format("MMMM D, YYYY"));
+        for (var i = 0; i < nodeElements.length; i++) {
+          data = response[i].data[0];
+          var start = data.timestamp;
+          var end = data.timestamp;
 
-        if (start[14] >= "3") {
-          start = start.replace(start.substr(14, 5), "30:00");
-          var nextNum = parseInt(start.substr(11, 2)) + 1;
-          if (nextNum > 9) {
-            end = start.replace(start.substr(11, 8), `${nextNum}:00:00`);
-          } else {
-            end = start.replace(start.substr(11, 8), `0${nextNum}:00:00`);
+          switch(end[14]){
+            case "0": 
+              start = start.replace(start.substr(14, 5), "00:00");
+              end = start.replace(start.substr(14, 5), "10:00");
+              break;
+            case "1":
+              start = start.replace(start.substr(14, 5), "10:00");
+              end = start.replace(start.substr(14, 5), "20:00");
+              break;
+            case "2":
+              start = start.replace(start.substr(14, 5), "20:00");
+              end = start.replace(start.substr(14, 5), "30:00");
+              break;
+            case "3":
+              start = start.replace(start.substr(14, 5), "30:00");
+              end = start.replace(start.substr(14, 5), "40:00");
+              break;
+            case "4":
+              start = start.replace(start.substr(14, 5), "40:00");
+              end = start.replace(start.substr(14, 5), "50:00");
+              break;
+            case "5":
+              start = start.replace(start.substr(14, 5), "50:00");
+              var nextNum = parseInt(start.substr(11, 2)) + 1;
+              if (nextNum > 9) {
+                end = start.replace(start.substr(11, 8), `${nextNum}:00:00`);
+              } else {
+                end = start.replace(start.substr(11, 8), `0${nextNum}:00:00`);
+              }
+              break;
           }
-        } else {
-          start = start.replace(start.substr(14, 5), "00:00");
-          end = start.replace(start.substr(14, 5), "30:00");
-        }
 
-        nodeConfigs[i].options.scales.x.min = start;
-        nodeConfigs[i].options.scales.x.max = end;
-        nodeConfigs[i].options.scales.x.time.unit = "minute";
-        nodeCharts[i].update();
+          nodeConfigs[i].options.scales.x.min = start;
+          nodeConfigs[i].options.scales.x.max = end;
+          nodeConfigs[i].options.scales.x.time.unit = "minute";
+          nodeCharts[i].update();
+        }
       }
-    }
-  });
+    });
+  }
 }
 
 function highlightChoice(buttonNum) {

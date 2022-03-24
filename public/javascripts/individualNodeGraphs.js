@@ -112,17 +112,30 @@ async function realtimeGraphs(node) {
       lastEntryTimestamp = subData.timestamp;
     }
 
-    updateTimeframeRealtime();
+    for (var i = 0; i < 4; i++) {
+      sensorCharts[i].update();
+    }
+
+    updateTimeframeRealtime()
 
     if (typeof updateVar !== "undefined") {
       clearInterval(updateVar);
     }
 
-    updateVar = setInterval(updateDataRealtime, 20000);
+    updateVar = setIntervalImmediately(updateDataRealtime, 20000);
   });
 }
 
+function setIntervalImmediately(func, interval) {
+  func();
+  return setInterval(func, interval);
+}
+
 function updateTimeScale(start, end, fromCalendar) {
+  if(start[0] == '1'){
+    updateTimeframeRealtime()
+    return;
+  }
   xMin = start;
   xMax = end;
 
@@ -178,31 +191,54 @@ async function updateDataRealtime() {
 }
 
 async function updateTimeframeRealtime() {
-  await getLatestData(getCurrentNode()).then((response) => {
-    if (response !== null) {
-      data = response.data[0]
-      var start = data.timestamp;
-      var end = data.timestamp;
-
-      if (start[14] >= "3") {
-        start = start.replace(start.substr(14, 5), "30:00");
-        var nextNum = parseInt(start.substr(11, 2)) + 1;
-        if (nextNum > 9) {
-          end = start.replace(start.substr(11, 8), `${nextNum}:00:00`);
-        } else {
-          end = start.replace(start.substr(11, 8), `0${nextNum}:00:00`);
+  if(!document.querySelector("#allNodes").classList.contains("highlightButton")){
+    await getLatestData(getCurrentNode()).then((response) => {
+      if (response !== null) {
+        data = response.data[0]
+        var start = data.timestamp;
+        var end = data.timestamp;
+        var latestDataDate = moment(data.timestamp.substr(0,10), "YYYY-MM-DD");
+        $("#reportrange span").html(latestDataDate.format("MMMM D, YYYY") + " - " + latestDataDate.format("MMMM D, YYYY"));
+      
+        switch(end[14]){
+          case "0": 
+            start = start.replace(start.substr(14, 5), "00:00");
+            end = start.replace(start.substr(14, 5), "10:00");
+            break;
+          case "1":
+            start = start.replace(start.substr(14, 5), "10:00");
+            end = start.replace(start.substr(14, 5), "20:00");
+            break;
+          case "2":
+            start = start.replace(start.substr(14, 5), "20:00");
+            end = start.replace(start.substr(14, 5), "30:00");
+            break;
+          case "3":
+            start = start.replace(start.substr(14, 5), "30:00");
+            end = start.replace(start.substr(14, 5), "40:00");
+            break;
+          case "4":
+            start = start.replace(start.substr(14, 5), "40:00");
+            end = start.replace(start.substr(14, 5), "50:00");
+            break;
+          case "5":
+            start = start.replace(start.substr(14, 5), "50:00");
+            var nextNum = parseInt(start.substr(11, 2)) + 1;
+            if (nextNum > 9) {
+              end = start.replace(start.substr(11, 8), `${nextNum}:00:00`);
+            } else {
+              end = start.replace(start.substr(11, 8), `0${nextNum}:00:00`);
+            }
+            break;
         }
-      } else {
-        start = start.replace(start.substr(14, 5), "00:00");
-        end = start.replace(start.substr(14, 5), "30:00");
+      
+        for (var i = 0; i < 4; i++) {
+          sensorConfigs[i].options.scales.x.min = start;
+          sensorConfigs[i].options.scales.x.max = end;
+          sensorConfigs[i].options.scales.x.time.unit = "minute";
+          sensorCharts[i].update();
+        }
       }
-
-      for (var i = 0; i < 4; i++) {
-        sensorConfigs[i].options.scales.x.min = start;
-        sensorConfigs[i].options.scales.x.max = end;
-        sensorConfigs[i].options.scales.x.time.unit = "minute";
-        sensorCharts[i].update();
-      }
-    }
-  });
+    });
+  }
 }
