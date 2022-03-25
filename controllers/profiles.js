@@ -1,5 +1,3 @@
-const mongoose = require("mongoose");
-const node = require("../models/node");
 const TeacherProfile = require("../models/profile");
 const StudentProfile = require("../models/studentProfile");
 const User = require("../models/user");

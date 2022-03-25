@@ -2,6 +2,7 @@ sensorConfigs = [];
 sensorCharts = [];
 
 var rawData;
+var numDaysIndiv;
 var displayCurrentData = true;
 var xMin = "0";
 var xMax = "0";
@@ -10,32 +11,32 @@ const socket = io("http://localhost:3000");
 socket.on("connection");
 
 socket.on("newData", (data) => {
-  // rawData is undefined, exiting 
+  // rawData is undefined, exiting
   if (typeof rawData === "undefined") {
     return;
   }
 
-  if(getCurrentNode() === data.nodeMacAddress){
+  if (getCurrentNode() === data.nodeMacAddress) {
     rawData[0].push({
       x: data.timestamp,
       y: data.temp,
     });
-  
+
     rawData[1].push({
       x: data.timestamp,
       y: data.ph,
     });
-  
+
     rawData[2].push({
       x: data.timestamp,
       y: data.light,
     });
-  
+
     rawData[3].push({
       x: data.timestamp,
       y: data.moist,
     });
-  
+
     updateDataRealtime(data);
     updateTimeframeRealtime(data);
   }
@@ -107,7 +108,7 @@ function initGraphs() {
   }
 }
 
-async function realtimeGraphs(node) {
+async function realtimeGraphs() {
   document.querySelector("#individualGraphs").classList.remove("removed");
   document.querySelector("#allGraphs").classList.add("removed");
   document.querySelector("#allGraphButtons").classList.add("hidden");
@@ -147,9 +148,8 @@ async function realtimeGraphs(node) {
     }
 
     updateTimeframeRealtime({ timestamp: rawData[0][rawData[0].length - 1]["x"] });
-    if(!displayCurrentData){
-      console.log("AVERAGE OUT")
-      averageOutData(1);
+    if (!displayCurrentData) {
+      averageOutData();
     }
   });
 }
@@ -174,8 +174,8 @@ function updateTimeScale(start, end, fromCalendar) {
   xMax = end;
   var a = moment(end.substr(0, 10), "YYYY-MM-DD");
   var b = moment(start.substr(0, 10), "YYYY-MM-DD");
-  var numDays = a.diff(b, "days") + 1;
-  averageOutData(numDays);
+  numDaysIndiv = a.diff(b, "days") + 1;
+  averageOutData();
 
   for (var i = 0; i < 4; i++) {
     sensorConfigs[i].options.scales.x.min = xMin;
@@ -193,40 +193,62 @@ function updateTimeScale(start, end, fromCalendar) {
   }
 }
 
-function averageOutData(numDays) {
+function averageOutData() {
   let latestData;
   let currentDataSum = 0;
   let currentDataCount = 0;
   let averageData = [];
-
-  console.log(sensorConfigs)
 
   for (var i = 0; i < 4; i++) {
     averageData = [];
     currentDataSum = 0;
     currentDataCount = 0;
     latestData = sensorConfigs[i].data.datasets[0].data.shift();
+    var latestDataTime = parseInt(latestData["x"].substr(11, 2)) + Math.round(numDaysIndiv / 2) - 1;
+    var latestDay = latestData["x"].substr(0, 10)
+    var time
+    let currentData
+    let dataRightBeforeCurrent = latestData
     currentDataSum += parseInt(latestData["y"]);
     currentDataCount++;
 
     while (sensorConfigs[i].data.datasets[0].data.length !== 0) {
-      let currentData = sensorConfigs[i].data.datasets[0].data.shift();
-      if (latestData["x"][12] === currentData["x"][12]) {
-        currentDataSum += parseInt(latestData["y"]);
-        currentDataCount++;
-      } else {
+      currentData = sensorConfigs[i].data.datasets[0].data.shift();
+      let currentDataTime = parseInt(currentData["x"].substr(11, 2));
+      let currentDay = currentData["x"].substr(0, 10)
+
+      if(latestDay !== currentDay){
         averageData.push({
-          x: currentData["x"].replace(currentData["x"].substr(14, 5), "00:00"),
+          x: dataRightBeforeCurrent["x"].replace(dataRightBeforeCurrent["x"].substr(17, 2), "00"),
           y: String(currentDataSum / currentDataCount),
         });
         currentDataSum = 0;
         currentDataCount = 0;
+        latestData = currentData;
+        latestDataTime = parseInt(latestData["x"].substr(11, 2)) + Math.round(numDaysIndiv / 2) - 1;
+        latestDay = latestData["x"].substr(0, 10)
       }
-      latestData = currentData;
+      else if (latestDataTime >= currentDataTime) {
+        currentDataSum += parseInt(latestData["y"]);
+        currentDataCount++;
+      } else {
+        time = moment(dataRightBeforeCurrent["x"], "YYYY-MM-DD HH:mm:ss").add(1, 'hour').format("YYYY-MM-DD HH:mm:ss");
+        averageData.push({
+          x: time.replace(time.substr(14, 5), "00:00"),
+          y: String(currentDataSum / currentDataCount),
+        });
+        currentDataSum = 0;
+        currentDataCount = 0;
+        latestData = currentData;
+        latestDataTime = parseInt(latestData["x"].substr(11, 2)) + Math.round(numDaysIndiv / 2) - 1;
+        latestDay = latestData["x"].substr(0, 10)
+      }
+
+      dataRightBeforeCurrent = currentData
     }
 
     averageData.push({
-      x: latestData["x"].replace(latestData["x"].substr(17, 2), "00"),
+      x: dataRightBeforeCurrent["x"].replace(dataRightBeforeCurrent["x"].substr(17, 2), "00"),
       y: String(currentDataSum / currentDataCount),
     });
     sensorConfigs[i].data.datasets[0].data = averageData;

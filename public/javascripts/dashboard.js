@@ -57,7 +57,7 @@ function populateNodes(groupId, groupNodeData, groupStudentsData) {
     newNode.title = node.macAddress;
     newNode.onclick = function () {
       highlightNodes(newNode);
-      realtimeGraphs(newNode);
+      realtimeGraphs();
     };
     nodeHeader.appendChild(newNode);
   }
@@ -68,7 +68,7 @@ function populateNodes(groupId, groupNodeData, groupStudentsData) {
   allNodes.id = "allNodes";
   allNodes.onclick = function () {
     highlightNodes(allNodes);
-    showAllGraphs(allNodes);
+    showAllGraphs();
   };
   nodeHeader.appendChild(allNodes);
 
@@ -83,7 +83,7 @@ function populateNodes(groupId, groupNodeData, groupStudentsData) {
 
   initAllGraphs(allNodes);
   highlightNodes(nodeHeader.children[0]);
-  realtimeGraphs(nodeHeader.children[0]);
+  realtimeGraphs();
 }
 
 function populateStudents(students, groupId){

@@ -1,4 +1,3 @@
-const mongoose = require("mongoose");
 const Hub = require("../models/hub");
 const Node = require("../models/node");
 const moment = require("moment"); // require
@@ -26,33 +25,6 @@ exports.getHubData = async (req, res, next) => {
     let nodeData = [];
     for (let node of hub.nodes) {
       let response = await Node.findById(node);
-      nodeData.push(response);
-    }
-    return res.status(200).json(nodeData);
-  } catch (err) {
-    console.log(err)
-    res.status(500).json({});
-  }
-};
-
-exports.getLatest = async (req, res, next) => {
-  try {
-   const node = await Node.findOne({nodeMacAddress: req.query.nodeMacAddress})
-   node.data = node.data[node.data.length - 1];
-   return res.status(200).json(node);
-  } catch (err) {
-    console.log(err)
-    res.status(500).json({});
-  }
-};
-
-exports.getLatestHubData = async (req, res, next) => {
-  try {
-    const hub = await Hub.findOne({ hubMacAddress: req.query.hubMacAddress })
-    let nodeData = [];
-    for (let node of hub.nodes) {
-      let response = await Node.findById(node);
-      response.data = response.data[response.data.length - 1];
       nodeData.push(response);
     }
     return res.status(200).json(nodeData);
