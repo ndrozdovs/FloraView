@@ -1,11 +1,72 @@
 nodeConfigs = [];
 nodeCharts = [];
 
-var xMin = "0";
-var xMax = "0";
-var timeUnit = "0";
 var updateVar;
 var lastEntryTimestamp;
+
+var currentSensor;
+var rawDataAll;
+var displayCurrentDataAll = true;
+var xMin = "0";
+var xMax = "0";
+
+socket.on("newDataAll", (data) => {
+  // rawDataAll is undefined, exiting
+  if (typeof rawDataAll === "undefined") {
+    return;
+  }
+
+  // Not our Hub, exiting
+  if (document.querySelector("#firstHub").innerHTML !== data.hubMacAddress) {
+    return;
+  }
+
+  for (let i = 0; i < rawDataAll.length; i++) {
+    if (rawDataAll[i].macAddress === data.nodeMacAddress) {
+      rawDataAll[i].data.push({
+        temp: data.temp,
+        ph: data.ph,
+        light: data.light,
+        moist: data.moist,
+        timestamp: data.timestamp,
+      });
+
+      updateDataRealtimeAll(data, i);
+      updateTimeframeRealtimeAll(data, i);
+    }
+  }
+});
+
+function initConfigs(numConifgs) {
+  for (var i = 0; i < numConifgs; i++) {
+    nodeConfigs.push({
+      type: "line",
+      data: {
+        datasets: [
+          {
+            data: [],
+          },
+        ],
+      },
+      options: {
+        scales: {
+          x: {
+            parsing: false,
+            min: "2022-03-03 00:00:00",
+            max: "2022-03-03 24:00:00",
+            type: "time",
+            time: {
+              unit: "hour",
+            },
+          },
+          y: {
+            beginAtZero: true,
+          },
+        },
+      },
+    });
+  }
+}
 
 buttons = ["Temperature", "pH", "Light", "Moisture"];
 colors = ["rgb(11, 245, 19)", "rgb(156, 75, 210)", "rgb(246, 168, 12)", "rgb(255, 99, 132)", "rgb(0,0,0)", "rgb(200, 75, 210)"];
@@ -22,17 +83,11 @@ async function getHubData(hubMacAddress) {
   );
   const data = await response.json();
 
-  return data;
-}
+  rawDataAll = [];
 
-async function getLatestHubData(hubMacAddress) {
-  const response = await fetch(
-    "http://localhost:3000/hubs/latestHubData?" +
-      new URLSearchParams({
-        hubMacAddress: hubMacAddress,
-      })
-  );
-  const data = await response.json();
+  for (var i = 0; i < nodeElements.length; i++) {
+    rawDataAll[i] = { macAddress: data[i].nodeMacAddress, data: [...data[i].data] };
+  }
 
   return data;
 }
@@ -92,37 +147,8 @@ function initAllGraphs(node) {
 
     nodeCharts.push(new Chart(document.getElementById(nodeElements[i] + "Chart"), nodeConfigs[i]));
   }
-}
 
-function initConfigs(numConifgs) {
-  for (var i = 0; i < numConifgs; i++) {
-    nodeConfigs.push({
-      type: "line",
-      data: {
-        datasets: [
-          {
-            data: [],
-          },
-        ],
-      },
-      options: {
-        scales: {
-          x: {
-            parsing: false,
-            min: "2022-03-03 00:00:00",
-            max: "2022-03-03 24:00:00",
-            type: "time",
-            time: {
-              unit: "hour",
-            },
-          },
-          y: {
-            beginAtZero: true,
-          },
-        },
-      },
-    });
-  }
+  getHubData(document.querySelector("#firstHub").innerHTML);
 }
 
 function showAllGraphs(node) {
@@ -133,21 +159,18 @@ function showAllGraphs(node) {
 }
 
 async function realtimeGraph(sensorIndex) {
-  var sensorType;
-  const hubMacAddress = document.querySelector("#firstHub").innerHTML;
-
   switch (sensorIndex) {
     case 0:
-      sensorType = "temp";
+      currentSensor = "temp";
       break;
     case 1:
-      sensorType = "ph";
+      currentSensor = "ph";
       break;
     case 2:
-      sensorType = "light";
+      currentSensor = "light";
       break;
     case 3:
-      sensorType = "moist";
+      currentSensor = "moist";
       break;
   }
 
@@ -155,37 +178,25 @@ async function realtimeGraph(sensorIndex) {
     nodeConfigs[i].data.datasets[0].data = [];
   }
 
-  await getHubData(hubMacAddress).then((response) => {
-    for (var i = 0; i < nodeElements.length; i++) {
-      for (var subData of response[i].data) {
-        nodeConfigs[i].data.datasets[0].data.push({
-          x: subData.timestamp,
-          y: subData[sensorType],
-        });
-
-        lastEntryTimestamp = subData.timestamp;
-
-        nodeCharts[i].update()
-      }
-
-      updateTimeframeRealtimeAll();
-
-      if (typeof updateVar !== "undefined") {
-        clearInterval(updateVar);
-      }
-
-      updateVar = setIntervalImmediately(updateDataRealtimeAll, 20000);
+  for (var i = 0; i < nodeElements.length; i++) {
+    for (var subData of rawDataAll[i]["data"]) {
+      nodeConfigs[i].data.datasets[0].data.push({
+        x: subData.timestamp,
+        y: subData[currentSensor],
+      });
     }
-  });
+    nodeCharts[i].update();
+
+    updateTimeframeRealtimeAll({ timestamp: rawDataAll[i].data[rawDataAll[i].data.length - 1]["timestamp"] }, i);
+  }
+
+  if(!displayCurrentDataAll){
+    console.log("AVERAGE OUT")
+    averageOutDataAll(1);
+  }
 
   highlightChoice(sensorIndex);
 }
-
-function setIntervalImmediately(func, interval) {
-  func();
-  return setInterval(func, interval);
-}
-
 
 function displayData() {
   let sensorIndex;
@@ -196,108 +207,153 @@ function displayData() {
     sensorIndex = 0;
   }
 
-  if (typeof updateVar !== "undefined") {
-    clearInterval(updateVar);
-  }
   realtimeGraph(sensorIndex);
 }
 
 function updateTimeScaleAll(start, end, fromCalendar) {
-  if(start[0] == '1'){
-    updateTimeframeRealtimeAll()
-    return;
-  }
-  xMin = start;
-  xMax = end;
-
+  // Populate with Raw Data
   for (var i = 0; i < nodeElements.length; i++) {
-    nodeConfigs[i].options.scales.x.min = xMin;
-    nodeConfigs[i].options.scales.x.max = xMax;
-
-    if (fromCalendar) {
-      if (start.substr(0, 10) !== end.substr(0, 10)) {
-        nodeConfigs[i].options.scales.x.time.unit = "day";
-      } else {
-        nodeConfigs[i].options.scales.x.time.unit = "hour";
-      }
+    nodeConfigs[i].data.datasets[0].data = [];
+  }
+  for (var i = 0; i < nodeElements.length; i++) {
+    for (var subData of rawDataAll[i]["data"]) {
+      nodeConfigs[i].data.datasets[0].data.push({
+        x: subData.timestamp,
+        y: subData[currentSensor],
+      });
     }
-
     nodeCharts[i].update();
   }
-}
 
-async function updateDataRealtimeAll(sensorType) {
-  const hubMacAddress = document.querySelector("#firstHub").innerHTML;
-  await getLatestHubData(hubMacAddress).then((response) => {
-    if (response !== null) {
-      for (var i = 0; i < nodeElements.length; i++) {
-        data = response[i].data[0];
-        if (data.timestamp != lastEntryTimestamp) {
-          lastEntryTimestamp = data.timestamp;
-
-          nodeConfigs[i].data.datasets[0].data.push({
-            x: data.timestamp,
-            y: data[sensorType],
-          });
-
-          nodeCharts[i].update();
-        }
-      }
+  if (start[0] == "1") {
+    console.log("LATEST DATA")
+    for (var i = 0; i < nodeElements.length; i++) {
+      displayCurrentDataAll = true;
+      updateTimeframeRealtimeAll({ timestamp: rawDataAll[i].data[rawDataAll[i].data.length - 1]["timestamp"] }, i);
     }
-  });
-}
-
-async function updateTimeframeRealtimeAll() {
-  if(document.querySelector("#allNodes").classList.contains("highlightButton")){
-    const hubMacAddress = document.querySelector("#firstHub").innerHTML;
-    await getLatestHubData(hubMacAddress).then((response) => {
-      if (response !== null) {
-        var latestDataDate = moment(data.timestamp.substr(0,10), "YYYY-MM-DD");
-        $("#reportrange span").html(latestDataDate.format("MMMM D, YYYY") + " - " + latestDataDate.format("MMMM D, YYYY"));
-        for (var i = 0; i < nodeElements.length; i++) {
-          data = response[i].data[0];
-          var start = data.timestamp;
-          var end = data.timestamp;
-
-          switch(end[14]){
-            case "0": 
-              start = start.replace(start.substr(14, 5), "00:00");
-              end = start.replace(start.substr(14, 5), "10:00");
-              break;
-            case "1":
-              start = start.replace(start.substr(14, 5), "10:00");
-              end = start.replace(start.substr(14, 5), "20:00");
-              break;
-            case "2":
-              start = start.replace(start.substr(14, 5), "20:00");
-              end = start.replace(start.substr(14, 5), "30:00");
-              break;
-            case "3":
-              start = start.replace(start.substr(14, 5), "30:00");
-              end = start.replace(start.substr(14, 5), "40:00");
-              break;
-            case "4":
-              start = start.replace(start.substr(14, 5), "40:00");
-              end = start.replace(start.substr(14, 5), "50:00");
-              break;
-            case "5":
-              start = start.replace(start.substr(14, 5), "50:00");
-              var nextNum = parseInt(start.substr(11, 2)) + 1;
-              if (nextNum > 9) {
-                end = start.replace(start.substr(11, 8), `${nextNum}:00:00`);
-              } else {
-                end = start.replace(start.substr(11, 8), `0${nextNum}:00:00`);
-              }
-              break;
-          }
-
-          nodeConfigs[i].options.scales.x.min = start;
-          nodeConfigs[i].options.scales.x.max = end;
-          nodeConfigs[i].options.scales.x.time.unit = "minute";
-          nodeCharts[i].update();
+    return;
+  }
+  displayCurrentDataAll = false;
+  if (document.querySelector("#allNodes").classList.contains("highlightButton")){
+    xMin = start;
+    xMax = end;
+    var a = moment(end.substr(0, 10), "YYYY-MM-DD");
+    var b = moment(start.substr(0, 10), "YYYY-MM-DD");
+    var numDays = a.diff(b, "days") + 1;
+    averageOutDataAll(numDays);
+  
+    for (var i = 0; i < nodeElements.length; i++) {
+      nodeConfigs[i].options.scales.x.min = xMin;
+      nodeConfigs[i].options.scales.x.max = xMax;
+  
+      if (fromCalendar) {
+        if (start.substr(0, 10) !== end.substr(0, 10)) {
+          nodeConfigs[i].options.scales.x.time.unit = "day";
+        } else {
+          nodeConfigs[i].options.scales.x.time.unit = "hour";
         }
       }
+  
+      nodeCharts[i].update();
+    }  
+  }
+}
+
+function averageOutDataAll(numDays) {
+  let latestData;
+  let currentDataSum = 0;
+  let currentDataCount = 0;
+  let averageData = [];
+
+  for (var i = 0; i < nodeElements.length; i++) {
+    averageData = [];
+    currentDataSum = 0;
+    currentDataCount = 0;
+    latestData = nodeConfigs[i].data.datasets[0].data.shift();
+    currentDataSum += parseInt(latestData["y"]);
+    currentDataCount++;
+
+    while (nodeConfigs[i].data.datasets[0].data.length !== 0) {
+      let currentData = nodeConfigs[i].data.datasets[0].data.shift();
+      if (latestData["x"][12] === currentData["x"][12]) {
+        currentDataSum += parseInt(latestData["y"]);
+        currentDataCount++;
+      } else {
+        averageData.push({
+          x: currentData["x"].replace(currentData["x"].substr(14, 5), "00:00"),
+          y: String(currentDataSum / currentDataCount),
+        });
+        currentDataSum = 0;
+        currentDataCount = 0;
+      }
+      latestData = currentData;
+    }
+
+    averageData.push({
+      x: latestData["x"].replace(latestData["x"].substr(17, 2), "00"),
+      y: String(currentDataSum / currentDataCount),
     });
+    nodeConfigs[i].data.datasets[0].data = averageData;
+
+    nodeCharts[i].update()
+  }
+}
+
+function updateDataRealtimeAll(data, index) {
+  if (displayCurrentDataAll) {
+    nodeConfigs[index].data.datasets[0].data.push({
+      x: data.timestamp,
+      y: data[currentSensor],
+    });
+
+    nodeCharts[index].update();
+  }
+}
+
+function updateTimeframeRealtimeAll(data, index) {
+  if (document.querySelector("#allNodes").classList.contains("highlightButton") && displayCurrentDataAll) {
+    console.log("updateTimeframeRealtimeAll")
+    var latestDataDate = moment(data.timestamp.substr(0, 10), "YYYY-MM-DD");
+    $("#reportrange span").html(latestDataDate.format("MMMM D, YYYY") + " - " + latestDataDate.format("MMMM D, YYYY"));
+    var start = data.timestamp;
+    var end = data.timestamp;
+
+    switch (end[14]) {
+      case "0":
+        start = start.replace(start.substr(14, 5), "00:00");
+        end = start.replace(start.substr(14, 5), "10:00");
+        break;
+      case "1":
+        start = start.replace(start.substr(14, 5), "10:00");
+        end = start.replace(start.substr(14, 5), "20:00");
+        break;
+      case "2":
+        start = start.replace(start.substr(14, 5), "20:00");
+        end = start.replace(start.substr(14, 5), "30:00");
+        break;
+      case "3":
+        start = start.replace(start.substr(14, 5), "30:00");
+        end = start.replace(start.substr(14, 5), "40:00");
+        break;
+      case "4":
+        start = start.replace(start.substr(14, 5), "40:00");
+        end = start.replace(start.substr(14, 5), "50:00");
+        break;
+      case "5":
+        start = start.replace(start.substr(14, 5), "50:00");
+        var nextNum = parseInt(start.substr(11, 2)) + 1;
+        if (nextNum > 9) {
+          end = start.replace(start.substr(11, 8), `${nextNum}:00:00`);
+        } else {
+          end = start.replace(start.substr(11, 8), `0${nextNum}:00:00`);
+        }
+        break;
+    }
+
+    nodeConfigs[index].options.scales.x.min = start;
+    nodeConfigs[index].options.scales.x.max = end;
+    nodeConfigs[index].options.scales.x.time.unit = "minute";
+    nodeCharts[index].update();
   }
 }
 

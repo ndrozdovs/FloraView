@@ -24,13 +24,10 @@ module.exports.renderLogin = (req, res) => {
 };
 
 module.exports.login = (req, res) => {
-  const redirectUrl = req.session.returnTo || "/dashboard";
-  delete req.session.returnTo;
-  res.redirect(redirectUrl);
+  res.redirect("/dashboard");
 };
 
 module.exports.logout = (req, res) => {
   req.logout();
-  // req.session.destroy();
   res.redirect("/");
 };

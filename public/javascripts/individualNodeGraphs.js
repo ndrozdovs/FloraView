@@ -1,10 +1,45 @@
 sensorConfigs = [];
 sensorCharts = [];
 
+var rawData;
+var displayCurrentData = true;
 var xMin = "0";
 var xMax = "0";
-var updateVar;
-var lastEntryTimestamp;
+
+const socket = io("http://localhost:3000");
+socket.on("connection");
+
+socket.on("newData", (data) => {
+  // rawData is undefined, exiting 
+  if (typeof rawData === "undefined") {
+    return;
+  }
+
+  if(getCurrentNode() === data.nodeMacAddress){
+    rawData[0].push({
+      x: data.timestamp,
+      y: data.temp,
+    });
+  
+    rawData[1].push({
+      x: data.timestamp,
+      y: data.ph,
+    });
+  
+    rawData[2].push({
+      x: data.timestamp,
+      y: data.light,
+    });
+  
+    rawData[3].push({
+      x: data.timestamp,
+      y: data.moist,
+    });
+  
+    updateDataRealtime(data);
+    updateTimeframeRealtime(data);
+  }
+});
 
 for (var i = 0; i < 4; i++) {
   sensorConfigs.push({
@@ -42,18 +77,12 @@ function getRandomInt(min, max) {
 }
 
 async function getNodeData(nodeMacAddress) {
-  const response = await fetch('http://localhost:3000/hubs?' + new URLSearchParams({
-    nodeMacAddress: nodeMacAddress,
-  }))
-  const data = await response.json();
-
-  return data;
-}
-
-async function getLatestData(nodeMacAddress) {
-  const response = await fetch('http://localhost:3000/hubs/latest?' + new URLSearchParams({
-    nodeMacAddress: nodeMacAddress,
-  }))
+  const response = await fetch(
+    "http://localhost:3000/hubs?" +
+      new URLSearchParams({
+        nodeMacAddress: nodeMacAddress,
+      })
+  );
   const data = await response.json();
 
   return data;
@@ -87,6 +116,8 @@ async function realtimeGraphs(node) {
     sensorConfigs[i].data.datasets[0].data = [];
   }
 
+  rawData = [[], [], [], []];
+
   await getNodeData(getCurrentNode()).then((response) => {
     for (var subData of response.data) {
       sensorConfigs[0].data.datasets[0].data.push({
@@ -108,36 +139,43 @@ async function realtimeGraphs(node) {
         x: subData.timestamp,
         y: subData.moist,
       });
-
-      lastEntryTimestamp = subData.timestamp;
     }
 
     for (var i = 0; i < 4; i++) {
+      rawData[i] = [...sensorConfigs[i].data.datasets[0].data];
       sensorCharts[i].update();
     }
 
-    updateTimeframeRealtime()
-
-    if (typeof updateVar !== "undefined") {
-      clearInterval(updateVar);
+    updateTimeframeRealtime({ timestamp: rawData[0][rawData[0].length - 1]["x"] });
+    if(!displayCurrentData){
+      console.log("AVERAGE OUT")
+      averageOutData(1);
     }
-
-    updateVar = setIntervalImmediately(updateDataRealtime, 20000);
   });
 }
 
-function setIntervalImmediately(func, interval) {
-  func();
-  return setInterval(func, interval);
-}
-
 function updateTimeScale(start, end, fromCalendar) {
-  if(start[0] == '1'){
-    updateTimeframeRealtime()
+  for (var i = 0; i < 4; i++) {
+    sensorConfigs[i].data.datasets[0].data = [];
+  }
+  // Populate with Raw Data
+  for (var i = 0; i < 4; i++) {
+    sensorConfigs[i].data.datasets[0].data = [...rawData[i]];
+    sensorCharts[i].update();
+  }
+
+  if (start[0] == "1") {
+    displayCurrentData = true;
+    updateTimeframeRealtime({ timestamp: rawData[0][rawData[0].length - 1]["x"] });
     return;
   }
+  displayCurrentData = false;
   xMin = start;
   xMax = end;
+  var a = moment(end.substr(0, 10), "YYYY-MM-DD");
+  var b = moment(start.substr(0, 10), "YYYY-MM-DD");
+  var numDays = a.diff(b, "days") + 1;
+  averageOutData(numDays);
 
   for (var i = 0; i < 4; i++) {
     sensorConfigs[i].options.scales.x.min = xMin;
@@ -155,90 +193,120 @@ function updateTimeScale(start, end, fromCalendar) {
   }
 }
 
-async function updateDataRealtime() {
-  await getLatestData(getCurrentNode()).then((response) => {
-    if (response !== null) {
-      data = response.data[0]
-      if (data.timestamp != lastEntryTimestamp) {
-        lastEntryTimestamp = data.timestamp;
+function averageOutData(numDays) {
+  let latestData;
+  let currentDataSum = 0;
+  let currentDataCount = 0;
+  let averageData = [];
 
-        sensorConfigs[0].data.datasets[0].data.push({
-          x: data.timestamp,
-          y: data.temp,
+  console.log(sensorConfigs)
+
+  for (var i = 0; i < 4; i++) {
+    averageData = [];
+    currentDataSum = 0;
+    currentDataCount = 0;
+    latestData = sensorConfigs[i].data.datasets[0].data.shift();
+    currentDataSum += parseInt(latestData["y"]);
+    currentDataCount++;
+
+    while (sensorConfigs[i].data.datasets[0].data.length !== 0) {
+      let currentData = sensorConfigs[i].data.datasets[0].data.shift();
+      if (latestData["x"][12] === currentData["x"][12]) {
+        currentDataSum += parseInt(latestData["y"]);
+        currentDataCount++;
+      } else {
+        averageData.push({
+          x: currentData["x"].replace(currentData["x"].substr(14, 5), "00:00"),
+          y: String(currentDataSum / currentDataCount),
         });
-
-        sensorConfigs[1].data.datasets[0].data.push({
-          x: data.timestamp,
-          y: data.ph,
-        });
-
-        sensorConfigs[2].data.datasets[0].data.push({
-          x: data.timestamp,
-          y: data.light,
-        });
-
-        sensorConfigs[3].data.datasets[0].data.push({
-          x: data.timestamp,
-          y: data.moist,
-        });
-
-        for (var i = 0; i < 4; i++) {
-          sensorCharts[i].update();
-        }
+        currentDataSum = 0;
+        currentDataCount = 0;
       }
+      latestData = currentData;
     }
-  });
+
+    averageData.push({
+      x: latestData["x"].replace(latestData["x"].substr(17, 2), "00"),
+      y: String(currentDataSum / currentDataCount),
+    });
+    sensorConfigs[i].data.datasets[0].data = averageData;
+
+    sensorCharts[i].update();
+  }
 }
 
-async function updateTimeframeRealtime() {
-  if(!document.querySelector("#allNodes").classList.contains("highlightButton")){
-    await getLatestData(getCurrentNode()).then((response) => {
-      if (response !== null) {
-        data = response.data[0]
-        var start = data.timestamp;
-        var end = data.timestamp;
-        var latestDataDate = moment(data.timestamp.substr(0,10), "YYYY-MM-DD");
-        $("#reportrange span").html(latestDataDate.format("MMMM D, YYYY") + " - " + latestDataDate.format("MMMM D, YYYY"));
-      
-        switch(end[14]){
-          case "0": 
-            start = start.replace(start.substr(14, 5), "00:00");
-            end = start.replace(start.substr(14, 5), "10:00");
-            break;
-          case "1":
-            start = start.replace(start.substr(14, 5), "10:00");
-            end = start.replace(start.substr(14, 5), "20:00");
-            break;
-          case "2":
-            start = start.replace(start.substr(14, 5), "20:00");
-            end = start.replace(start.substr(14, 5), "30:00");
-            break;
-          case "3":
-            start = start.replace(start.substr(14, 5), "30:00");
-            end = start.replace(start.substr(14, 5), "40:00");
-            break;
-          case "4":
-            start = start.replace(start.substr(14, 5), "40:00");
-            end = start.replace(start.substr(14, 5), "50:00");
-            break;
-          case "5":
-            start = start.replace(start.substr(14, 5), "50:00");
-            var nextNum = parseInt(start.substr(11, 2)) + 1;
-            if (nextNum > 9) {
-              end = start.replace(start.substr(11, 8), `${nextNum}:00:00`);
-            } else {
-              end = start.replace(start.substr(11, 8), `0${nextNum}:00:00`);
-            }
-            break;
-        }
-      
-        for (var i = 0; i < 4; i++) {
-          sensorConfigs[i].options.scales.x.min = start;
-          sensorConfigs[i].options.scales.x.max = end;
-          sensorConfigs[i].options.scales.x.time.unit = "minute";
-          sensorCharts[i].update();
-        }
-      }
+async function updateDataRealtime(data) {
+  if (displayCurrentData) {
+    sensorConfigs[0].data.datasets[0].data.push({
+      x: data.timestamp,
+      y: data.temp,
     });
+
+    sensorConfigs[1].data.datasets[0].data.push({
+      x: data.timestamp,
+      y: data.ph,
+    });
+
+    sensorConfigs[2].data.datasets[0].data.push({
+      x: data.timestamp,
+      y: data.light,
+    });
+
+    sensorConfigs[3].data.datasets[0].data.push({
+      x: data.timestamp,
+      y: data.moist,
+    });
+
+    for (var i = 0; i < 4; i++) {
+      sensorCharts[i].update();
+    }
+  }
+}
+
+async function updateTimeframeRealtime(data) {
+  if (!document.querySelector("#allNodes").classList.contains("highlightButton") && displayCurrentData) {
+    var start = data.timestamp;
+    var end = data.timestamp;
+    var latestDataDate = moment(data.timestamp.substr(0, 10), "YYYY-MM-DD");
+    $("#reportrange span").html(latestDataDate.format("MMMM D, YYYY") + " - " + latestDataDate.format("MMMM D, YYYY"));
+
+    switch (end[14]) {
+      case "0":
+        start = start.replace(start.substr(14, 5), "00:00");
+        end = start.replace(start.substr(14, 5), "10:00");
+        break;
+      case "1":
+        start = start.replace(start.substr(14, 5), "10:00");
+        end = start.replace(start.substr(14, 5), "20:00");
+        break;
+      case "2":
+        start = start.replace(start.substr(14, 5), "20:00");
+        end = start.replace(start.substr(14, 5), "30:00");
+        break;
+      case "3":
+        start = start.replace(start.substr(14, 5), "30:00");
+        end = start.replace(start.substr(14, 5), "40:00");
+        break;
+      case "4":
+        start = start.replace(start.substr(14, 5), "40:00");
+        end = start.replace(start.substr(14, 5), "50:00");
+        break;
+      case "5":
+        start = start.replace(start.substr(14, 5), "50:00");
+        var nextNum = parseInt(start.substr(11, 2)) + 1;
+        if (nextNum > 9) {
+          end = start.replace(start.substr(11, 8), `${nextNum}:00:00`);
+        } else {
+          end = start.replace(start.substr(11, 8), `0${nextNum}:00:00`);
+        }
+        break;
+    }
+
+    for (var i = 0; i < 4; i++) {
+      sensorConfigs[i].options.scales.x.min = start;
+      sensorConfigs[i].options.scales.x.max = end;
+      sensorConfigs[i].options.scales.x.time.unit = "minute";
+      sensorCharts[i].update();
+    }
   }
 }
