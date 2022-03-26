@@ -81,10 +81,11 @@ exports.addNodeData = async (req, res, next) => {
       await hub.save();
     }
 
+    if (typeof mySocket !== "undefined") {
+      mySocket.emit('newData', { hubMacAddress: req.body.hubMacAddress, nodeMacAddress: req.body.nodeMacAddress, temp: req.body.temp, ph: req.body.ph, light: req.body.light, moist: req.body.moist, timestamp: moment().subtract(0, "days").format("YYYY-MM-DD HH:mm:ss") })
+      mySocket.emit('newDataAll', { hubMacAddress: req.body.hubMacAddress, nodeMacAddress: req.body.nodeMacAddress, temp: req.body.temp, ph: req.body.ph, light: req.body.light, moist: req.body.moist, timestamp: moment().subtract(0, "days").format("YYYY-MM-DD HH:mm:ss") })
+    }
 
-    mySocket.emit('newData', { hubMacAddress: req.body.hubMacAddress, nodeMacAddress: req.body.nodeMacAddress, temp: req.body.temp, ph: req.body.ph, light: req.body.light, moist: req.body.moist, timestamp: moment().subtract(0, "days").format("YYYY-MM-DD HH:mm:ss") })
-    mySocket.emit('newDataAll', { hubMacAddress: req.body.hubMacAddress, nodeMacAddress: req.body.nodeMacAddress, temp: req.body.temp, ph: req.body.ph, light: req.body.light, moist: req.body.moist, timestamp: moment().subtract(0, "days").format("YYYY-MM-DD HH:mm:ss") })
-  
     res.status(201).json({ message: "Added data successfully" });
   } catch (err) {
     console.log(err)
