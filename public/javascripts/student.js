@@ -157,21 +157,36 @@ async function interact() {
   }
 
   $("a.downloadData").click(async function (e) {
-    const hubMacAddress = document.querySelector("#firstHub").innerHTML
-    const rawData = await getNodeData(getCurrentNode());
+    var rawDataExcel = []
+    if (document.querySelector("#allNodes").classList.contains("highlightButton")){
+      const nodeHeader = document.querySelector("#nodeList"); // Select node list in the modal
+      var children = nodeHeader.children;
+      for (var i = 0; i < children.length; i++) {
+        if (children[i].id !== "allNodes") {
+          var dataTemp = await getNodeData(children[i].title);
+          rawDataExcel.push(dataTemp)
+        }
+      }
+    }
+    else{     
+      var dataTemp = await getNodeData(getCurrentNode());
+      rawDataExcel.push(dataTemp)
+    }
     let data = [[]]
     let row = []
     data.push(["Node MAC Address", "Timestamp", "Temperature", "pH", "Light", "Moisture"])
 
-    for(let i = 0; i < rawData.data.length; i++){
-      row = []
-      row.push(rawData.nodeMacAddress)
-      row.push(rawData.data[i]["timestamp"])
-      row.push(rawData.data[i]["temp"])
-      row.push(rawData.data[i]["ph"])
-      row.push(rawData.data[i]["light"])
-      row.push(rawData.data[i]["moist"])
-      data.push(row)
+    for(let j = 0; j < rawDataExcel.length; j++){
+      for(let i = 0; i < rawDataExcel[j].data.length; i++){
+        row = []
+        row.push(rawDataExcel[j].nodeMacAddress)
+        row.push(rawDataExcel[j].data[i]["timestamp"])
+        row.push(rawDataExcel[j].data[i]["temp"])
+        row.push(rawDataExcel[j].data[i]["ph"])
+        row.push(rawDataExcel[j].data[i]["light"])
+        row.push(rawDataExcel[j].data[i]["moist"])
+        data.push(row)
+      }
     }
     e.preventDefault();
     exportToCsv("nodeData", data)

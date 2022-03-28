@@ -20,15 +20,25 @@ function getRandomInt(min, max) {
 
 const seedDB = async () => {
   let numberFound;
-  numberFound = await Hub.countDocuments({ hubMacAddress: "94:B9:7E:D6:39:04" }); // Change this Hub macAddress to whatever is the desired Hub
-  if (numberFound > 0){
-    return;
+  numberFound = await Hub.countDocuments({ hubMacAddress: "94:B9:7E:D6:39:04" });
+
+  if (numberFound === 0) {
+    const newHub = new Hub({ hubMacAddress: "94:B9:7E:D6:39:04" });
+    await newHub.save();
   }
-  const node = new Node({ nodeMacAddress: "thisIs17Character", codeName: "Node 420" }); // Change this Node macAddress to whatever is the desired Node
-  await node.save();
-  const hub = new Hub({ hubMacAddress: "94:B9:7E:D6:39:04" }); // Change this Hub macAddress to whatever is the desired Hub
+
+  const hub = await Hub.findOne({ hubMacAddress: "94:B9:7E:D6:39:04" });
+  numberFound = await Node.countDocuments({ nodeMacAddress: "seededNodeForDemo" });
+
+  if (numberFound > 0) {
+    console.log("Node already seeded, exiting")
+    return
+  }
+
+  const node = new Node({ nodeMacAddress: "seededNodeForDemo", codeName: "Node " + String(hub.nodes.length + 1) });
   hub.nodes.push(node);
   await hub.save();
+
   let date = moment().subtract(30, "days")
   for (let i = 0; i < 2160; i++) {
     node.data.push({ 

@@ -38,6 +38,9 @@ exports.getAvailableNodes = async (req, res, next) => {
   try {
     const hub = await Hub.findOne({ hubMacAddress: req.query.hubMacAddress })
     let nodeList = [];
+    if(hub === null){
+      return res.status(200).json([]);
+    }
     for (let node of hub.nodes) {
       let response = await Node.findById(node);
       nodeList.push({ nodeMacAddress: response.nodeMacAddress, codeName: response.codeName });

@@ -205,19 +205,19 @@ function averageOutData() {
     currentDataCount = 0;
     latestData = sensorConfigs[i].data.datasets[0].data.shift();
     var latestDataTime = parseInt(latestData["x"].substr(11, 2)) + Math.round(numDaysIndiv / 2) - 1;
-    var latestDay = latestData["x"].substr(0, 10)
-    var time
-    let currentData
-    let dataRightBeforeCurrent = latestData
+    var latestDay = latestData["x"].substr(0, 10);
+    var time;
+    let currentData;
+    let dataRightBeforeCurrent = latestData;
     currentDataSum += parseInt(latestData["y"]);
     currentDataCount++;
 
     while (sensorConfigs[i].data.datasets[0].data.length !== 0) {
       currentData = sensorConfigs[i].data.datasets[0].data.shift();
       let currentDataTime = parseInt(currentData["x"].substr(11, 2));
-      let currentDay = currentData["x"].substr(0, 10)
+      let currentDay = currentData["x"].substr(0, 10);
 
-      if(latestDay !== currentDay){
+      if (latestDay !== currentDay) {
         averageData.push({
           x: dataRightBeforeCurrent["x"].replace(dataRightBeforeCurrent["x"].substr(17, 2), "00"),
           y: String(currentDataSum / currentDataCount),
@@ -226,13 +226,12 @@ function averageOutData() {
         currentDataCount = 0;
         latestData = currentData;
         latestDataTime = parseInt(latestData["x"].substr(11, 2)) + Math.round(numDaysIndiv / 2) - 1;
-        latestDay = latestData["x"].substr(0, 10)
-      }
-      else if (latestDataTime >= currentDataTime) {
+        latestDay = latestData["x"].substr(0, 10);
+      } else if (latestDataTime >= currentDataTime) {
         currentDataSum += parseInt(latestData["y"]);
         currentDataCount++;
       } else {
-        time = moment(dataRightBeforeCurrent["x"], "YYYY-MM-DD HH:mm:ss").add(1, 'hour').format("YYYY-MM-DD HH:mm:ss");
+        time = moment(dataRightBeforeCurrent["x"], "YYYY-MM-DD HH:mm:ss").add(1, "hour").format("YYYY-MM-DD HH:mm:ss");
         averageData.push({
           x: time.replace(time.substr(14, 5), "00:00"),
           y: String(currentDataSum / currentDataCount),
@@ -241,10 +240,10 @@ function averageOutData() {
         currentDataCount = 0;
         latestData = currentData;
         latestDataTime = parseInt(latestData["x"].substr(11, 2)) + Math.round(numDaysIndiv / 2) - 1;
-        latestDay = latestData["x"].substr(0, 10)
+        latestDay = latestData["x"].substr(0, 10);
       }
 
-      dataRightBeforeCurrent = currentData
+      dataRightBeforeCurrent = currentData;
     }
 
     averageData.push({
@@ -294,32 +293,62 @@ async function updateTimeframeRealtime(data) {
 
     switch (end[14]) {
       case "0":
-        start = start.replace(start.substr(14, 5), "00:00");
-        end = start.replace(start.substr(14, 5), "10:00");
+        if (end[15] < "5") {
+          start = start.replace(start.substr(14, 5), "00:00");
+          end = start.replace(start.substr(14, 5), "05:00");
+        } else {
+          start = start.replace(start.substr(14, 5), "05:00");
+          end = start.replace(start.substr(14, 5), "10:00");
+        }
         break;
       case "1":
-        start = start.replace(start.substr(14, 5), "10:00");
-        end = start.replace(start.substr(14, 5), "20:00");
+        if (end[15] < "5") {
+          start = start.replace(start.substr(14, 5), "10:00");
+          end = start.replace(start.substr(14, 5), "15:00");
+        } else {
+          start = start.replace(start.substr(14, 5), "15:00");
+          end = start.replace(start.substr(14, 5), "20:00");
+        }
         break;
       case "2":
-        start = start.replace(start.substr(14, 5), "20:00");
-        end = start.replace(start.substr(14, 5), "30:00");
+        if (end[15] < "5") {
+          start = start.replace(start.substr(14, 5), "20:00");
+          end = start.replace(start.substr(14, 5), "25:00");
+        } else {
+          start = start.replace(start.substr(14, 5), "25:00");
+          end = start.replace(start.substr(14, 5), "30:00");
+        }
         break;
       case "3":
-        start = start.replace(start.substr(14, 5), "30:00");
-        end = start.replace(start.substr(14, 5), "40:00");
+        if (end[15] < "5") {
+          start = start.replace(start.substr(14, 5), "30:00");
+          end = start.replace(start.substr(14, 5), "35:00");
+        } else {
+          start = start.replace(start.substr(14, 5), "35:00");
+          end = start.replace(start.substr(14, 5), "40:00");
+        }
         break;
       case "4":
-        start = start.replace(start.substr(14, 5), "40:00");
-        end = start.replace(start.substr(14, 5), "50:00");
+        if (end[15] < "5") {
+          start = start.replace(start.substr(14, 5), "40:00");
+          end = start.replace(start.substr(14, 5), "45:00");
+        } else {
+          start = start.replace(start.substr(14, 5), "45:00");
+          end = start.replace(start.substr(14, 5), "50:00");
+        }
         break;
       case "5":
-        start = start.replace(start.substr(14, 5), "50:00");
-        var nextNum = parseInt(start.substr(11, 2)) + 1;
-        if (nextNum > 9) {
-          end = start.replace(start.substr(11, 8), `${nextNum}:00:00`);
+        if (end[15] < "5") {
+          start = start.replace(start.substr(14, 5), "50:00");
+          end = start.replace(start.substr(14, 5), "55:00");
         } else {
-          end = start.replace(start.substr(11, 8), `0${nextNum}:00:00`);
+          start = start.replace(start.substr(14, 5), "55:00");
+          var nextNum = parseInt(start.substr(11, 2)) + 1;
+          if (nextNum > 9) {
+            end = start.replace(start.substr(11, 8), `${nextNum}:00:00`);
+          } else {
+            end = start.replace(start.substr(11, 8), `0${nextNum}:00:00`);
+          }
         }
         break;
     }
