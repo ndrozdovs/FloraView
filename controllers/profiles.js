@@ -102,10 +102,9 @@ module.exports.getStudents = async (req, res, next) => {
 
 module.exports.addStudent = async (req, res) => {
   try {
-    const { pairCode, password } = req.body;
-    const teacherProfile = await TeacherProfile.findOne({ "classrooms[0].pairCode": pairCode });
+    const teacherProfile = await TeacherProfile.findOne({ "classrooms.pairCode": req.body.classroom });
   
-    if (teacherProfile.classrooms[0].password === password) {
+    if (teacherProfile.classrooms[0].password === req.body.password) {
       const studentProfile = new StudentProfile({
         hubMacAddress: teacherProfile.hubMacAddress,
       });
@@ -130,12 +129,11 @@ module.exports.addStudent = async (req, res) => {
 
 module.exports.addStudentToGroup = async (req, res) => {
   try {
-    const { students, groupName } = req.body;
     const teacherProfile = await TeacherProfile.findOne({ user: new ObjectId(req.user._id) });
   
     for (let group of teacherProfile.groups) {
-      if (group.groupName == groupName) {
-        for (let student of students) {
+      if (group.groupName == req.body.groupName) {
+        for (let student of req.body.students) {
           if (group.students.indexOf(student) === -1) {
             let [first, last] = student.split(" ");
 

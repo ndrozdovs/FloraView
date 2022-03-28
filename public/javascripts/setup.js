@@ -22,6 +22,10 @@ function addPasswordToClassroom(password) {
 }
 
 function interact() {
+  $("#enterWifiModal").on("shown.bs.modal", function () {
+    document.querySelector("#pairSpinner").classList.toggle("hidden"); // Disable the spinner
+  });
+
   // Disconnect serial when wifi modal is exited
   $("#enterWifiModal").on("hide.bs.modal", function () {
     console.log("Serial Disconnected");

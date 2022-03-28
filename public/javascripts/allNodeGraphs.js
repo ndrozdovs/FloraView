@@ -86,6 +86,8 @@ async function getHubData(hubMacAddress) {
     rawDataAll[i] = { macAddress: data[i].nodeMacAddress, data: [...data[i].data] };
   }
 
+  console.log(rawDataAll)
+
   return data;
 }
 
@@ -229,29 +231,27 @@ function updateTimeScaleAll(start, end, fromCalendar) {
     return;
   }
   displayCurrentDataAll = false;
-  if (document.querySelector("#allNodes").classList.contains("highlightButton")){
-    xMin = start;
-    xMax = end;
-    var a = moment(end.substr(0, 10), "YYYY-MM-DD");
-    var b = moment(start.substr(0, 10), "YYYY-MM-DD");
-    numDaysAll = a.diff(b, "days") + 1;
-    averageOutDataAll();
-  
-    for (var i = 0; i < nodeElements.length; i++) {
-      nodeConfigs[i].options.scales.x.min = xMin;
-      nodeConfigs[i].options.scales.x.max = xMax;
-  
-      if (fromCalendar) {
-        if (start.substr(0, 10) !== end.substr(0, 10)) {
-          nodeConfigs[i].options.scales.x.time.unit = "day";
-        } else {
-          nodeConfigs[i].options.scales.x.time.unit = "hour";
-        }
+  xMin = start;
+  xMax = end;
+  var a = moment(end.substr(0, 10), "YYYY-MM-DD");
+  var b = moment(start.substr(0, 10), "YYYY-MM-DD");
+  numDaysAll = a.diff(b, "days") + 1;
+  averageOutDataAll();
+
+  for (var i = 0; i < nodeElements.length; i++) {
+    nodeConfigs[i].options.scales.x.min = xMin;
+    nodeConfigs[i].options.scales.x.max = xMax;
+
+    if (fromCalendar) {
+      if (start.substr(0, 10) !== end.substr(0, 10)) {
+        nodeConfigs[i].options.scales.x.time.unit = "day";
+      } else {
+        nodeConfigs[i].options.scales.x.time.unit = "hour";
       }
-  
-      nodeCharts[i].update();
-    }  
-  }
+    }
+
+    nodeCharts[i].update();
+  }  
 }
 
 function averageOutDataAll() {

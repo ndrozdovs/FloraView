@@ -30,9 +30,12 @@ async function connect() {
     await port.open({baudRate: 115200,});
   }
   catch(err){
+    document.querySelector("#pairSpinner").classList.toggle("hidden"); // Disable the spinner
     document.querySelector("#closeSerialMonitor").classList.remove("removed"); // Show error asking user to close serial monitor windows
     return;
   }
+
+  document.querySelector("#pairSpinner").classList.toggle("hidden"); // Enable the spinner
 
   console.log(port);
 
@@ -55,6 +58,7 @@ async function connect() {
     await reader.read();
   }
   catch(err){
+    document.querySelector("#pairSpinner").classList.toggle("hidden"); // Disable the spinner
     document.querySelector("#reconnectSerial").classList.remove("removed"); // Show error asking user to unplug the Hub
     return;
   }
