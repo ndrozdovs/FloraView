@@ -104,7 +104,7 @@ module.exports.addStudent = async (req, res) => {
   try {
     const teacherProfile = await TeacherProfile.findOne({ "classrooms.pairCode": req.body.classroom });
   
-    if (teacherProfile.classrooms[0].password === req.body.password) {
+    if (teacherProfile !== null && teacherProfile.classrooms[0].password === req.body.password) {
       const studentProfile = new StudentProfile({
         hubMacAddress: teacherProfile.hubMacAddress,
       });

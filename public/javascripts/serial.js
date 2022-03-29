@@ -99,7 +99,15 @@ async function clickConnect() {
 async function readLoop() {
   let hubMacAddress
   while (true) {
-    const { value, done } = await reader.read();
+    try{
+      var { value, done } = await reader.read();
+    }
+    catch(err){
+      document.querySelector("#pairSpinner").classList.add("hidden"); // Disable the spinner
+      document.querySelector("#reconnectSerial").classList.remove("removed"); // Show error asking user to unplug the Hub
+      return;
+    }
+
     console.log(value);
     if (done) {
       console.log("[readLoop] DONE", done);

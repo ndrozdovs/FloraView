@@ -218,8 +218,9 @@ function averageOutData() {
       let currentDay = currentData["x"].substr(0, 10);
 
       if (latestDay !== currentDay) {
+        var newString = dataRightBeforeCurrent["x"].substr(0, 17) + "00"
         averageData.push({
-          x: dataRightBeforeCurrent["x"].replace(dataRightBeforeCurrent["x"].substr(17, 2), "00"),
+          x: newString,
           y: String(currentDataSum / currentDataCount),
         });
         currentDataSum = 0;
@@ -232,8 +233,9 @@ function averageOutData() {
         currentDataCount++;
       } else {
         time = moment(dataRightBeforeCurrent["x"], "YYYY-MM-DD HH:mm:ss").add(1, "hour").format("YYYY-MM-DD HH:mm:ss");
+        time = time.substr(0, 14) + "00:00"
         averageData.push({
-          x: time.replace(time.substr(14, 5), "00:00"),
+          x: time,
           y: String(currentDataSum / currentDataCount),
         });
         currentDataSum = 0;
@@ -246,8 +248,9 @@ function averageOutData() {
       dataRightBeforeCurrent = currentData;
     }
 
+    var newString = dataRightBeforeCurrent["x"].substr(0, 17) + "00"
     averageData.push({
-      x: dataRightBeforeCurrent["x"].replace(dataRightBeforeCurrent["x"].substr(17, 2), "00"),
+      x: newString,
       y: String(currentDataSum / currentDataCount),
     });
     sensorConfigs[i].data.datasets[0].data = averageData;
