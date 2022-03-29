@@ -60,6 +60,7 @@ function getRandomFloat(min, max, decimals) {
 
 exports.addNodeData = async (req, res, next) => {
   try {
+    console.log("Received packet from Hub")
     if(req.query.hubMacAddress.length === 0){
       console.log("No Hub macAddress, data not added, exiting")
       return;
@@ -86,27 +87,28 @@ exports.addNodeData = async (req, res, next) => {
     if (req.query.light === "-1234.12"){
       var light
       if(node.data.length === 0){
-        req.query.light = 500
+        req.query.light = 300
       }
       else{
-        light = parseInt(node.data[node.data.length - 1].light)
-        req.query.light = String(light + getRandomFloat(-50,50, 2))
+        light = parseFloat(node.data[node.data.length - 1].light)
+        req.query.light = String(light + getRandomFloat(-10,10, 2))
       }
       console.log("FloraView: ", moment().subtract(0, "days").format("YYYY-MM-DD HH:mm:ss"))
     }
     if (req.query.temp === "-1234.12"){
-      var temp
+      var temp 
+      req.query.temp = 22
       if(node.data.length === 0){
         req.query.temp = 22
       }
       else{
-        var temp =  parseInt(node.data[node.data.length - 1].temp)
+        var temp =  parseFloat(node.data[node.data.length - 1].temp)
         req.query.temp = String(temp + getRandomFloat(-0.2, 0.2, 2))
       }
       console.log("Floraview: ", moment().subtract(0, "days").format("YYYY-MM-DD HH:mm:ss"))
     }
 
-    req.query.ph = String(parseInt(req.query.ph) + getRandomFloat(-0.2, 0.2, 2))
+    req.query.ph = String(parseFloat(req.query.ph) + getRandomFloat(-0.2, 0.2, 2))
   
     node.data.push({ temp: req.query.temp, ph: req.query.ph, light: req.query.light, moist: req.query.moist, timestamp: moment().subtract(0, "days").format("YYYY-MM-DD HH:mm:ss") });
     await node.save();
