@@ -32,7 +32,6 @@ async function connect() {
   }
   catch(err){
     document.querySelector("#pairSpinner").classList.add("hidden"); // Disable the spinner
-    console.log("SPINNER DISABLED")
     document.querySelector("#closeSerialMonitor").classList.remove("removed"); // Show error asking user to close serial monitor windows
     return;
   }
@@ -59,7 +58,6 @@ async function connect() {
   }
   catch(err){
     document.querySelector("#pairSpinner").classList.add("hidden"); // Disable the spinner
-    console.log("SPINNER DISABLED 2.0")
     document.querySelector("#reconnectSerial").classList.remove("removed"); // Show error asking user to unplug the Hub
     return;
   }
