@@ -78,6 +78,14 @@ exports.addNodeData = async (req, res, next) => {
     numberFound = await Node.countDocuments({ nodeMacAddress: req.query.nodeMacAddress });
   
     if (numberFound === 0) {
+      const nodes = await Node.find({})
+      for(var singleNode of nodes){
+        if(req.query.nodeMacAddress.substr(15,2) === singleNode.nodeMacAddress.substr(15,2)){
+          console.log("Node macAddress was corrupted, exiting")
+          return;
+        }
+        console.log("----------------------")
+      }
       const newNode = new Node({ nodeMacAddress: req.query.nodeMacAddress, codeName: "Node " + String(hub.nodes.length + 1) });
       await newNode.save();
     }
