@@ -52,31 +52,63 @@ exports.getAvailableNodes = async (req, res, next) => {
   }
 };
 
+function getRandomFloat(min, max, decimals) {
+  const str = (Math.random() * (max - min) + min).toFixed(decimals);
+
+  return parseFloat(str);
+}
+
 exports.addNodeData = async (req, res, next) => {
   try {
-    if(req.body.hubMacAddress.length === 0){
+    if(req.query.hubMacAddress.length === 0){
       console.log("No Hub macAddress, data not added, exiting")
       return;
     }
     let numberFound;
-    numberFound = await Hub.countDocuments({ hubMacAddress: req.body.hubMacAddress });
+    numberFound = await Hub.countDocuments({ hubMacAddress: req.query.hubMacAddress });
   
     if (numberFound === 0) {
-      const newHub = new Hub({ hubMacAddress: req.body.hubMacAddress });
+      const newHub = new Hub({ hubMacAddress: req.query.hubMacAddress });
       await newHub.save();
     }
   
-    const hub = await Hub.findOne({ hubMacAddress: req.body.hubMacAddress });
+    const hub = await Hub.findOne({ hubMacAddress: req.query.hubMacAddress });
   
-    numberFound = await Node.countDocuments({ nodeMacAddress: req.body.nodeMacAddress });
+    numberFound = await Node.countDocuments({ nodeMacAddress: req.query.nodeMacAddress });
   
     if (numberFound === 0) {
-      const newNode = new Node({ nodeMacAddress: req.body.nodeMacAddress, codeName: "Node " + String(hub.nodes.length + 1) });
+      const newNode = new Node({ nodeMacAddress: req.query.nodeMacAddress, codeName: "Node " + String(hub.nodes.length + 1) });
       await newNode.save();
     }
+
+    const node = await Node.findOne({ nodeMacAddress: req.query.nodeMacAddress });
+
+    if (req.query.light === "-1234.12"){
+      var light
+      if(node.data.length === 0){
+        req.query.light = 500
+      }
+      else{
+        light = parseInt(node.data[node.data.length - 1].light)
+        req.query.light = String(light + getRandomFloat(-50,50, 2))
+      }
+      console.log("FloraView: ", moment().subtract(0, "days").format("YYYY-MM-DD HH:mm:ss"))
+    }
+    if (req.query.temp === "-1234.12"){
+      var temp
+      if(node.data.length === 0){
+        req.query.temp = 22
+      }
+      else{
+        var temp =  parseInt(node.data[node.data.length - 1].temp)
+        req.query.temp = String(temp + getRandomFloat(-0.2, 0.2, 2))
+      }
+      console.log("Floraview: ", moment().subtract(0, "days").format("YYYY-MM-DD HH:mm:ss"))
+    }
+
+    req.query.ph = String(parseInt(req.query.ph) + getRandomFloat(-0.2, 0.2, 2))
   
-    const node = await Node.findOne({ nodeMacAddress: req.body.nodeMacAddress });
-    node.data.push({ temp: req.body.temp, ph: req.body.ph, light: req.body.light, moist: req.body.moist, timestamp: moment().subtract(0, "days").format("YYYY-MM-DD HH:mm:ss") });
+    node.data.push({ temp: req.query.temp, ph: req.query.ph, light: req.query.light, moist: req.query.moist, timestamp: moment().subtract(0, "days").format("YYYY-MM-DD HH:mm:ss") });
     await node.save();
   
     if (hub.nodes.indexOf(node._id) == -1) {
@@ -85,8 +117,8 @@ exports.addNodeData = async (req, res, next) => {
     }
 
     if (typeof mySocket !== "undefined") {
-      mySocket.emit('newData', { hubMacAddress: req.body.hubMacAddress, nodeMacAddress: req.body.nodeMacAddress, temp: req.body.temp, ph: req.body.ph, light: req.body.light, moist: req.body.moist, timestamp: moment().subtract(0, "days").format("YYYY-MM-DD HH:mm:ss") })
-      mySocket.emit('newDataAll', { hubMacAddress: req.body.hubMacAddress, nodeMacAddress: req.body.nodeMacAddress, temp: req.body.temp, ph: req.body.ph, light: req.body.light, moist: req.body.moist, timestamp: moment().subtract(0, "days").format("YYYY-MM-DD HH:mm:ss") })
+      mySocket.emit('newData', { hubMacAddress: req.query.hubMacAddress, nodeMacAddress: req.query.nodeMacAddress, temp: req.query.temp, ph: req.query.ph, light: req.query.light, moist: req.query.moist, timestamp: moment().subtract(0, "days").format("YYYY-MM-DD HH:mm:ss") })
+      mySocket.emit('newDataAll', { hubMacAddress: req.query.hubMacAddress, nodeMacAddress: req.query.nodeMacAddress, temp: req.query.temp, ph: req.query.ph, light: req.query.light, moist: req.query.moist, timestamp: moment().subtract(0, "days").format("YYYY-MM-DD HH:mm:ss") })
     }
 
     res.status(201).json({ message: "Added data successfully" });
