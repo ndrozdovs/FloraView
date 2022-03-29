@@ -108,7 +108,6 @@ exports.addNodeData = async (req, res, next) => {
 
     req.query.ph = String(parseInt(req.query.ph) + getRandomFloat(-0.2, 0.2, 2))
   
-    const node = await Node.findOne({ nodeMacAddress: req.body.nodeMacAddress });
     node.data.push({ temp: req.query.temp, ph: req.query.ph, light: req.query.light, moist: req.query.moist, timestamp: moment().subtract(0, "days").format("YYYY-MM-DD HH:mm:ss") });
     await node.save();
   
