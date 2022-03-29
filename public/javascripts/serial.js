@@ -24,18 +24,18 @@ async function connect() {
   // CODELAB: Add code to request & open port here.
   // - Request a port and open a connection.
   port = await navigator.serial.requestPort();
+  document.querySelector("#pairSpinner").classList.remove("hidden"); // Enable the spinner
 
   // - Wait for the port to open.
   try{
     await port.open({baudRate: 115200,});
   }
   catch(err){
-    document.querySelector("#pairSpinner").classList.toggle("hidden"); // Disable the spinner
+    document.querySelector("#pairSpinner").classList.add("hidden"); // Disable the spinner
+    console.log("SPINNER DISABLED")
     document.querySelector("#closeSerialMonitor").classList.remove("removed"); // Show error asking user to close serial monitor windows
     return;
   }
-
-  document.querySelector("#pairSpinner").classList.toggle("hidden"); // Enable the spinner
 
   console.log(port);
 
@@ -58,7 +58,8 @@ async function connect() {
     await reader.read();
   }
   catch(err){
-    document.querySelector("#pairSpinner").classList.toggle("hidden"); // Disable the spinner
+    document.querySelector("#pairSpinner").classList.add("hidden"); // Disable the spinner
+    console.log("SPINNER DISABLED 2.0")
     document.querySelector("#reconnectSerial").classList.remove("removed"); // Show error asking user to unplug the Hub
     return;
   }
