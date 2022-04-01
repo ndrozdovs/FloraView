@@ -33,6 +33,7 @@ const dbUrl = process.env.DB_URL || "mongodb://localhost:27017/FloraView";
 
 const corsOptions ={
   origin:'http://strawberry-custard-75142.herokuapp.com', 
+  methods:['GET','POST'],
   credentials:true,       
   optionSuccessStatus:200,
 }
