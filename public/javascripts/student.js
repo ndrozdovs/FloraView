@@ -82,7 +82,7 @@ function highlightNodes(node) {
 }
 
 async function getNodeData(nodeMacAddress) {
-  const response = await fetch('http://strawberry-custard-75142.herokuapp.com/hubs?' + new URLSearchParams({
+  const response = await fetch('https://strawberry-custard-75142.herokuapp.com/hubs?' + new URLSearchParams({
     nodeMacAddress: nodeMacAddress,
   }))
   const data = await response.json();
@@ -91,7 +91,7 @@ async function getNodeData(nodeMacAddress) {
 }
 
 async function getAllGroups() {
-  const response = await fetch("http://strawberry-custard-75142.herokuapp.com/profiles/getStudentGroups");
+  const response = await fetch("https://strawberry-custard-75142.herokuapp.com/profiles/getStudentGroups");
   const data = await response.json();
 
   return data;
