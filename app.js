@@ -14,6 +14,7 @@ const passport = require("passport");
 const LocalStrategy = require("passport-local");
 const User = require("./models/user");
 const bodyParser = require('body-parser')
+const cors = require('cors')
 
 const app = express();
 const server = require('http').createServer(app)
@@ -48,6 +49,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json())
 app.use(methodOverride("_method"));
+app.use(cors({origin: 'https://strawberry-custard-75142.herokuapp.com'}))
 
 const secret = process.env.SECRET || 'thisshouldbeabettersecret!';
 
