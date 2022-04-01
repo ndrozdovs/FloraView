@@ -91,7 +91,7 @@ async function getNodeData(nodeMacAddress) {
 }
 
 async function getAllGroups() {
-  const response = await fetch("https://strawberry-custard-75142.herokuapp.com/profiles/getStudentGroups");
+  const response = await fetch("https://strawberry-custard-75142.herokuapp.com/profiles/getStudentGroups", {credentials: "include"});
   const data = await response.json();
 
   return data;
