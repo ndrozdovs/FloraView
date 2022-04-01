@@ -7,7 +7,7 @@ var displayCurrentData = true;
 var xMin = "0";
 var xMax = "0";
 
-const socket = io("http://localhost:3000");
+const socket = io("http://strawberry-custard-75142.herokuapp.com");
 socket.on("connection");
 
 socket.on("newData", (data) => {
@@ -79,7 +79,7 @@ function getRandomInt(min, max) {
 
 async function getNodeData(nodeMacAddress) {
   const response = await fetch(
-    "http://localhost:3000/hubs?" +
+    "http://strawberry-custard-75142.herokuapp.com/hubs?" +
       new URLSearchParams({
         nodeMacAddress: nodeMacAddress,
       })
