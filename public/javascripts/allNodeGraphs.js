@@ -74,7 +74,7 @@ nodeElements = [];
 
 async function getHubData(hubMacAddress) {
   const response = await fetch(
-    "https://strawberry-custard-75142.herokuapp.com/hubs/hub?" +
+    "https://flora-view.herokuapp.com/hubs/hub?" +
       new URLSearchParams({
         hubMacAddress: hubMacAddress,
       })

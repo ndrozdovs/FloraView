@@ -122,7 +122,7 @@ function highlightNodes(node) {
 }
 
 async function addGroupToProfile(groupName, nodes) {
-  await fetch("https://strawberry-custard-75142.herokuapp.com/profiles/addGroup", {
+  await fetch("https://flora-view.herokuapp.com/profiles/addGroup", {
     method: "post",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
@@ -131,7 +131,7 @@ async function addGroupToProfile(groupName, nodes) {
 }
 
 async function addStudentsToGroup(students, groupName) {
-  await fetch("https://strawberry-custard-75142.herokuapp.com/profiles/addStudentsToGroup", {
+  await fetch("https://flora-view.herokuapp.com/profiles/addStudentsToGroup", {
     method: "post",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
@@ -140,7 +140,7 @@ async function addStudentsToGroup(students, groupName) {
 }
 
 function addPasswordToClassroom(password) {
-  fetch("https://strawberry-custard-75142.herokuapp.com/profiles/addPassword", {
+  fetch("https://flora-view.herokuapp.com/profiles/addPassword", {
     method: "post",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
@@ -149,7 +149,7 @@ function addPasswordToClassroom(password) {
 }
 
 async function getAllGroups() {
-  const response = await fetch("https://strawberry-custard-75142.herokuapp.com/profiles/getGroups", {
+  const response = await fetch("https://flora-view.herokuapp.com/profiles/getGroups", {
     method: "get",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
@@ -160,7 +160,7 @@ async function getAllGroups() {
 }
 
 async function getAllNodes(hubMacAddress) {
-  const response = await fetch('https://strawberry-custard-75142.herokuapp.com/hubs/nodes?' + new URLSearchParams({
+  const response = await fetch('https://flora-view.herokuapp.com/hubs/nodes?' + new URLSearchParams({
     hubMacAddress: hubMacAddress,
   }))
   const data = await response.json();
@@ -169,7 +169,7 @@ async function getAllNodes(hubMacAddress) {
 }
 
 async function getNodeData(nodeMacAddress) {
-  const response = await fetch('https://strawberry-custard-75142.herokuapp.com/hubs?' + new URLSearchParams({
+  const response = await fetch('https://flora-view.herokuapp.com/hubs?' + new URLSearchParams({
     nodeMacAddress: nodeMacAddress,
   }))
   const data = await response.json();
@@ -178,7 +178,7 @@ async function getNodeData(nodeMacAddress) {
 }
 
 async function getAllStudents() {
-  const response = await fetch("https://strawberry-custard-75142.herokuapp.com/profiles/getStudents", {credentials: "include"});
+  const response = await fetch("https://flora-view.herokuapp.com/profiles/getStudents", {credentials: "include"});
   const data = await response.json();
 
   return data;

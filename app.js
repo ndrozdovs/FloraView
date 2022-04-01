@@ -32,7 +32,7 @@ const MongoDBStore = require("connect-mongo");
 const dbUrl = process.env.DB_URL || "mongodb://localhost:27017/FloraView";
 
 const corsOptions ={
-  origin:'http://strawberry-custard-75142.herokuapp.com', 
+  origin:'http://flora-view.herokuapp.com', 
   methods:['GET','POST'],
   credentials:true,       
   optionSuccessStatus:200,
