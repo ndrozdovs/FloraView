@@ -1,3 +1,7 @@
+if(process.env.NODE_ENV !== "production"){
+  require('dotenv').config();
+}
+
 const express = require("express");
 const path = require("path");
 const ejsMate = require("ejs-mate");
@@ -20,10 +24,11 @@ const mainPagesRoutes = require("./routes/mainPages");
 const dashboardRoutes = require("./routes/dashboard");
 const hubRoutes = require("./routes/hubs");
 const profileRoutes = require("./routes/profiles");
-
 const HubsController = require("./controllers/hubs");
 
-const dbUrl = "mongodb://localhost:27017/FloraView";
+const MongoDBStore = require("connect-mongo");
+
+const dbUrl = process.env.DB_URL || "mongodb://localhost:27017/FloraView";
 
 mongoose.connect(dbUrl);
 
@@ -44,10 +49,22 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json())
 app.use(methodOverride("_method"));
 
-const secret = 'anything';
+const secret = process.env.SECRET || 'thisshouldbeabettersecret!';
+
+const store = MongoDBStore.create({
+  mongoUrl: dbUrl,
+  secret,
+  touchAfter: 24 * 60 * 60
+});
+
+store.on("error", function (e) {
+  console.log("SESSION STORE ERROR", e)
+})
 
 const sessionConfig = {
-  secret: 'thisshouldbeabettersecret!',
+  store,
+  name: 'session',
+  secret,
   resave: false,
   saveUninitialized: true,
   cookie: {
