@@ -18,6 +18,7 @@ module.exports.newProfile = async (req, res, next) => {
 
 module.exports.addGroup = async (req, res, next) => {
   try {
+    console.log("ADDED NEW GROUP")
     const { groupName, nodes } = req.body;
     const profile = await TeacherProfile.findOne({ user: new ObjectId(req.user._id) });
     profile.groups.push({ groupName: groupName, nodes: nodes });
