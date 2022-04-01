@@ -18,7 +18,6 @@ module.exports.newProfile = async (req, res, next) => {
 
 module.exports.addGroup = async (req, res, next) => {
   try {
-    console.log("ADDED NEW GROUP")
     const { groupName, nodes } = req.body;
     const profile = await TeacherProfile.findOne({ user: new ObjectId(req.user._id) });
     profile.groups.push({ groupName: groupName, nodes: nodes });
@@ -32,8 +31,6 @@ module.exports.addGroup = async (req, res, next) => {
 
 module.exports.addPassword = async (req, res, next) => {
   try {
-    console.log("ADD PASSWORD")
-    console.log(req.user)
     const profile = await TeacherProfile.findOne({ user: new ObjectId(req.user._id) });
     profile.classrooms[0].password = req.body.password;
     await profile.save();
@@ -46,10 +43,7 @@ module.exports.addPassword = async (req, res, next) => {
 
 module.exports.getGroups = async (req, res, next) => {
   try {
-    console.log("getGroups")
-    console.log(req.user._id)
     const profile = await TeacherProfile.findOne({ user: new ObjectId(req.user._id) });
-    console.log(profile)
     const groupNodeData = {};
     const groupStudentsData = {};
     for (let group of profile.groups) {
