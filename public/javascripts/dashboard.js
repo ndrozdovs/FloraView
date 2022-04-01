@@ -156,10 +156,12 @@ async function getAllGroups() {
 }
 
 async function getAllNodes(hubMacAddress) {
+  console.log("getAllNodes")
   const response = await fetch('https://strawberry-custard-75142.herokuapp.com/hubs/nodes?' + new URLSearchParams({
     hubMacAddress: hubMacAddress,
   }))
   const data = await response.json();
+  console.log(data)
 
   return data;
 }
