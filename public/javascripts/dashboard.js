@@ -122,7 +122,7 @@ function highlightNodes(node) {
 }
 
 async function addGroupToProfile(groupName, nodes) {
-  await fetch("https-75142.herokuapp.com/profiles/addGroup", {
+  await fetch("http://strawberry-custard-75142.herokuapp.com/profiles/addGroup", {
     method: "post",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
