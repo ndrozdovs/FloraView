@@ -32,6 +32,8 @@ module.exports.addGroup = async (req, res, next) => {
 
 module.exports.addPassword = async (req, res, next) => {
   try {
+    console.log("ADD PASSWORD")
+    console.log(req.user)
     const profile = await TeacherProfile.findOne({ user: new ObjectId(req.user._id) });
     profile.classrooms[0].password = req.body.password;
     await profile.save();
