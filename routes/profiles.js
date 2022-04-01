@@ -5,11 +5,11 @@ const { isLoggedIn, isStudent } = require("../middleware");
 
 router.post("/", isLoggedIn, ProfilesController.newProfile);
 
-router.post("/addGroup", ProfilesController.addGroup);
+router.post("/addGroup", isLoggedIn, ProfilesController.addGroup);
 
 router.post("/addPassword", isLoggedIn, ProfilesController.addPassword);
 
-router.get("/getGroups", ProfilesController.getGroups);
+router.get("/getGroups", isLoggedIn, ProfilesController.getGroups);
 
 router.get("/getStudentGroups", isLoggedIn, isStudent, ProfilesController.getStudentGroups);
 

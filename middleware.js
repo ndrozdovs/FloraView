@@ -4,10 +4,12 @@ var ObjectId = require("mongodb").ObjectId;
 
 module.exports.isLoggedIn = (req, res, next) => {
   if (!req.isAuthenticated()) {
+    console.log("IS NOT LOGGED IN")
     req.session.returnTo = req.originalUrl;
     req.flash("error", "You must be signed in first!");
     return res.redirect("/login");
   }
+  console.log("IS LOGGED IN")
   next();
 };
 
