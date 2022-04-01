@@ -122,7 +122,7 @@ function highlightNodes(node) {
 }
 
 async function addGroupToProfile(groupName, nodes) {
-  await fetch("http://strawberry-custard-75142.herokuapp.com/profiles/addGroup", {
+  await fetch("https://strawberry-custard-75142.herokuapp.com/profiles/addGroup", {
     method: "post",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
@@ -131,7 +131,7 @@ async function addGroupToProfile(groupName, nodes) {
 }
 
 async function addStudentsToGroup(students, groupName) {
-  await fetch("http://strawberry-custard-75142.herokuapp.com/profiles/addStudentsToGroup", {
+  await fetch("https://strawberry-custard-75142.herokuapp.com/profiles/addStudentsToGroup", {
     method: "post",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
