@@ -149,7 +149,11 @@ function addPasswordToClassroom(password) {
 }
 
 async function getAllGroups() {
-  const response = await fetch("https://strawberry-custard-75142.herokuapp.com/profiles/getGroups", {credentials: "include"});
+  const response = await fetch("https://strawberry-custard-75142.herokuapp.com/profiles/getGroups", , {
+    method: "get",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+  });
   const data = await response.json();
 
   return data;
