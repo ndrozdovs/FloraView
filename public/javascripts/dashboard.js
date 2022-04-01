@@ -149,7 +149,6 @@ function addPasswordToClassroom(password) {
 }
 
 async function getAllGroups() {
-  console.log("CALLING GET ALL GROUPS")
   const response = await fetch("https://strawberry-custard-75142.herokuapp.com/profiles/getGroups");
   const data = await response.json();
 
@@ -235,8 +234,6 @@ async function interact() {
   if (groups !== null && groups.childNodes.length !== 0) {
     for (group of groups.childNodes) {
       if (group.tagName === "BUTTON") {
-        console.log("CALLING populateNodesAsync")
-        console.log(group.id)
         populateNodesAsync(group.id)
         break;
       }
