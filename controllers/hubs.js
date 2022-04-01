@@ -63,6 +63,7 @@ exports.addNodeData = async (req, res, next) => {
     console.log("Received packet from Hub")
     if(req.query.hubMacAddress.length === 0){
       console.log("No Hub macAddress, data not added, exiting")
+      res.status(500).json({});
       return;
     }
     let numberFound;
@@ -82,6 +83,7 @@ exports.addNodeData = async (req, res, next) => {
       for(var singleNode of nodes){
         if(req.query.nodeMacAddress.substr(15,2) === singleNode.nodeMacAddress.substr(15,2)){
           console.log("Node macAddress was corrupted, exiting")
+          res.status(500).json({});
           return;
         }
         console.log("----------------------")
