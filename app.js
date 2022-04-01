@@ -31,6 +31,12 @@ const MongoDBStore = require("connect-mongo");
 
 const dbUrl = process.env.DB_URL || "mongodb://localhost:27017/FloraView";
 
+const corsOptions ={
+  origin:'*', 
+  credentials:true,       
+  optionSuccessStatus:200,
+}
+
 mongoose.connect(dbUrl);
 
 const db = mongoose.connection;
@@ -49,7 +55,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json())
 app.use(methodOverride("_method"));
-app.use(cors({origin: 'https://strawberry-custard-75142.herokuapp.com'}))
+app.use(cors(corsOptions))
 
 const secret = process.env.SECRET || 'thisshouldbeabettersecret!';
 
