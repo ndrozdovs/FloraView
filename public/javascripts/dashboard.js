@@ -153,7 +153,7 @@ function addPasswordToClassroom(password) {
 }
 
 async function getAllGroups() {
-  const response = await fetch("https://floraview.ca/profiles/getGroups", {
+  const response = await fetch("https://www.floraview.ca/profiles/getGroups", {
     method: "get",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
