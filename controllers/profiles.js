@@ -137,10 +137,10 @@ module.exports.addStudentToGroup = async (req, res) => {
   try {
     const teacherProfile = await TeacherProfile.findOne({ user: new ObjectId(req.user._id) });
     console.log("REQUEST:", req.body)
-    console.log("NUMBER STUDENTS: ", group.students.length)
-
+    
     for (let group of teacherProfile.groups) {
       if (group.groupName == req.body.groupName) {
+        console.log("NUMBER STUDENTS: ", group.students.length)
         for(let i = 0; i < group.students.length; i++){
           console.log("CURRENT STUDENT: ", group.students[i])
           if (!req.body.students.includes(group.students[i])) {
