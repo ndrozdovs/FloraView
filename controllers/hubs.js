@@ -27,6 +27,7 @@ exports.getHubData = async (req, res, next) => {
       let response = await Node.findById(node);
       nodeData.push(response);
     }
+    res.set('Access-Control-Allow-Origin', '*');
     return res.status(200).json(nodeData);
   } catch (err) {
     console.log(err)
