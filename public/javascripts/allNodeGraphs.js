@@ -164,7 +164,7 @@ function initAllGraphs(node) {
 function showAllGraphs() {
   document.querySelector("#individualGraphs").classList.add("removed");
   document.querySelector("#allGraphs").classList.remove("removed");
-  document.querySelector("#allGraphButtons").classList.remove("hidden");
+  document.querySelector("#allGraphButtons").classList.remove("removed");
   displayData();
 }
 
