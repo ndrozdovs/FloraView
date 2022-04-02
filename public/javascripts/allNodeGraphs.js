@@ -79,7 +79,7 @@ nodeElements = [];
 
 async function getHubData(hubMacAddress) {
   const response = await fetch(
-    "https://floraview.ca/hubs/hub?" +
+    "https://www.floraview.ca/hubs/hub?" +
       new URLSearchParams({
         hubMacAddress: hubMacAddress,
       })

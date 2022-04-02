@@ -126,7 +126,7 @@ function highlightNodes(node) {
 }
 
 async function addGroupToProfile(groupName, nodes) {
-  await fetch("https://floraview.ca/profiles/addGroup", {
+  await fetch("https://www.floraview.ca/profiles/addGroup", {
     method: "post",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
@@ -135,7 +135,7 @@ async function addGroupToProfile(groupName, nodes) {
 }
 
 async function addStudentsToGroup(students, groupName) {
-  await fetch("https://floraview.ca/profiles/addStudentsToGroup", {
+  await fetch("https://www.floraview.ca/profiles/addStudentsToGroup", {
     method: "post",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
@@ -144,7 +144,7 @@ async function addStudentsToGroup(students, groupName) {
 }
 
 function addPasswordToClassroom(password) {
-  fetch("https://floraview.ca/profiles/addPassword", {
+  fetch("https://www.floraview.ca/profiles/addPassword", {
     method: "post",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
@@ -164,7 +164,7 @@ async function getAllGroups() {
 }
 
 async function getAllNodes(hubMacAddress) {
-  const response = await fetch('https://floraview.ca/hubs/nodes?' + new URLSearchParams({
+  const response = await fetch('https://www.floraview.ca/hubs/nodes?' + new URLSearchParams({
     hubMacAddress: hubMacAddress,
   }))
   const data = await response.json();
@@ -173,7 +173,7 @@ async function getAllNodes(hubMacAddress) {
 }
 
 async function getNodeData(nodeMacAddress) {
-  const response = await fetch('https://floraview.ca/hubs?' + new URLSearchParams({
+  const response = await fetch('https://www.floraview.ca/hubs?' + new URLSearchParams({
     nodeMacAddress: nodeMacAddress,
   }))
   const data = await response.json();
@@ -182,7 +182,7 @@ async function getNodeData(nodeMacAddress) {
 }
 
 async function getAllStudents() {
-  const response = await fetch("https://floraview.ca/profiles/getStudents", {credentials: "include"});
+  const response = await fetch("https://www.floraview.ca/profiles/getStudents", {credentials: "include"});
   const data = await response.json();
 
   return data;

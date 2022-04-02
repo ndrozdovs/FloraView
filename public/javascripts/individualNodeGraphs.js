@@ -7,7 +7,7 @@ var displayCurrentData = true;
 var xMin = "0";
 var xMax = "0";
 
-const socket = io("https://floraview.ca");
+const socket = io("https://www.floraview.ca");
 socket.on("connection");
 
 socket.on("newData", (data) => {
@@ -79,7 +79,7 @@ function getRandomInt(min, max) {
 
 async function getNodeData(nodeMacAddress) {
   const response = await fetch(
-    "https://floraview.ca/hubs?" +
+    "https://www.floraview.ca/hubs?" +
       new URLSearchParams({
         nodeMacAddress: nodeMacAddress,
       })

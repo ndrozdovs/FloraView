@@ -2,7 +2,7 @@ window.addEventListener("load", interact);
 
 function createProfile(hubMacAddress) {
   const pairCode = getRandomInt(1000, 9999);
-  fetch("https://floraview.ca/profiles", {
+  fetch("https://www.floraview.ca/profiles", {
     method: "post",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
@@ -13,7 +13,7 @@ function createProfile(hubMacAddress) {
 }
 
 function addPasswordToClassroom(password) {
-  fetch("https://floraview.ca/profiles/addPassword", {
+  fetch("https://www.floraview.ca/profiles/addPassword", {
     method: "post",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
