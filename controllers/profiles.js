@@ -136,13 +136,20 @@ module.exports.addStudent = async (req, res) => {
 module.exports.addStudentToGroup = async (req, res) => {
   try {
     const teacherProfile = await TeacherProfile.findOne({ user: new ObjectId(req.user._id) });
+    console.log("REQUEST:", req.body)
+    console.log("NUMBER STUDENTS: ", group.students.length)
 
     for (let group of teacherProfile.groups) {
       if (group.groupName == req.body.groupName) {
         for(let i = 0; i < group.students.length; i++){
+          console.log("CURRENT STUDENT: ", group.students[i])
           if (!req.body.students.includes(group.students[i])) {
+            console.log("STUDENT DOES NOT EXIST")
+            console.log(group.students)
+            console.log("-------------------------")
             let [first, last] = group.students[i].split(" ");
             group.students.splice(i, 1)
+            console.log(group.students)
             let studentAccount = await User.findOne({ firstName: first, lastName: last });
             let studentProfile = await StudentProfile.findOne({ user: studentAccount._id })
             for(let j = 0; j < studentProfile.groups.length; j++){
