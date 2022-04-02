@@ -43,6 +43,10 @@ module.exports.addPassword = async (req, res, next) => {
 
 module.exports.getGroups = async (req, res, next) => {
   try {
+    console.log("getGroups")
+    console.log(req.originalUrl) // '/admin/new?a=b' (WARNING: beware query string)
+    console.log(req.get('host')) // '/admin'
+    console.log(req.protocol) // '/new'
     const profile = await TeacherProfile.findOne({ user: new ObjectId(req.user._id) });
     const groupNodeData = {};
     const groupStudentsData = {};
