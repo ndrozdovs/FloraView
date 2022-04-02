@@ -31,12 +31,12 @@ const MongoDBStore = require("connect-mongo");
 
 const dbUrl = process.env.DB_URL || "mongodb://localhost:27017/FloraView";
 
-//const corsOptions ={
-  //origin:'*', 
-  //methods:['GET','POST'],
-  //credentials:true,       
-  //optionSuccessStatus:200,
-//}
+const corsOptions ={
+  origin:'http://floraview.ca', 
+  methods:['GET','POST'],
+  credentials:true,       
+  optionSuccessStatus:200,
+}
 
 mongoose.connect(dbUrl);
 
@@ -56,7 +56,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json())
 app.use(methodOverride("_method"));
-//app.use(cors(corsOptions))
+app.use(cors(corsOptions))
 
 const secret = process.env.SECRET || 'thisshouldbeabettersecret!';
 
@@ -96,7 +96,9 @@ passport.deserializeUser(User.deserializeUser());
 app.use((req, res, next) => {
   res.locals.currentUser = req.user;
   res.locals.error = req.flash("error");
-  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Origin', req.headers.origin);
+  res.header('Access-Control-Allow-Credentials', true);
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
   next();
 });
 
