@@ -1,5 +1,7 @@
 let nodes = [];
 
+console.log(window.location.protocol)
+
 if (window.location.protocol == 'http:') {
      
   console.log("you are accessing us via "
