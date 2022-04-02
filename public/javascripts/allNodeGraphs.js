@@ -67,7 +67,12 @@ function initConfigs(numConifgs) {
 }
 
 buttons = ["Temperature", "pH", "Light", "Moisture"];
-colors = ["rgb(11, 245, 19)", "rgb(156, 75, 210)", "rgb(246, 168, 12)", "rgb(255, 99, 132)", "rgb(0,0,0)", "rgb(200, 75, 210)"];
+colors = {
+  "temp": ["rgb(11, 245, 19)", "rgb(156, 75, 210)", "rgb(246, 168, 12)", "rgb(255, 99, 132)", "rgb(0,0,0)", "rgb(200, 75, 210)"],
+  "ph": ["rgb(156, 75, 210)", "rgb(246, 168, 12)", "rgb(255, 99, 132)", "rgb(11, 245, 19)", "rgb(0,0,0)", "rgb(200, 75, 210)"],
+  "light": ["rgb(246, 168, 12)", "rgb(255, 99, 132)", "rgb(11, 245, 19)", "rgb(156, 75, 210)", "rgb(0,0,0)", "rgb(200, 75, 210)"],
+  "moist": ["rgb(255, 99, 132)", "rgb(11, 245, 19)", "rgb(156, 75, 210)", "rgb(246, 168, 12)", "rgb(0,0,0)", "rgb(200, 75, 210)"]
+}
 minValue = [15, 4, 30, 50];
 maxValue = [25, 10, 60, 100];
 nodeElements = [];
@@ -151,8 +156,8 @@ function initAllGraphs(node) {
 
   for (var i = 0; i < nodeElements.length; i++) {
     nodeConfigs[i].data.datasets[0].label = nodeElements[i].slice(0, 4) + " " + nodeElements[i].slice(4);
-    nodeConfigs[i].data.datasets[0].backgroundColor = colors[i];
-    nodeConfigs[i].data.datasets[0].borderColor = colors[i];
+    nodeConfigs[i].data.datasets[0].backgroundColor = colors[currentSensor][i];
+    nodeConfigs[i].data.datasets[0].borderColor = colors[currentSensor][i];
     nodeConfigs[i].data.datasets[0].data = [];
 
     nodeCharts.push(new Chart(document.getElementById(nodeElements[i] + "Chart"), nodeConfigs[i]));
