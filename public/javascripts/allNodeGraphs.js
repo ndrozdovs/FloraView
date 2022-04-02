@@ -156,9 +156,6 @@ function initAllGraphs(node) {
 
   for (var i = 0; i < nodeElements.length; i++) {
     nodeConfigs[i].data.datasets[0].label = nodeElements[i].slice(0, 4) + " " + nodeElements[i].slice(4);
-    console.log(currentSensor)
-    console.log(colors[currentSensor])
-    console.log(colors[currentSensor][i])
     nodeConfigs[i].data.datasets[0].backgroundColor = colors[currentSensor][i];
     nodeConfigs[i].data.datasets[0].borderColor = colors[currentSensor][i];
     nodeConfigs[i].data.datasets[0].data = [];
@@ -194,6 +191,8 @@ async function realtimeGraph(sensorIndex) {
 
   for (var i = 0; i < nodeElements.length; i++) {
     nodeConfigs[i].data.datasets[0].data = [];
+    nodeConfigs[i].data.datasets[0].backgroundColor = colors[currentSensor][i];
+    nodeConfigs[i].data.datasets[0].borderColor = colors[currentSensor][i];
   }
 
   for (var i = 0; i < nodeElements.length; i++) {
