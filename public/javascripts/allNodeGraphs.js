@@ -1,7 +1,7 @@
 nodeConfigs = [];
 nodeCharts = [];
 
-var currentSensor;
+var currentSensor = "temp";
 var rawDataAll;
 var numDaysAll;
 var displayCurrentDataAll = true;
