@@ -7,7 +7,7 @@ var displayCurrentData = true;
 var xMin = "0";
 var xMax = "0";
 
-const socket = io("https://flora-view.herokuapp.com");
+const socket = io("https://floraview.ca");
 socket.on("connection");
 
 socket.on("newData", (data) => {
@@ -79,7 +79,7 @@ function getRandomInt(min, max) {
 
 async function getNodeData(nodeMacAddress) {
   const response = await fetch(
-    "https://flora-view.herokuapp.com/hubs?" +
+    "https://floraview.ca/hubs?" +
       new URLSearchParams({
         nodeMacAddress: nodeMacAddress,
       })

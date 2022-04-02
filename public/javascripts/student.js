@@ -88,7 +88,7 @@ function highlightNodes(node) {
 }
 
 async function getNodeData(nodeMacAddress) {
-  const response = await fetch('https://flora-view.herokuapp.com/hubs?' + new URLSearchParams({
+  const response = await fetch('https://floraview.ca/hubs?' + new URLSearchParams({
     nodeMacAddress: nodeMacAddress,
   }))
   const data = await response.json();
@@ -97,7 +97,7 @@ async function getNodeData(nodeMacAddress) {
 }
 
 async function getAllGroups() {
-  const response = await fetch("https://flora-view.herokuapp.com/profiles/getStudentGroups", {
+  const response = await fetch("https://floraview.ca/profiles/getStudentGroups", {
     method: "get",
     headers: { "Content-Type": "application/json" },
     credentials: "include",

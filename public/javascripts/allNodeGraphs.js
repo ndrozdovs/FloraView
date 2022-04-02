@@ -79,7 +79,7 @@ nodeElements = [];
 
 async function getHubData(hubMacAddress) {
   const response = await fetch(
-    "https://flora-view.herokuapp.com/hubs/hub?" +
+    "https://floraview.ca/hubs/hub?" +
       new URLSearchParams({
         hubMacAddress: hubMacAddress,
       })
