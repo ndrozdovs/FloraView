@@ -4,12 +4,14 @@ if (window.location.protocol == 'http:') {
 
 window.addEventListener("load", interact);
 
+function callPopulateStudent() {
+  populateNodesAsync(this.id);
+}
+
 function addListenerToButtons() {
   var groupButtons = document.querySelectorAll("button.custom");
   groupButtons.forEach((button) => {
-    button.addEventListener("click", async function () {
-      populateNodesAsync(this.id)
-    });
+    button.addEventListener("click", callPopulateStudent)
   });
 }
 
