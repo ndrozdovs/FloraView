@@ -102,6 +102,13 @@ app.use((req, res, next) => {
   next();
 });
 
+app.get('/', function(req, res, next) {
+  if (req.protocol == 'http') {
+      res.redirect('https://' +
+      req.get('host') + req.originalUrl);
+  }
+});
+
 // Routes which should handle requests
 app.use("/", userRoutes);
 app.use("/", mainPagesRoutes);
