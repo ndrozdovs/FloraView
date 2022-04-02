@@ -53,9 +53,6 @@ for (var i = 0; i < 4; i++) {
       ],
     },
     options: {
-      animation: {
-        duration: 0
-      },
       scales: {
         x: {
           parsing: false,
