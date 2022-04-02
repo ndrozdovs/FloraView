@@ -111,7 +111,7 @@ function initGraphs() {
 async function realtimeGraphs() {
   document.querySelector("#individualGraphs").classList.remove("removed");
   document.querySelector("#allGraphs").classList.add("removed");
-  document.querySelector("#allGraphButtons").classList.add("hidden");
+  document.querySelector("#allGraphButtons").classList.add("removed");
 
   for (var i = 0; i < 4; i++) {
     sensorConfigs[i].data.datasets[0].data = [];

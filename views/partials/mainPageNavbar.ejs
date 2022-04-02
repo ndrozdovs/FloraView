@@ -1,27 +1,51 @@
-<div class="container">
-  <nav class="navbar navbar-expand-lg">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="/">
-        <img src="../assets/FloraView_logo.png" alt="" width="102" height="68" />
-      </a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse text-muted" id="navbarNavAltMarkup">
-        <div class="navbar-nav">
+<nav class="navbar navbar-expand-lg">
+  <div class="container-fluid" id="navbarContent">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <i class="fa fa-bars"></i>
+    </button>
+    <a class="navbar-brand mt-2 mt-lg-0 pl-3" href="/">
+      <img src="../assets/FloraView_logo.png" alt="" width="102" height="68" />
+    </a>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
           <a class="nav-link" href="/product">Product</a>
+        </li>
+        <li class="nav-item">
           <a class="nav-link" href="/useCases">Use Cases</a>
+        </li>
+        <li class="nav-item">
           <a class="nav-link" href="/company">Company</a>
+        </li>
+        <li class="nav-item">
           <a class="nav-link" href="/pricing">Pricing</a>
-        </div>
-        <div class="navbar-nav ml-auto">
-          <% if(!currentUser) {%>
-          <a class="nav-link" href="/login">Login</a>
-          <% } else {%>
-          <a class="nav-link" href="/dashboard">Dashboard</a>
-          <% } %>
-        </div>
-      </div>
+        </li>
+      </ul>
     </div>
-  </nav>
-</div>
+
+    <li class="nav-item">
+      <li class="nav-item">
+        <% if(!currentUser) {%>
+        <a class="nav-link" href="/login">Login</a>
+        <% } else {%>
+        <a class="nav-link" href="/dashboard">Dashboard</a>
+        <% } %>
+      </li>
+    </li>
+  </div>
+</nav>
+
+<!--
+  <li class="nav-item">
+          <a class="nav-link" href="/product">Product</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/useCases">Use Cases</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/company">Company</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/pricing">Pricing</a>
+        </li>
+-->
