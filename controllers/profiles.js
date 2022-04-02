@@ -86,6 +86,7 @@ module.exports.getStudentGroups = async (req, res, next) => {
 module.exports.getStudents = async (req, res, next) => {
   try {
     const teacherProfile = await TeacherProfile.findOne({ user: new ObjectId(req.user._id) });
+
     const students = [];
   
     for (let student of teacherProfile.classrooms[0].students) {
@@ -130,6 +131,27 @@ module.exports.addStudent = async (req, res) => {
 module.exports.addStudentToGroup = async (req, res) => {
   try {
     const teacherProfile = await TeacherProfile.findOne({ user: new ObjectId(req.user._id) });
+
+    for (let group of teacherProfile.groups) {
+      if (group.groupName == req.body.groupName) {
+        for(let i = 0; i < group.students.length; i++){
+          if (!req.body.students.includes(group.students[i])) {
+            let [first, last] = group.students[i].split(" ");
+            group.students.splice(i, 1)
+            let studentAccount = await User.findOne({ firstName: first, lastName: last });
+            let studentProfile = await StudentProfile.findOne({ user: studentAccount._id })
+            for(let j = 0; j < studentProfile.groups.length; j++){
+              if(studentProfile.groups[j].groupName === group.groupName){
+                studentProfile.groups.splice(j, 1)
+                break;
+              }
+            }
+            await studentProfile.save();
+          }
+        }
+        break;
+      }
+    }
   
     for (let group of teacherProfile.groups) {
       if (group.groupName == req.body.groupName) {

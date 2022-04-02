@@ -358,6 +358,13 @@ async function interact() {
   $("#addStudentsModal").on("shown.bs.modal", async function () {
     const students = await getAllStudents();
     const studentHeader = document.querySelector("#studentListForm"); // Select node list in the modal
+    const currentStudentHeader = document.querySelector("#studentList");
+
+    var currentStudents = [];
+    var children = currentStudentHeader.children;
+    for (var i = 0; i < children.length; i++) {
+      currentStudents.push(children[i].innerHTML);
+    }
 
     // Remove all nodes from the list (clear the list)
     var child = studentHeader.lastElementChild;
@@ -381,6 +388,10 @@ async function interact() {
       newInput.value = student;
       newInput.name = "studentSelector"
       newLabel.innerHTML = student;
+
+      if(currentStudents.includes(student)){
+        newInput.checked = true
+      }
 
       studentHeader.appendChild(newDiv);
       newDiv.appendChild(newInput);
