@@ -60,6 +60,7 @@ module.exports.getGroups = async (req, res, next) => {
       groupStudentsData[group.groupName] = group.students;
     }
 
+    res.set('Access-Control-Allow-Origin', '*');
     return res.status(200).json({ groupNodeData, groupStudentsData });
   } catch (err) {
     console.log(err)
