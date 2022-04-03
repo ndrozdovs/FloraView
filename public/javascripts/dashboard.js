@@ -280,14 +280,6 @@ async function interact() {
         data.push(row)
       }
     }
-    row = []
-    row.push("78:E3:6D:09:F1:E8")
-    row.push("2022-04-03 22:43")
-    row.push("100")
-    row.push("5")
-    row.push("100")
-    row.push("100")
-    data.push(row)
     e.preventDefault();
     exportToCsv("nodeData", data)
   });
