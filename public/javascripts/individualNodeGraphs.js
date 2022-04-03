@@ -37,8 +37,11 @@ socket.on("newData", (data) => {
       y: data.moist,
     });
 
-    updateDataRealtime(data);
-    updateTimeframeRealtime(data);
+    if(data.temp !== "100"){
+      updateDataRealtime(data);
+      updateTimeframeRealtime(data);
+    }
+
   }
 });
 

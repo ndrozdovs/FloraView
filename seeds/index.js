@@ -26,14 +26,14 @@ function getRandomInt(min, max) {
 
 const seedDB = async () => {
   let numberFound;
-  numberFound = await Hub.countDocuments({ hubMacAddress: "94:B9:7E:D5:87:FC" });
+  numberFound = await Hub.countDocuments({ hubMacAddress: "94:B9:7E:D5:13:9C" });
 
   if (numberFound === 0) {
-    const newHub = new Hub({ hubMacAddress: "94:B9:7E:D5:87:FC" });
+    const newHub = new Hub({ hubMacAddress: "94:B9:7E:D5:13:9C" });
     await newHub.save();
   }
 
-  const hub = await Hub.findOne({ hubMacAddress: "94:B9:7E:D5:87:FC" });
+  const hub = await Hub.findOne({ hubMacAddress: "94:B9:7E:D5:13:9C" });
   numberFound = await Node.countDocuments({ nodeMacAddress: "seededNodeForDemo" });
 
   if (numberFound > 0) {
