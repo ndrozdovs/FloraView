@@ -16,32 +16,31 @@ socket.on("newData", (data) => {
     return;
   }
 
-  if (getCurrentNode() === data.nodeMacAddress) {
-    rawData[0].push({
-      x: data.timestamp,
-      y: data.temp,
-    });
+  if(data.temp !== "100"){
+    if (getCurrentNode() === data.nodeMacAddress) {
+      rawData[0].push({
+        x: data.timestamp,
+        y: data.temp,
+      });
 
-    rawData[1].push({
-      x: data.timestamp,
-      y: data.ph,
-    });
+      rawData[1].push({
+        x: data.timestamp,
+        y: data.ph,
+      });
 
-    rawData[2].push({
-      x: data.timestamp,
-      y: data.light,
-    });
+      rawData[2].push({
+        x: data.timestamp,
+        y: data.light,
+      });
 
-    rawData[3].push({
-      x: data.timestamp,
-      y: data.moist,
-    });
+      rawData[3].push({
+        x: data.timestamp,
+        y: data.moist,
+      });
 
-    if(data.temp !== "100"){
       updateDataRealtime(data);
       updateTimeframeRealtime(data);
     }
-
   }
 });
 
