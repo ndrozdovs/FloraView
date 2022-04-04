@@ -11,6 +11,7 @@ const socket = io("https://www.floraview.ca");
 socket.on("connection");
 
 socket.on("newData", (data) => {
+  console.log("RECEIVED NEW DATA")
   // rawData is undefined, exiting
   if (typeof rawData === "undefined") {
     return;
