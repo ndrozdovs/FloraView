@@ -125,5 +125,6 @@ server.listen(port, () => {
 });
 
 io.on('connection', function(socket) {
+  console.log("USER CONNECTED: ", socket)
   HubsController.respond(socket)
 })

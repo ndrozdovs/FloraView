@@ -61,7 +61,7 @@ function getRandomFloat(min, max, decimals) {
 
 exports.addNodeData = async (req, res, next) => {
   try {
-    console.log("Received packet from Hub")
+    //console.log("Received packet from Hub")
     if(req.query.hubMacAddress.length === 0){
       console.log("No Hub macAddress, data not added, exiting")
       res.status(500).json({});
@@ -132,6 +132,8 @@ exports.addNodeData = async (req, res, next) => {
     if (typeof mySocket !== "undefined") {
       mySocket.emit('newData', { hubMacAddress: req.query.hubMacAddress, nodeMacAddress: req.query.nodeMacAddress, temp: req.query.temp, ph: req.query.ph, light: req.query.light, moist: req.query.moist, timestamp: moment().subtract(0, "days").format("YYYY-MM-DD HH:mm:ss") })
       mySocket.emit('newDataAll', { hubMacAddress: req.query.hubMacAddress, nodeMacAddress: req.query.nodeMacAddress, temp: req.query.temp, ph: req.query.ph, light: req.query.light, moist: req.query.moist, timestamp: moment().subtract(0, "days").format("YYYY-MM-DD HH:mm:ss") })
+      mySocket.broadcast.emit('newData', { hubMacAddress: req.query.hubMacAddress, nodeMacAddress: req.query.nodeMacAddress, temp: req.query.temp, ph: req.query.ph, light: req.query.light, moist: req.query.moist, timestamp: moment().subtract(0, "days").format("YYYY-MM-DD HH:mm:ss") })
+      mySocket.broadcast.emit('newDataAll', { hubMacAddress: req.query.hubMacAddress, nodeMacAddress: req.query.nodeMacAddress, temp: req.query.temp, ph: req.query.ph, light: req.query.light, moist: req.query.moist, timestamp: moment().subtract(0, "days").format("YYYY-MM-DD HH:mm:ss") })
     }
 
     res.status(201).json({ message: "Added data successfully" });
