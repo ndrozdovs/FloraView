@@ -1,4 +1,5 @@
 let nodes = [];
+var progress = false;
 
 if (window.location.protocol == 'http:') {
   window.location.href = window.location.href.replace('http:', 'https:');
@@ -90,6 +91,7 @@ function populateNodes(groupId, groupNodeData, groupStudentsData) {
   initAllGraphs(allNodes);
   highlightNodes(nodeHeader.children[0]);
   realtimeGraphs();
+  progress = false;
 }
 
 function populateStudents(students, groupId){
@@ -189,6 +191,10 @@ async function getAllStudents() {
 }
 
 async function populateNodesAsync(group){
+  if (progress) {
+    return;
+  }
+  progress = true;
   document.querySelector("#displayGroups_Nodes").classList.remove("removed"); // Display groups and nodes screen
   await getAllGroups().then(({groupNodeData, groupStudentsData}) => {
     populateNodes(group, groupNodeData, groupStudentsData);
