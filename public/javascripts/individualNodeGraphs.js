@@ -152,6 +152,7 @@ async function realtimeGraphs() {
       averageOutData();
     }
   });
+  progress = false;
 }
 
 function updateTimeScale(start, end, fromCalendar) {
