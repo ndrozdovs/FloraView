@@ -61,7 +61,7 @@ function getRandomFloat(min, max, decimals) {
 
 exports.addNodeData = async (req, res, next) => {
   try {
-    //console.log("Received packet from Hub")
+    console.log("Received packet from Hub")
     if(req.query.hubMacAddress.length === 0){
       console.log("No Hub macAddress, data not added, exiting")
       res.status(500).json({});
