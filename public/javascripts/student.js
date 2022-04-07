@@ -46,8 +46,6 @@ function populateNodes(groupId, groupNodeData) {
     newNode.id = node.codeName.replace(/ /g, "");
     newNode.title = node.macAddress;
     newNode.onclick = function () {
-      console.log("CLICK")
-      console.log(studentProgress)
       if (studentProgress) {
         return;
       }

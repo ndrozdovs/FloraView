@@ -153,6 +153,7 @@ async function realtimeGraphs() {
     }
   });
   progress = false;
+  studentProgress = false;
 }
 
 function updateTimeScale(start, end, fromCalendar) {
