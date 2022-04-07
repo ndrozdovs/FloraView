@@ -1,3 +1,5 @@
+studentProgress = false;
+
 if (window.location.protocol == 'http:') {
   window.location.href = window.location.href.replace('http:', 'https:');
 }
@@ -44,6 +46,10 @@ function populateNodes(groupId, groupNodeData) {
     newNode.id = node.codeName.replace(/ /g, "");
     newNode.title = node.macAddress;
     newNode.onclick = function () {
+      if (progress) {
+        return;
+      }
+      progress = true;
       highlightNodes(newNode);
       realtimeGraphs();
     };
