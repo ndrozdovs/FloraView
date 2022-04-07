@@ -46,10 +46,10 @@ function populateNodes(groupId, groupNodeData) {
     newNode.id = node.codeName.replace(/ /g, "");
     newNode.title = node.macAddress;
     newNode.onclick = function () {
-      if (progress) {
+      if (studentProgress) {
         return;
       }
-      progress = true;
+      studentProgress = true;
       highlightNodes(newNode);
       realtimeGraphs();
     };
