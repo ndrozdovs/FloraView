@@ -157,18 +157,11 @@ module.exports.addStudentToGroup = async (req, res) => {
     for (let group of teacherProfile.groups) {
       if (group.groupName == req.body.groupName) {
         for (let student of req.body.students) {
-          console.log(student)
           if (group.students.indexOf(student) === -1) {
             let [first, last] = student.split(" ");
-            console.log(student)
-            console.log(first)
-            console.log(last)
 
             let studentAccount = await User.findOne({ firstName: first, lastName: last });
-            console.log(studentAccount)
             let studentProfile = await StudentProfile.findOne({ user: studentAccount._id })
-            console.log(studentProfile)
-            console.log("------------------------------")
             studentProfile.groups.push({ groupName: group.groupName, nodes: group.nodes });
             group.students.push(student);
             await studentProfile.save();
