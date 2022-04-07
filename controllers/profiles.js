@@ -132,6 +132,10 @@ module.exports.addStudent = async (req, res) => {
 module.exports.addStudentToGroup = async (req, res) => {
   try {
     const teacherProfile = await TeacherProfile.findOne({ user: new ObjectId(req.user._id) });
+
+    console.log(req.body)
+
+    console.log(teacherProfile)
     
     for (let group of teacherProfile.groups) {
       if (group.groupName == req.body.groupName) {
@@ -159,9 +163,12 @@ module.exports.addStudentToGroup = async (req, res) => {
         for (let student of req.body.students) {
           if (group.students.indexOf(student) === -1) {
             let [first, last] = student.split(" ");
+            console.log(first)
 
             let studentAccount = await User.findOne({ firstName: first, lastName: last });
             let studentProfile = await StudentProfile.findOne({ user: studentAccount._id })
+            console.log(studentProfile)
+            console.log("------------------------------")
             studentProfile.groups.push({ groupName: group.groupName, nodes: group.nodes });
             group.students.push(student);
             await studentProfile.save();
